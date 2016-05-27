@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "module": "commonjs",
+        "removeComments": true,
+        "sourceMap": false,
+        "target": "es5",
+        "moduleResolution": "node",
+        "outDir": "lib"
+    },
+    "filesGlob": [
+        "typings/index.d.ts",
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
+    "files": [
+        "typings/index.d.ts",
+        "src/api/Connector.ts",
+        "src/api/Request.ts",
+        "src/api/Response.ts",
+        "src/api/ResponseError.ts",
+        "src/api/ResponseSuccess.ts",
+        "src/index.ts",
+        "src/models/common/Collection.ts",
+        "src/models/common/Model.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

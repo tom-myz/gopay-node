@@ -1,0 +1,3 @@
+class FormatJSON extends Format {
+    
+}
