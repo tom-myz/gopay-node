@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "declaration": true,
-        "module": "commonjs",
-        "removeComments": true,
-        "sourceMap": false,
         "target": "es5",
+        "outDir": "lib",
+        "module": "commonjs",
         "moduleResolution": "node",
-        "outDir": "lib"
+        "declaration": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true
     },
     "filesGlob": [
         "typings/index.d.ts",
@@ -15,14 +16,25 @@
     ],
     "files": [
         "typings/index.d.ts",
-        "src/api/Connector.ts",
-        "src/api/Request.ts",
-        "src/api/Response.ts",
-        "src/api/ResponseError.ts",
-        "src/api/ResponseSuccess.ts",
+        "src/api/API.ts",
+        "src/config.ts",
+        "src/errors/Error.ts",
+        "src/errors/ErrorAPI.ts",
+        "src/errors/ErrorClient.ts",
+        "src/errors/ErrorCode.ts",
         "src/index.ts",
         "src/models/common/Collection.ts",
-        "src/models/common/Model.ts"
+        "src/models/common/CRUDModel.ts",
+        "src/models/common/Model.ts",
+        "src/models/merchants/MerchantModel.ts",
+        "src/types/UUID.ts",
+        "src/validation/ValidatedModel.ts",
+        "src/validation/ValidationError.ts",
+        "src/validation/ValidationSchema.ts",
+        "src/validation/validators/Email.ts",
+        "src/validation/validators/Required.ts",
+        "src/validation/validators/UUID.ts",
+        "src/validation/validators/Validator.ts"
     ],
     "exclude": [
         "node_modules"

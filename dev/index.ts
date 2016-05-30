@@ -1,3 +1,18 @@
-import { Request } from "../src/index"
+import { MerchantModel } from "../src/models/merchants/MerchantModel"
+import { API } from "../src/api/API"
+import {Error} from "../src/errors/Error";
 
-console.warn("It Works!", Request)
+const merchant = new MerchantModel()
+
+merchant
+    .setProp("email", "test")
+    .setProp("password", "")
+    .create({ email: "test1", password: "" })
+    .then((created) => {
+        console.warn(created)
+    })
+    .catch((error: Error) => {
+        console.warn(error)
+    })
+
+//API.setTest(true)
