@@ -1,13 +1,18 @@
 import { Model } from "./Model"
-import { APIBackend } from "../../api/API"
+import { API } from "../../api/API"
 
-export abstract class Collection<M extends Model<any>> extends APIBackend {
+export interface Pagination {
+    total?: number
+    page?: number
+    pageSize?: number
+}
+
+export abstract class Collection<M extends Model<any>> implements Pagination {
 
     private _models: Array<M> = []
-    private _total: number = 0
 
     constructor (models?: Array<M>, total?: number) {
-        super()
+
     }
 
 }

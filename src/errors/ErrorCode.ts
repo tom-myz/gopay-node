@@ -19,8 +19,8 @@ export const UNKNOWN: ErrorCode = "UNKNOWN"
 export const ErrorCodesMapping: { [_: string] : ErrorCode } = {
     "INVALID_PAYMENT_TYPE": "UNKNOWN",
     "INVALID_PAYMENT_PROCESS": "UNKNOWN",
-    "STORE_EXISTS": "UNKNOWN",
-
+    "EMAIL_EXISTS": "CONFLICT",
+    "STORE_EXISTS": "CONFLICT",
 }
 
 export default {

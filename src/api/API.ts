@@ -7,16 +7,38 @@ import Response from "~popsicle/dist/response";
 import PopsicleError from "~popsicle/dist/error";
 import create = require("core-js/fn/object/create");
 import { ErrorAPI } from "../errors/ErrorAPI"
+import * as Utils from "../utils/props"
+import assign = require("core-js/fn/object/assign")
 
-export abstract class APIBackend {
+export interface APIAuthToken { token: string }
 
-    send (options?: RequestOptions): Promise<{}> {
+export class APIBridge {
+    private _test: boolean = false
+    private _auth: APIAuthToken = { token: null }
+
+    public setTest (test: boolean): void {
+        this._test = test
+    }
+
+    public isTest (test?: boolean): boolean {
+        if (test !== undefined) {
+            return test
+        }
+        return this._test
+    }
+
+    public send (options?: RequestOptions, auth?: APIAuthToken): Promise<{}> {
+        const headers = {
+            "Authorization": `Token ${ auth ? auth.token : this._auth.token }`
+        }
+
         return new Promise((resolve, reject) => {
-            request(options)
-                .use(prefix(API.getAPIBase()))
+            var opts = assign({}, options, { headers }, { body: options.body ? Utils.underscore(options.body) : {} })
+            request(opts)
+                .use(prefix(this.getAPIBase()))
                 .then((res: Response) => {
-                    if (API.isResponseSuccessful(res)) {
-                        resolve(res.body)
+                    if (this.isResponseSuccessful(res)) {
+                        resolve(Utils.camelCase(res.body))
                     } else {
                         reject(new ErrorAPI(res))
                     }
@@ -25,30 +47,29 @@ export abstract class APIBackend {
         })
     }
 
-}
-
-export class API {
-    private static _test: boolean = false
-
-    static setTest (test: boolean): void {
-        API._test = test
-    }
-
-    static isTest (test?: boolean): boolean {
-        if (test !== undefined) {
-            return test
-        }
-        return API._test
-    }
-
-    static getAPIBase (test?: boolean): string {
-        if (API.isTest(test)) {
+    public getAPIBase (test?: boolean): string {
+        if (this.isTest(test)) {
             return config.apiBaseTest
         }
         return config.apiBase
     }
 
-    static isResponseSuccessful (res: Response): boolean {
+    private isResponseSuccessful (res: Response): boolean {
         return res.status >= 200 && res.status < 400
     }
+
+    public setToken(auth: APIAuthToken): Promise<APIAuthToken> {
+        this._auth = auth
+        return Promise.resolve(auth)
+    }
+
+    public authenticate(email: string, password: string): Promise<APIAuthToken> {
+        return API.send({
+            method: "POST",
+            url: "/authenticate",
+            body: { email, password }
+        }).then((auth: APIAuthToken) => this.setToken(auth))
+    }
 }
+
+export const API: APIBridge = new APIBridge()

@@ -2,7 +2,14 @@ import { Validator } from "./Validator"
 
 export class Required implements Validator {
     error: string = "REQUIRED_VALUE"
-    valid (value: string): boolean {
+    valid (value?: any): boolean {
+        if (value === undefined || value === null || value === "") {
+            return false
+        } else if (typeof value === "object") {
+            return Object.getOwnPropertyNames(value).length !== 0
+        } else if (Array.isArray(value)) {
+            return (<Array<any>>value).length !== 0
+        }
         return true
     }
 }

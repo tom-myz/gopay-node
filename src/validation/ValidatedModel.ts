@@ -1,7 +1,7 @@
-import { ValidationSchema } from "./ValidationSchema"
-import { ValidationError } from "./ValidationError"
+import { ValidationSchema, ValidationError } from "./Validation"
 
-export interface ValidatedModel {
-    _validation: ValidationSchema
-    validate (): Array<ValidationError>
+export interface ValidatedModel<P> {
+    _validationCreate: ValidationSchema
+    _validationUpdate: ValidationSchema
+    validate (props: P, schema: ValidationSchema): Promise<P>
 }
