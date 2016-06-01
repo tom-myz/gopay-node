@@ -1,26 +1,35 @@
-import {Validator} from "./validators/Validator";
+import { IValidator } from "./validators/Validator"
 import {error} from "util";
 
 export type ValidationSchema = {
-    [field: string]: Array<Validator>
+    [field: string]: Array<IValidator>
 }
 
-export type ValidationError = {
+export type ValidationMessage = {
     [field: string]: string
 }
 
+export interface ValidatedResource<P> {
+    validate (data: P, schema: ValidationSchema): Promise<P>
+}
+
+export interface IValidatedResource {
+    schemaCreate: ValidationSchema
+    schemaUpdate: ValidationSchema
+}
+
 export class Validation {
-    static validate (obj: Object, schema: ValidationSchema): Array<ValidationError> {
-        const errors: Array<ValidationError> = []
+    static validate (obj: Object, schema: ValidationSchema): Array<ValidationMessage> {
+        const errors: Array<ValidationMessage> = []
 
         Object.keys(schema).forEach((k: string) => {
             const value: any = (<any>obj)[k]
-            const validators: Array<Validator> = schema[k] || []
+            const validators: Array<IValidator> = schema[k] || []
 
             for (let validator of validators) {
                 if (!validator.valid(value)) {
 
-                    errors.push(<ValidationError>{ [k]: validator.error })
+                    errors.push(<ValidationMessage>{ [k]: validator.error })
                     break
                 }
             }

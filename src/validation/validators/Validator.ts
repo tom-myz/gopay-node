@@ -1,6 +1,6 @@
 import { Required } from "./Required"
 
-export interface Validator {
+export interface IValidator {
     error: string
     valid(value: any): boolean
 }

@@ -1,8 +1,13 @@
-import {Error, ErrorBody, ErrorMessage} from "./Error"
+import { CommonError } from "./CommonError"
 import Response from "~popsicle/dist/response";
-import ErrorCodes, { ErrorCode } from "./ErrorCode"
 
-export class ErrorAPI extends Error {
+type ErrorBody = {
+    status: "error"
+    key: string
+    errors: Array<Object>
+}
+
+export class ResponseError extends CommonError {
     
     private _raw: Response 
 
@@ -14,10 +19,11 @@ export class ErrorAPI extends Error {
         if (error !== undefined) {
             this.parseError()
         } else {
-            this.code = ErrorCodes.UNKNOWN
+            this.code = "UNKNOWN"
         }
     }
 
+    /*
     private getErrorMessages (): Array<ErrorMessage> {
         const body: ErrorBody = this._raw.toJSON().body
 
@@ -33,10 +39,14 @@ export class ErrorAPI extends Error {
         
         return ErrorCodes.UNKNOWN
     }
+    */
     
     private parseError () {
         const status = this._raw.status
 
+        this.code = "UNKNOWN"
+
+        /*
         switch (status) {
             case 401 :
                 this.code = ErrorCodes.NOT_AUTHORIZED
@@ -65,5 +75,6 @@ export class ErrorAPI extends Error {
             default :
                 this.code = ErrorCodes.UNKNOWN
         }
+        */
     }
 }

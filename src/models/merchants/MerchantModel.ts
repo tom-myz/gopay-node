@@ -1,29 +1,24 @@
-import { Model } from "../common/Model"
-import { WithId } from "../common/WithId"
-import { UUID } from "../../types/UUID"
+import { CRUDModel } from "../common/CRUDModel"
 
-export interface PMerchant extends WithId {
-    id?: string
-    email?: string
-    password?: string
-    active?: string
-    createdOn?: number
-    updatedOn?: number
-    address?: Object
-    gatewayCredentials?: Object
+export interface PMerchant {
+    id?                 : string
+    email?              : string
+    password?           : string
+    active?             : string
+    createdOn?          : number
+    updatedOn?          : number
+    address?            : Object
+    gatewayCredentials? : Object
 }
 
-export interface RMerchant {
-    stores: Object
-}
+export class MerchantModel extends CRUDModel<PMerchant> {
 
-export class MerchantModel extends Model<PMerchant> implements RMerchant {
-    
-    /* Relations */
-    stores: Object
-    
     parse (props: PMerchant) {
-        return this
+        return new MerchantModel(props)
+    }
+
+    id (): string {
+        return this.props.id
     }
     
     url (): string {

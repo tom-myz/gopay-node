@@ -1,13 +1,32 @@
-import { MerchantModel } from "../src/models/merchants/MerchantModel"
-import { API } from "../src/api/API"
-import { Error } from "../src/errors/Error";
-
+import SDK from "../src/index.ts"
 /*
 const merchant = new MerchantModel({
     id: "4fbaaffc-c270-410e-8997-e40261192380"
 })
 */
 
+
+const sdk = new SDK({ camelCase : true })
+
+console.warn(sdk)
+
+sdk.authorization.authorize({ email: "test10@test.com", password: "testtest"})
+    .then(() => sdk.merchant.read("4fbaaffc-c270-410e-8997-e40261192380"))
+    .then((m) => console.warn(m))
+    .then(() => sdk.store.read("4677896b-391c-4e06-ba49-c584558570b9"))
+    .then((m) => console.warn(m))
+    .then(() => sdk.store.read("4677896b-391c-4e06-ba49-c584558570b9", "4fbaaffc-c270-410e-8997-e40261192380"))
+    .then((m) => console.warn(m))
+    .catch((a) => console.warn(a))
+
+//const auth = new Authorization({ email: "test10@test.com", password: "testtest"})
+
+/*
+auth.authorize()
+    .then((a) => console.warn(a))
+    .catch((a) => console.warn(a))
+*/
+/*
 API.authenticate("test10@test.com", "testtest")
     .then((token) => {
         console.warn(token)
@@ -29,6 +48,7 @@ API.authenticate("test10@test.com", "testtest")
             })
     })
     .catch((e) => console.warn(e))
+*/
 
 /*
 const a = merchant

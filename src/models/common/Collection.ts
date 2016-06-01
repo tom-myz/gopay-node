@@ -1,5 +1,4 @@
 import { Model } from "./Model"
-import { API } from "../../api/API"
 
 export interface Pagination {
     total?: number

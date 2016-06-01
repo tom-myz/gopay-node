@@ -1,6 +1,6 @@
-import { Validator } from "./Validator"
+import { IValidator } from "./Validator"
 
-export class Required implements Validator {
+export class Required implements IValidator {
     error: string = "REQUIRED_VALUE"
     valid (value?: any): boolean {
         if (value === undefined || value === null || value === "") {
