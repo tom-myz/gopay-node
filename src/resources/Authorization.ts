@@ -1,7 +1,7 @@
 import { WithAPI } from "../api/WithAPI"
 import { Validation, ValidationSchema } from "../validation/Validation"
 import Validator from "../validation/validators/Validator"
-import { ValidationError } from "../errors/CommonError"
+import { VALIDATION_ERROR } from "../errors/Errors"
 
 export interface AuthorizationCredentials {
     email    : string
@@ -15,7 +15,7 @@ export interface AuthorizationResponse {
 export class Authorization extends WithAPI {
 
     private validation: ValidationSchema = {
-        email    : [ new Validator.Required() ],
+        email    : [ new Validator.Required(), new Validator.Email() ],
         password : [ new Validator.Required() ]
     }
 
@@ -23,7 +23,7 @@ export class Authorization extends WithAPI {
         const validationErrors = Validation.validate(credentials, this.validation)
         
         if (validationErrors.length !== 0) {
-           return Promise.reject<string>(new ValidationError(validationErrors))
+           return Promise.reject<string>(VALIDATION_ERROR(validationErrors))
         }
         
         return this.api.send({

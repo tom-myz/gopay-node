@@ -1,43 +1,70 @@
 import { ICRUDResource, CRUDResource } from "../CRUDResource"
+import {IParams, URLSegments} from "../Resource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
 
 export interface PMerchant {
+    id?: string
     email?: string
     password?: string
+    address?: Object
+    gatewayCredentials?: Object
+    active?: boolean
+    roles?: Array<string>
     createdOn?: number
+    updatedOn?: number
 }
 
-export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<PMerchant>, IValidatedResource {
+export interface ParamsMerchantRead extends IParams {
+    id: string
+}
 
-    public schemaCreate: ValidationSchema = {
-        email    : [ new Validator.Required() ],
-        password : [ new Validator.Required() ]
+export interface ParamsMerchantCreate extends IParams {
+    data: PMerchant
+}
+
+export interface ParamsMerchantUpdate extends IParams {
+    id: string
+    data: PMerchant
+}
+
+export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<PMerchant>, IValidatedResource<PMerchant> {
+
+    public schemaCreate (): ValidationSchema {
+        return {
+            email    : [ new Validator.Required(), new Validator.Email() ],
+            password : [ new Validator.Required(), new Validator.LengthBetween(8, 30) ]
+        }
+
     }
 
-    public schemaUpdate: ValidationSchema
+    public schemaUpdate (): ValidationSchema {
+        return {
+            email : [ new Validator.Email() ]
+        }
+    }
 
     public accessType: ResourceAccessType = ResourceAccessType.Token
     
-    public url (id?: string): string {
-        return `/merchants${id ? `/${id}` : ""}`
+    public url (segments: URLSegments): string {
+        return `/merchants${segments.id ? `/${segments.id}` : ""}`
     }
 
-    public create (data: PMerchant): Promise<PMerchant> {
-        return this._create(data)
+    public create (params: ParamsMerchantCreate): Promise<PMerchant> {
+        return this._create(params)
     }
 
-    public read (id: string): Promise<PMerchant> {
-        return this._read(id)
+    public read (params: ParamsMerchantRead): Promise<PMerchant> {
+        return this._read(params)
     }
 
-    public update (id: string, data: PMerchant): Promise<PMerchant> {
-        return this._update(id, data)
+    public update (params: ParamsMerchantUpdate): Promise<PMerchant> {
+        return this._update(params)
     }
 
-    public delete (id: string): Promise<PMerchant> {
-        return this._delete(id)
+    public delete (params: ParamsMerchantRead): Promise<any> {
+        return this._delete(params)
     }
     
 }

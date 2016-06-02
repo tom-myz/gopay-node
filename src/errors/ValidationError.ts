@@ -5,7 +5,6 @@ export class ValidationError extends CommonError {
 
     constructor (errors: Array<ValidationMessage>) {
         super()
-
         this.code = "VALIDATION_ERROR"
         this.errors = errors
     }

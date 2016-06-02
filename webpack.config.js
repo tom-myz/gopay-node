@@ -1,7 +1,6 @@
 const webpack = require("webpack")
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const HtmlWebpackTemplate = require("html-webpack-template")
 
 const plugins = [
     new webpack.HotModuleReplacementPlugin(),

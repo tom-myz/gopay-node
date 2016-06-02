@@ -2,7 +2,12 @@ import config from "./config"
 import { RestAPI } from "./api/RestAPI"
 import { Authorization } from "./resources/Authorization"
 import { Merchant } from "./resources/merchants/Merchant"
+import { Merchants } from "./resources/merchants/Merchants"
 import { Store } from "./resources/stores/Store"
+import { Stores } from "./resources/stores/Stores"
+import { TransactionToken } from "./resources/charges/TransactionToken"
+import { Charge } from "./resources/charges/Charge"
+import { Charges } from "./resources/charges/Charges"
 
 export interface SDKOptions {
     endpoint?  : string
@@ -18,8 +23,13 @@ export class PaymentsSDK {
 
     /* Resources */
     public authorization: Authorization
+    public token: TransactionToken
     public merchant: Merchant
+    public merchants: Merchants
     public store: Store
+    public stores: Stores
+    public charge: Charge
+    public charges: Charges
     
     constructor (options: SDKOptions = <SDKOptions>{}) {
         // TODO: check if it's node and take process.env credentials
@@ -34,8 +44,13 @@ export class PaymentsSDK {
 
         /* Resources */
         this.authorization = new Authorization(this.api)
+        this.token = new TransactionToken(this.api)
         this.merchant = new Merchant(this.api)
+        this.merchants = new Merchants(this.api)
         this.store = new Store(this.api)
+        this.stores = new Stores(this.api)
+        this.charge = new Charge(this.api)
+        this.charges = new Charges(this.api)
     }
     
     
