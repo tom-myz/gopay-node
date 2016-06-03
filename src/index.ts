@@ -1,5 +1,6 @@
+import { process } from "process"
 import config from "./config"
-import { RestAPI } from "./api/RestAPI"
+import { RestAPI, RestAPIOptions } from "./api/RestAPI"
 import { Authorization } from "./resources/Authorization"
 import { Merchant } from "./resources/merchants/Merchant"
 import { Merchants } from "./resources/merchants/Merchants"
@@ -41,16 +42,8 @@ export class PaymentsSDK {
     public bankAccount: BankAccount
     public bankAccounts: BankAccounts
     
-    constructor (options: SDKOptions = <SDKOptions>{}) {
-        // TODO: check if it's node and take process.env credentials
-        const endpoint = options.endpoint || config.endpoint
-        const appId = options.appId
-        const secret = options.secret
-
-        const token = options.token
-        const camel = options.camelCase || false
-
-        this.api = new RestAPI({ endpoint, appId, secret, token, camel })
+    constructor (options?: SDKOptions) {
+        this.api = new RestAPI(this.getOptions(options))
 
         /* Resources */
         this.authorization = new Authorization(this.api)
@@ -68,8 +61,15 @@ export class PaymentsSDK {
         this.bankAccounts = new BankAccounts(this.api)
     }
     
-    
-    
+    public getOptions (options: SDKOptions = <SDKOptions>{}): RestAPIOptions  {
+        return {
+            endpoint : options.endpoint || config.endpoint,
+            appId    : options.appId || process.env[config.envAppId],
+            secret   : options.secret || process.env[config.envSecret],
+            token    : options.token,
+            camel    : options.camelCase || false
+        }
+    }
 }
 
 export default PaymentsSDK

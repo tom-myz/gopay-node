@@ -16,6 +16,7 @@
     ],
     "files": [
         "typings/index.d.ts",
+        "src/typings/process.d.ts",
         "src/api/RestAPI.ts",
         "src/api/WithAPI.ts",
         "src/config.ts",
