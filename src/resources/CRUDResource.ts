@@ -5,21 +5,34 @@ import { VALIDATION_ERROR } from "../errors/Errors"
 import { IParams, URLSegments, SendOptions } from "./Resource"
 
 export interface ICRUDResource<P> {
-    url (segments: URLSegments): string
     create (params: IParams): Promise<P>
     read (params: IParams): Promise<P>
     update (params: IParams): Promise<P>
     delete (params: IParams): Promise<P>
 }
 
+export interface CRUDParamsRead extends IParams {
+    id: string
+}
+
+export interface CRUDParamsCreate<P> extends IParams {
+    data: P
+}
+
+export interface CRUDParamsUpdate<P> extends IParams {
+    id: string
+    data: P
+}
+
 export abstract class CRUDResource<P>
     extends WithAPI
     implements ValidatedResource<P> {
-    
+
+    public urlSegment: string = ""
     public accessType: ResourceAccessType = ResourceAccessType.None
 
-    private _url (segments: URLSegments): string {
-        return (<ICRUDResource<P>>(<any>this)).url(segments)
+    public url (segments: URLSegments): string {
+        return `/${this.urlSegment}${segments.id ? `/${segments.id}` : ""}`
     }
 
     public _create (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
@@ -29,7 +42,7 @@ export abstract class CRUDResource<P>
         return this.validate(options.data, schema)
             .then(() => this.api.send({
                 method : "POST",
-                url    : this._url(<URLSegments>options),
+                url    : this.url(<URLSegments>options),
                 body   : options.data
             }, accessType))
     }
@@ -37,7 +50,7 @@ export abstract class CRUDResource<P>
     public _read (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
         return this.api.send({
             method : "GET",
-            url    : this._url(<URLSegments>options)
+            url    : this.url(<URLSegments>options)
         }, accessType)
     }
 
@@ -48,7 +61,7 @@ export abstract class CRUDResource<P>
         return this.validate(options.data, schema)
             .then(() => this.api.send({
                 method : "PATCH",
-                url    : this._url(<URLSegments>options),
+                url    : this.url(<URLSegments>options),
                 body   : options.data
             }, accessType))
     }
@@ -56,7 +69,7 @@ export abstract class CRUDResource<P>
     public _delete (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<any> {
         return this.api.send({
             method : "DELETE",
-            url    : this._url(<URLSegments>options)
+            url    : this.url(<URLSegments>options)
         }, accessType)
     }
 

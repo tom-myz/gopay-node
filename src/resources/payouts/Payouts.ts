@@ -2,16 +2,18 @@ import { IListParams, PListResponse } from "../Resource"
 import { IListResource, ListResource, IPaginationParams } from "../ListResource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedListResource, ValidationSchema } from "../../validation/Validation"
-import { PCharge } from "./Charge"
+import { PPayout } from "./Payout"
 
-export interface PCharges extends IPaginationParams {}
+export interface PPayouts extends IPaginationParams {
+    status?: string
+}
 
-export class Charges extends ListResource<PCharges, PCharge> implements IListResource<PCharge>, IValidatedListResource<PCharges> {
+export class Payouts extends ListResource<PPayouts, PPayout> implements IListResource<PPayouts>, IValidatedListResource<PPayouts> {
 
-    public urlSegment: string = "charges"
+    public urlSegment: string = "payouts"
     public accessType: ResourceAccessType = ResourceAccessType.Token
-    
-    public read (params: IListParams<PCharges>): Promise<PListResponse<PCharge>> {
+
+    public read (params: IListParams<PPayouts>): Promise<PListResponse<PPayout>> {
         return this._read(params)
     }
 

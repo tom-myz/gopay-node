@@ -5,6 +5,11 @@ export interface IListParams<P> extends IParams {
     data?: P
 }
 
+export interface PListResponse<P> {
+    total: number
+    items: Array<P>
+}
+
 export interface URLSegments {
     id?: string
     merchantId?: string

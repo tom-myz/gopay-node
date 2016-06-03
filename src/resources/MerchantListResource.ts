@@ -1,5 +1,5 @@
 import { IListResource, ListResource } from "./ListResource"
-import { URLSegments, IListParams } from "./Resource"
+import { URLSegments, IListParams, PListResponse } from "./Resource"
 import { ResourceAccessType } from "../api/RestAPI"
 import { ValidationSchema } from "../validation/Validation"
 import { isEmpty } from "../utils"
@@ -8,9 +8,7 @@ export interface ParamsMerchantListRead<P> extends IListParams<P> {
     merchantId?: string
 }
 
-export abstract class MerchantListResource<P> extends ListResource<P> implements IListResource<P> {
-
-    public urlSegment: string = ""
+export abstract class MerchantListResource<P, R> extends ListResource<P, R> implements IListResource<R> {
 
     public url (segments: URLSegments): string {
         if (isEmpty(segments.merchantId)) {
@@ -19,7 +17,7 @@ export abstract class MerchantListResource<P> extends ListResource<P> implements
         return `/merchants/${segments.merchantId}/${this.urlSegment}`
     }
 
-    public read (params?: ParamsMerchantListRead<P>): Promise<P> {
+    public read (params?: IListParams<P>): Promise<PListResponse<R>> {
         return this._read(params)
     }
 

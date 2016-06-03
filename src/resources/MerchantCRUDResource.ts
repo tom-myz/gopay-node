@@ -22,8 +22,6 @@ export interface ParamsMerchantUpdate<P> extends IParams {
 
 export abstract class MerchantCRUDResource<P> extends CRUDResource<P> implements ICRUDResource<P> {
 
-    public urlSegment: string = ""
-
     public url (segments: URLSegments): string {
         if (isEmpty(segments.merchantId)) {
             return `/${this.urlSegment}${segments.id ? `/${segments.id}` : ""}`

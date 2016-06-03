@@ -1,4 +1,4 @@
-import { ICRUDResource, CRUDResource } from "../CRUDResource"
+import { ICRUDResource, CRUDResource, CRUDParamsRead, CRUDParamsCreate, CRUDParamsUpdate } from "../CRUDResource"
 import {IParams, URLSegments} from "../Resource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
@@ -18,20 +18,10 @@ export interface PMerchant {
     updatedOn?: number
 }
 
-export interface ParamsMerchantRead extends IParams {
-    id: string
-}
-
-export interface ParamsMerchantCreate extends IParams {
-    data: PMerchant
-}
-
-export interface ParamsMerchantUpdate extends IParams {
-    id: string
-    data: PMerchant
-}
-
 export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<PMerchant>, IValidatedResource<PMerchant> {
+
+    public urlSegment: string = "merchants"
+    public accessType: ResourceAccessType = ResourceAccessType.Token
 
     public schemaCreate (): ValidationSchema {
         return {
@@ -40,7 +30,6 @@ export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<P
             address            : contactInfoSchema,
             gatewayCredentials : gatewayCredentialsSchema
         }
-
     }
 
     public schemaUpdate (): ValidationSchema {
@@ -51,25 +40,19 @@ export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<P
         }
     }
 
-    public accessType: ResourceAccessType = ResourceAccessType.Token
-    
-    public url (segments: URLSegments): string {
-        return `/merchants${segments.id ? `/${segments.id}` : ""}`
-    }
-
-    public create (params: ParamsMerchantCreate): Promise<PMerchant> {
+    public create (params: CRUDParamsCreate<PMerchant>): Promise<PMerchant> {
         return this._create(params)
     }
 
-    public read (params: ParamsMerchantRead): Promise<PMerchant> {
+    public read (params: CRUDParamsRead): Promise<PMerchant> {
         return this._read(params)
     }
 
-    public update (params: ParamsMerchantUpdate): Promise<PMerchant> {
+    public update (params: CRUDParamsUpdate<PMerchant>): Promise<PMerchant> {
         return this._update(params)
     }
 
-    public delete (params: ParamsMerchantRead): Promise<any> {
+    public delete (params: CRUDParamsRead): Promise<any> {
         return this._delete(params)
     }
     

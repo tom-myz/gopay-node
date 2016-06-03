@@ -1,4 +1,4 @@
-import { ICRUDResource, CRUDResource } from "../CRUDResource"
+import { ICRUDResource, CRUDResource, CRUDParamsCreate, CRUDParamsRead, CRUDParamsUpdate } from "../CRUDResource"
 import {IParams, URLSegments} from "../Resource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
@@ -18,20 +18,10 @@ export interface PCharge {
     updatedOn?: number
 }
 
-export interface ParamsChargeRead extends IParams {
-    id: string
-}
-
-export interface ParamsChargeCreate extends IParams {
-    data: PCharge
-}
-
-export interface ParamsChargeUpdate extends IParams {
-    id: string
-    data: PCharge
-}
-
 export class Charge extends CRUDResource<PCharge> implements ICRUDResource<PCharge>, IValidatedResource<PCharge> {
+
+    public urlSegment: string = "charges"
+    public accessType: ResourceAccessType = ResourceAccessType.Token
 
     public schemaCreate (): ValidationSchema {
         return {
@@ -41,22 +31,16 @@ export class Charge extends CRUDResource<PCharge> implements ICRUDResource<PChar
         }
 
     }
-
-    public accessType: ResourceAccessType = ResourceAccessType.Token
-
-    public url (segments: URLSegments): string {
-        return `/charges${segments.id ? `/${segments.id}` : ""}`
-    }
-
-    public create (params: ParamsChargeCreate): Promise<PCharge> {
+    
+    public create (params: CRUDParamsCreate<PCharge>): Promise<PCharge> {
         return this._create(params)
     }
 
-    public read (params: ParamsChargeRead): Promise<PCharge> {
+    public read (params: CRUDParamsRead): Promise<PCharge> {
         return this._read(params)
     }
 
-    public update (params: ParamsChargeUpdate): Promise<PCharge> {
+    public update (params: CRUDParamsUpdate<PCharge>): Promise<PCharge> {
         return this._update(params)
     }
 

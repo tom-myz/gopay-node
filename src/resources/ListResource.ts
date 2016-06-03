@@ -2,14 +2,14 @@ import { WithAPI } from "../api/WithAPI"
 import { ResourceAccessType } from "../api/RestAPI"
 import { IValidatedListResource, ValidatedResource, ValidationSchema, Validation } from "../validation/Validation"
 import { VALIDATION_ERROR } from "../errors/Errors"
-import { IParams, URLSegments, SendOptions } from "./Resource"
+import { IParams, URLSegments, SendOptions, PListResponse } from "./Resource"
 import { Query } from "~popsicle/dist/base"
 import Validator from "../validation/validators/Validator"
 
 
 export interface IListResource<P> {
     url (segments: URLSegments): string
-    read (params: IParams): Promise<P>
+    read (params: IParams): Promise<PListResponse<P>>
 }
 
 export interface IPaginationParams extends IParams {
@@ -22,24 +22,25 @@ const paginationSchema: ValidationSchema = {
     pageSize: [ new Validator.Numeric() ]
 }
 
-export abstract class ListResource<P>
+export abstract class ListResource<P, R>
     extends WithAPI
     implements ValidatedResource<P> {
 
+    public urlSegment: string = ""
     public accessType: ResourceAccessType = ResourceAccessType.None
 
-    private _url (segments: URLSegments): string {
-        return (<IListResource<P>>(<any>this)).url(segments)
+    public url (segments: URLSegments): string {
+        return `/${this.urlSegment}`
     }
 
-    public _read (options: SendOptions<P> = {}, accessType: ResourceAccessType = this.accessType): Promise<P> {
+    public _read (options: SendOptions<P> = {}, accessType: ResourceAccessType = this.accessType): Promise<PListResponse<R>> {
         const fn: Function = (<IValidatedListResource<any>>(<any>this)).schemaParams || (() => {})
         const schema = Object.assign({}, paginationSchema, fn(options.data))
 
         return this.validate(options.data, schema)
             .then(() => this.api.send({
                 method : "GET",
-                url    : this._url(<URLSegments>options),
+                url    : this.url(<URLSegments>options),
                 query  : <Query>(<Object>options.data)
             }, accessType))
     }

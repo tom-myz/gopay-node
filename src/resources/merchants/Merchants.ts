@@ -1,22 +1,17 @@
-import { IListParams } from "../Resource"
+import { IListParams, PListResponse } from "../Resource"
 import { IListResource, ListResource, IPaginationParams } from "../ListResource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedListResource, ValidationSchema } from "../../validation/Validation"
-import Validator from "../../validation/validators/Validator"
+import { PMerchant } from "./Merchant"
 
 export interface PMerchants extends IPaginationParams {}
 
-export interface ParamsListRead<P> extends IListParams<P> {}
+export class Merchants extends ListResource<PMerchants, PMerchant> implements IListResource<PMerchant>, IValidatedListResource<PMerchants> {
 
-export class Merchants extends ListResource<PMerchants> implements IListResource<PMerchants>, IValidatedListResource<PMerchants> {
-
+    public urlSegment: string = "merchants"
     public accessType: ResourceAccessType = ResourceAccessType.Token
-
-    public url (): string {
-        return `/merchants`
-    }
-
-    public read (params: ParamsListRead<PMerchants>): Promise<PMerchants> {
+    
+    public read (params: IListParams<PMerchants>): Promise<PListResponse<PMerchant>> {
         return this._read(params)
     }
 

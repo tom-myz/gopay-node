@@ -26,7 +26,6 @@ export interface ParamsStoreUpdate<P> extends IParams {
 
 export abstract class StoreCRUDResource<P> extends CRUDResource<P> implements ICRUDResource<P> {
 
-    public urlSegment: string = ""
     public single: boolean = true
 
     public url (segments: URLSegments): string {
