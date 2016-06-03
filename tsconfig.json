@@ -25,6 +25,8 @@
         "src/errors/ResponseError.ts",
         "src/errors/ValidationError.ts",
         "src/index.ts",
+        "src/locale/en.ts",
+        "src/locale/I18n.ts",
         "src/resources/Authorization.ts",
         "src/resources/charges/Charge.ts",
         "src/resources/charges/Charges.ts",

@@ -3,6 +3,7 @@ import { PMerchant } from "../src/resources/merchants/Merchant"
 import { PStore } from "../src/resources/stores/Store"
 import { PTransactionToken } from "../src/resources/charges/TransactionToken"
 import { PCharge } from "../src/resources/charges/Charge"
+import { CommonError } from "../src/errors/CommonError"
 
 const sdk = new SDK({ camelCase : true })
 
@@ -40,4 +41,6 @@ sdk.authorization.authorize({ email: "test@test.com", password: "testtest" })
     .then((c: PCharge) => {
         console.info("Yay!!!", c)
     })
-    .catch((e) => console.error(e))
+    .catch((e: CommonError) => {
+        console.error(e, e.getLocalised())
+    })

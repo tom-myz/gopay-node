@@ -6,10 +6,16 @@ import { IValidatedResource, ValidationSchema } from "../../validation/Validatio
 import Validator from "../../validation/validators/Validator"
 import { StoreConfiguration } from "./StoreConfiguration"
 import { ApplicationToken } from "./ApplicationToken"
+import { PGatewayCredentials, gatewayCredentialsSchema } from "../common/GatewayCredentials"
 
 export interface PStore {
     id?: string
+    storeConfigurationId?: string
+    merchantId?: string
     name?: string
+    gatewayCredentials?: PGatewayCredentials
+    createdOn?: number
+    updatedOn?: number
 }
 
 export class Store extends MerchantCRUDResource<PStore> implements IValidatedResource<PStore> {
@@ -22,7 +28,14 @@ export class Store extends MerchantCRUDResource<PStore> implements IValidatedRes
 
     public schemaCreate (): ValidationSchema {
         return {
-            name : [ new Validator.Required() ]
+            name               : [ new Validator.Required() ],
+            gatewayCredentials : gatewayCredentialsSchema
+        }
+    }
+
+    public schemaUpdate (): ValidationSchema {
+        return {
+            gatewayCredentials : gatewayCredentialsSchema
         }
     }
 
