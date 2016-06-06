@@ -11,9 +11,10 @@ node("master") {
         print "Running tests in environment: ${env.NODE_ENV}"
 
         sh "node -v"
-        sh "typings install"
         sh "npm prune"
+        sh "npm install -g typings typescript mocha"
         sh "npm install"
+        sh "typings install"
         sh "npm test"
 
     stage "Build"
