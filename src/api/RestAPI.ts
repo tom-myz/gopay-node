@@ -5,7 +5,8 @@ import { Headers } from "~popsicle/dist/base";
 import { RequestError } from "../errors/RequestError"
 import { ResponseError } from "../errors/ResponseError"
 import Response from "~popsicle/dist/response";
-import { RequestOptions } from "~popsicle/dist/request";
+import { RequestOptions } from "~popsicle/dist/request"
+import { SDK_WRONG_CREDENTIALS } from "../errors/ErrorsConstants"
 
 export type RestMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT"
 
@@ -22,7 +23,7 @@ export interface RestAPIOptions {
     appId?   : string
     secret?  : string
     token?   : string
-    camel    : boolean
+    camel?   : boolean
 }
 
 export class RestAPI {
@@ -41,7 +42,7 @@ export class RestAPI {
         this.camel = options.camel
     }
 
-    private hasCredentials (accessType: ResourceAccessType): boolean {
+    public hasCredentials (accessType: ResourceAccessType): boolean {
         switch (accessType) {
             case ResourceAccessType.SecretOrToken :
                 return !isEmpty(this.token) || (!isEmpty(this.appId) && !isEmpty(this.secret))
@@ -64,6 +65,14 @@ export class RestAPI {
         let authorization: string
 
         switch (accessType) {
+            case ResourceAccessType.SecretOrToken :
+                if (this.hasCredentials(ResourceAccessType.Token)) {
+                    authorization = `Token ${this.token}`
+                } else if (this.hasCredentials(ResourceAccessType.Secret)) {
+                    authorization = `Credentials ${this.appId}:${this.secret}`
+                }
+                break
+
             case ResourceAccessType.Token :
                 authorization = `Token ${this.token}`
                 break
@@ -88,7 +97,7 @@ export class RestAPI {
 
     public send (options: RequestOptions, accessType: ResourceAccessType = ResourceAccessType.None): Promise<Object> {
         if (!this.hasCredentials(accessType)) {
-            return Promise.reject<Object>(new RequestError("SDK_WRONG_CREDENTIALS"))
+            return Promise.reject<Object>(new RequestError(SDK_WRONG_CREDENTIALS))
         }
 
         const body: Object = options.body  ? underscore(options.body) : null
@@ -103,7 +112,7 @@ export class RestAPI {
                         reject(new ResponseError(response))
                     }
                 })
-                .catch(() => reject(new ResponseError()))
+                .catch((e) => reject(new ResponseError()))
         })
     }
 }

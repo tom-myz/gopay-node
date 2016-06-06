@@ -24,6 +24,7 @@ const locale: LocaleDefinition = {
         "NOT_FOUND": "Resource not found",
         "INTERNAL_ERROR": "Error occurred while processing request on the server",
         "BAD_REQUEST": "Data sent to the server could not be processed",
+        "SDK_WRONG_CREDENTIALS": "Incorrect credentials data is present for the request",
 
         /* API Responses */
         "INVALID_PAYMENT_TYPE": "Incorrect payment type",
