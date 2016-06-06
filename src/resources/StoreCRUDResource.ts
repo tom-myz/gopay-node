@@ -50,7 +50,7 @@ export abstract class StoreCRUDResource<P> extends CRUDResource<P> implements IC
     }
 
     public delete (params: ParamsStoreRead): Promise<P> {
-        return this._update(params)
+        return this._delete(params)
     }
 
 }

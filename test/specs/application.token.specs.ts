@@ -48,4 +48,12 @@ describe("Application Token", () => {
         return token.create({ storeId : "1" }).should.eventually.eql(okResponse)
     })
 
+    it("should call the api to delete token", () => {
+        const okScope = scope
+            .delete(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens\/[a-f0-9\-]+$/i)
+            .reply(204, null)
+
+        return token.delete({ storeId : "1", id: "123" }).should.eventually.be.null
+    })
+
 })

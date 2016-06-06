@@ -116,4 +116,12 @@ describe("Transaction Token", () => {
         return token.read({ id : "123" }).should.eventually.eql(okResponse)
     })
 
+    it("should call the api to delete token", () => {
+        const okScope = scope
+            .delete(/tokens\/[a-f0-9\-]+$/i)
+            .reply(204, null)
+
+        return token.delete({ id : "1" }).should.eventually.be.null
+    })
+
 })
