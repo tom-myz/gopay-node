@@ -5,7 +5,7 @@ import { ResourceAccessType } from "../../api/RestAPI"
 import { isEmpty } from "../../utils"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
-import { StoreCRUDResource } from "../StoreCRUDResource"
+import {StoreCRUDResource, ParamsStoreCreate} from "../StoreCRUDResource"
 import { ACTION_NOT_PERMITTED } from "../../errors/Errors"
 
 export interface PApplicationToken {

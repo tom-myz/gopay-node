@@ -17,7 +17,7 @@ describe("Application Token", () => {
     let scope:Scope
 
     beforeEach(() => {
-        api = new RestAPI({endpoint: "/"})
+        api = new RestAPI({endpoint: "/", token: "token"})
         token = new ApplicationToken(api)
         scope = nock("http://localhost:80")
     })
@@ -37,6 +37,15 @@ describe("Application Token", () => {
                 expect(e.code).to.equal("ACTION_NOT_PERMITTED")
             })
         ])
+    })
+
+    it("should call the api without data and get successful response", () => {
+        const okResponse = { status : "created" }
+        const okScope = scope
+            .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
+            .reply(201, okResponse, { "Content-Type" : "application/json" })
+
+        return token.create({ storeId : "1" }).should.eventually.eql(okResponse)
     })
 
 })

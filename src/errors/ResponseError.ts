@@ -56,6 +56,7 @@ export class ResponseError extends CommonError {
 
             case 409 :
                 this.code = Errors.CONFLICTED
+                break
 
             case 500 :
                 this.code = Errors.INTERNAL_ERROR

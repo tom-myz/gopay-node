@@ -6,6 +6,7 @@ import { Scope } from "~nock/index"
 import { RequestError } from "../../src/errors/RequestError"
 import { CommonError } from "../../src/errors/CommonError"
 import { SDK_WRONG_CREDENTIALS } from "../../src/errors/ErrorsConstants"
+import {ResponseError} from "../../src/errors/ResponseError";
 
 describe("RestAPI", () => {
 
@@ -122,12 +123,21 @@ describe("RestAPI", () => {
 
     it("should return responses in camelCase format", () => {
         const api: RestAPI = new RestAPI({ endpoint : "/", camel : true })
-    const response = { some_value : true }
-    const scope = nock("http://localhost:80")
-        .get("/")
-        .reply(200, response, { "Content-Type" : "application/json" })
-    const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.None)
-    return promise.should.eventually.eql({ someValue : true })
+        const response = { some_value : true }
+        const scope = nock("http://localhost:80")
+            .get("/")
+            .reply(200, response, { "Content-Type" : "application/json" })
+        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.None)
+        return promise.should.eventually.eql({ someValue : true })
+    })
+
+    it("should return error when api returns error response", () => {
+        const api: RestAPI = new RestAPI({ endpoint : "/" })
+        const scope = nock("http://localhost:80")
+            .get("/")
+            .reply(400, null)
+        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.None)
+        return promise.should.be.rejectedWith(ResponseError)
     })
 
 })

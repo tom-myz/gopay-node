@@ -75,7 +75,7 @@ export class TransactionToken extends CRUDResource<PTransactionToken<any>> imple
         return this._read(params)
     }
 
-    public update (params: any): Promise<any> {
+    public update (params?: any): Promise<any> {
         return Promise.reject(ACTION_NOT_PERMITTED)
     }
 
