@@ -12,9 +12,8 @@ node("master") {
 
         sh "node -v"
         sh "npm prune"
-        sh "npm install -g typings typescript mocha"
         sh "npm install"
-        sh "typings install"
+        sh "./node_modules/typings/dist/bin.js install"
         sh "npm test"
 
     stage "Build"
@@ -37,9 +36,6 @@ node("master") {
 
         echo "Cleaning up build"
 
-        sh "rm -rf typings"
-        sh "npm prune"
-        sh "rm -rf node_modules"
         sh "npm run clean"
 
 }

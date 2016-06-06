@@ -51,7 +51,7 @@
   "scripts" : {
     "tsconfig" : "./node_modules/tsconfig-glob/cli .",
     "start" : "webpack-dev-server",
-    "clean": "rm -rf lib",
-    "test": "mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts"
+    "clean": "npm prune && rm -rf node_modules typings lib",
+    "test": "./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts"
   }
 }
