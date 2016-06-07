@@ -36,45 +36,45 @@ export abstract class CRUDResource<P>
     }
 
     public _create (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
-        const fn: Function = (<IValidatedResource<any>>(<any>this)).schemaCreate || (() => {})
-        const schema =  Object.assign({}, fn(options.data))
+        const fn: (...a: any[]) => ValidationSchema | void = (this as IValidatedResource<any>).schemaCreate || (() => undefined)
+        const schema: ValidationSchema =  Object.assign({}, fn(options.data))
 
         return this.validate(options.data, schema)
             .then(() => this.api.send({
+                body   : options.data,
                 method : "POST",
-                url    : this.url(<URLSegments>options),
-                body   : options.data
+                url    : this.url(options as URLSegments)
             }, accessType))
     }
 
     public _read (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
         return this.api.send({
             method : "GET",
-            url    : this.url(<URLSegments>options)
+            url    : this.url(options as URLSegments)
         }, accessType)
     }
 
     public _update (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
-        const fn: Function = (<IValidatedResource<any>>(<any>this)).schemaUpdate || (() => {})
-        const schema = Object.assign({}, fn(options.data))
+        const fn: (...a: any[]) => ValidationSchema | void = (this as IValidatedResource<any>).schemaUpdate || (() => undefined)
+        const schema: ValidationSchema = Object.assign({}, fn(options.data))
 
         return this.validate(options.data, schema)
             .then(() => this.api.send({
+                body   : options.data,
                 method : "PATCH",
-                url    : this.url(<URLSegments>options),
-                body   : options.data
+                url    : this.url(options as URLSegments)
             }, accessType))
     }
 
     public _delete (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<any> {
         return this.api.send({
             method : "DELETE",
-            url    : this.url(<URLSegments>options)
+            url    : this.url(options as URLSegments)
         }, accessType)
     }
 
-    public validate (data: P = <P>{}, schema: ValidationSchema) {
-        const errors = Validation.validate(data, schema)
+    public validate (data: P = {} as P, schema: ValidationSchema): Promise<P> {
+        const errors: Array<any> = Validation.validate(data, schema)
 
         if (errors.length === 0) {
             return Promise.resolve(data)

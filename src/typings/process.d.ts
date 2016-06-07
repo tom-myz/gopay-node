@@ -1,13 +1,13 @@
 declare namespace nodeProcess {
-    
+
     interface Process {
-        nextTick(fun: Function): void
         title: string
         browser: boolean
         env: { [key: string]: string }
         argv: Array<string>
         version: string
         versions: { [key: string]: string }
+        nextTick(fun: Function): void
         on(): void
         addListener(): void
         once(): void
@@ -20,8 +20,8 @@ declare namespace nodeProcess {
         chdir(): void
         umask(): number
     }
-    
-    const Process: Process
+
+    export const process: Process
 }
 
 declare module "process" {

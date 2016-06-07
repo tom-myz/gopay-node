@@ -1,5 +1,4 @@
 import { ICRUDResource, CRUDResource, CRUDParamsRead, CRUDParamsCreate, CRUDParamsUpdate } from "../CRUDResource"
-import {IParams, URLSegments} from "../Resource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
@@ -18,24 +17,26 @@ export interface PMerchant {
     updatedOn?: number
 }
 
-export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<PMerchant>, IValidatedResource<PMerchant> {
+export class Merchant
+    extends CRUDResource<PMerchant>
+    implements ICRUDResource<PMerchant>, IValidatedResource<PMerchant> {
 
     public urlSegment: string = "merchants"
     public accessType: ResourceAccessType = ResourceAccessType.Token
 
     public schemaCreate (): ValidationSchema {
         return {
-            email              : [ new Validator.Required(), new Validator.Email() ],
-            password           : [ new Validator.Required(), new Validator.LengthBetween(8, 30) ],
             address            : contactInfoSchema,
-            gatewayCredentials : gatewayCredentialsSchema
+            email              : [ new Validator.Required(), new Validator.Email() ],
+            gatewayCredentials : gatewayCredentialsSchema,
+            password           : [ new Validator.Required(), new Validator.LengthBetween(8, 30) ]
         }
     }
 
     public schemaUpdate (): ValidationSchema {
         return {
-            email              : [ new Validator.Email() ],
             address            : contactInfoSchema,
+            email              : [ new Validator.Email() ],
             gatewayCredentials : gatewayCredentialsSchema
         }
     }
@@ -55,5 +56,5 @@ export class Merchant extends CRUDResource<PMerchant> implements ICRUDResource<P
     public delete (params: CRUDParamsRead): Promise<any> {
         return this._delete(params)
     }
-    
+
 }

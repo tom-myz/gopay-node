@@ -63,8 +63,8 @@ describe("Transaction Token", () => {
                     data : { cardNumber: "", expMonth: "", expYear: "", cvv : "" }
                 },
                 [
-                    { type : "REQUIRED_VALUE" },
-                    { storeId : "REQUIRED_VALUE"}
+                    { storeId : "REQUIRED_VALUE"},
+                    { type : "REQUIRED_VALUE" }
                 ]
             ],
             [
@@ -76,9 +76,9 @@ describe("Transaction Token", () => {
                 [
                     { storeId : "INVALID_FORMAT_UUID"},
                     { "data.cardNumber" : "REQUIRED_VALUE" },
+                    { "data.cvv" : "REQUIRED_VALUE" },
                     { "data.expMonth" : "REQUIRED_VALUE" },
-                    { "data.expYear" : "REQUIRED_VALUE" },
-                    { "data.cvv" : "REQUIRED_VALUE" }
+                    { "data.expYear" : "REQUIRED_VALUE" }
                 ]
             ],
             [
@@ -89,9 +89,9 @@ describe("Transaction Token", () => {
                 },
                 [
                     { "data.cardNumber" : "INVALID_FORMAT_CARD_NUMBER" },
+                    { "data.cvv" : "INVALID_FORMAT_NUMERIC" },
                     { "data.expMonth" : "INVALID_FORMAT_NUMERIC" },
-                    { "data.expYear" : "INVALID_FORMAT_NUMERIC" },
-                    { "data.cvv" : "INVALID_FORMAT_NUMERIC" }
+                    { "data.expYear" : "INVALID_FORMAT_NUMERIC" }
                 ]
             ]
         ]

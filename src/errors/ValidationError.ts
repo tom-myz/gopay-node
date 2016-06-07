@@ -1,5 +1,5 @@
 import { CommonError } from "./CommonError"
-import { ValidationMessage } from "../validation/Validation";
+import { ValidationMessage } from "../validation/Validation"
 
 export class ValidationError extends CommonError {
 

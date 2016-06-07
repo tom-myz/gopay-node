@@ -13,18 +13,17 @@ export interface LocalisedError {
 }
 
 export abstract class CommonError {
-    
     public code: string
     public errors: Array<ErrorMessage> = []
 
     public getLocalised(lang?: string): LocalisedError {
-        const message  = I18n.t(this.code, null, lang)
+        const message: string = I18n.t(this.code, undefined, lang)
         let messages: Array<string> = []
 
         if (this.code === VALIDATION_ERROR) {
             messages = this.errors.map((e: ErrorMessage) => {
-                const field = Object.keys(e)[0]
-                const code = Object.values(e)[0]
+                const field: string = Object.keys(e)[0]
+                const code: string = Object.values(e)[0]
                 return I18n.t(code, { field }, lang)
             })
         }

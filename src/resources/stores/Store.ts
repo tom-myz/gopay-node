@@ -1,7 +1,5 @@
-import { ICRUDResource, CRUDResource } from "../CRUDResource"
 import { MerchantCRUDResource } from "../MerchantCRUDResource"
 import { ResourceAccessType } from "../../api/RestAPI"
-import { isEmpty } from "../../utils"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
 import { StoreConfiguration } from "./StoreConfiguration"
@@ -26,10 +24,12 @@ export class Store extends MerchantCRUDResource<PStore> implements IValidatedRes
 
     public urlSegment: string = "stores"
 
+    public accessType: ResourceAccessType = ResourceAccessType.Token
+
     public schemaCreate (): ValidationSchema {
         return {
-            name               : [ new Validator.Required() ],
-            gatewayCredentials : gatewayCredentialsSchema
+            gatewayCredentials : gatewayCredentialsSchema,
+            name               : [ new Validator.Required() ]
         }
     }
 
@@ -38,7 +38,4 @@ export class Store extends MerchantCRUDResource<PStore> implements IValidatedRes
             gatewayCredentials : gatewayCredentialsSchema
         }
     }
-
-    public accessType: ResourceAccessType = ResourceAccessType.Token
-
 }

@@ -2,16 +2,19 @@ import { IValidator } from "./Validator"
 import { isEmpty } from "../../utils"
 
 export class LengthMin implements IValidator {
-    error: string = "INVALID_FORMAT_LENGTH_MIN"
+    public error: string = "INVALID_FORMAT_LENGTH_MIN"
+    public min: number
 
-    constructor (public min: number) {}
+    constructor (min: number) {
+        this.min = min
+    }
 
-    valid (value?: any): boolean {
+    public valid (value?: any): boolean {
         if (isEmpty(value)) {
             return true
         }
 
-        const v = value.toString()
+        const v: string = value.toString()
         return v.length >= this.min
     }
 }

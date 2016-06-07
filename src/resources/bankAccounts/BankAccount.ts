@@ -1,9 +1,9 @@
-import { ICRUDResource, CRUDResource, CRUDParamsRead, CRUDParamsCreate, CRUDParamsUpdate } from "../CRUDResource"
-import {IParams, URLSegments} from "../Resource"
+import { ICRUDResource, CRUDParamsRead, CRUDParamsCreate, CRUDParamsUpdate } from "../CRUDResource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
 import { ACTION_NOT_PERMITTED } from "../../errors/Errors"
+import { MerchantCRUDResource } from "../MerchantCRUDResource"
 
 export interface PBankAccount {
     id?: string
@@ -25,17 +25,19 @@ export interface PBankAccount {
     updatedOn?: number
 }
 
-export class BankAccount extends CRUDResource<PBankAccount> implements ICRUDResource<PBankAccount>, IValidatedResource<PBankAccount> {
+export class BankAccount
+    extends MerchantCRUDResource<PBankAccount>
+    implements ICRUDResource<PBankAccount>, IValidatedResource<PBankAccount> {
 
     public urlSegment: string = "bank_accounts"
     public accessType: ResourceAccessType = ResourceAccessType.Token
 
     public schemaCreate (): ValidationSchema {
         return {
-            holderName    : [ new Validator.Required() ],
+            accountNumber : [ new Validator.Required() ],
             bankName      : [ new Validator.Required() ],
-            currency      : [ new Validator.Required() ],
-            accountNumber : [ new Validator.Required() ]
+            currency      : [ new Validator.Required(), new Validator.LengthMin(3) ],
+            holderName    : [ new Validator.Required() ]
         }
     }
 

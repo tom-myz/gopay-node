@@ -1,7 +1,5 @@
 import { ICRUDResource, CRUDResource } from "./CRUDResource"
 import { URLSegments, IParams } from "./Resource"
-import { ResourceAccessType } from "../api/RestAPI"
-import { ValidationSchema } from "../validation/Validation"
 import { isEmpty } from "../utils"
 
 export interface ParamsStoreRead extends IParams {
@@ -29,7 +27,7 @@ export abstract class StoreCRUDResource<P> extends CRUDResource<P> implements IC
     public single: boolean = true
 
     public url (segments: URLSegments): string {
-        const id = (!this.single && segments.id) ? `/${segments.id}` : ""
+        const id: string = (!this.single && segments.id) ? `/${segments.id}` : ""
 
         if (isEmpty(segments.merchantId)) {
             return `/stores/${segments.storeId}/${this.urlSegment}${id}`

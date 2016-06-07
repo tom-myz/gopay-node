@@ -4,39 +4,39 @@ import { isEmpty } from "../utils"
 import * as Errors from "./ErrorsConstants"
 
 type ErrorBody = {
-    status:"error"
-    key:string
-    errors:Array<Object>
+    status: string
+    key: string
+    errors: Array<Object>
 }
- 
+
 export class ResponseError extends CommonError {
-    
-    private _raw: Response 
+
+    private _raw: Response
 
     constructor (error?: Response) {
         super()
 
         this._raw = error
-        
+
         if (!isEmpty(error)) {
             this.parseError()
         } else {
             this.code = Errors.UNKNOWN
         }
     }
-    
-    private parseErrorByBody (body: ErrorBody) {
+
+    private parseErrorByBody (body: ErrorBody): void {
         if (isEmpty(body.errors)) {
             this.code = body.key
         } else {
             this.code = Errors.VALIDATION_ERROR
             this.errors = body.errors.map((e: ValidationErrorMessage) => {
-                return (<ErrorMessage>{ [e.field]: e.reason })
+                return { [e.field]: e.reason } as ErrorMessage
             })
         }
     }
-    
-    private parseErrorByStatus (status: number) {
+
+    private parseErrorByStatus (status: number): void {
         switch (status) {
             case 401 :
                 this.code = Errors.NOT_AUTHORIZED
@@ -66,9 +66,9 @@ export class ResponseError extends CommonError {
                 this.code = Errors.UNKNOWN
         }
     }
-    
-    private parseError () {
-        const status = this._raw.status
+
+    private parseError (): void {
+        const status: number = this._raw.status
         const body: ErrorBody = this._raw.body
 
         if (isEmpty(body)) {

@@ -1,4 +1,3 @@
-import Validator from "../../validation/validators/Validator"
 import { ValidationSchema } from "../../validation/Validation"
 
 export interface PContactInfo {
