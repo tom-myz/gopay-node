@@ -43,17 +43,25 @@ describe("Application Token", () => {
         const okResponse = { status : "created" }
         const okScope = scope
             .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
+            .twice()
             .reply(201, okResponse, { "Content-Type" : "application/json" })
 
-        return token.create({ storeId : "1" }).should.eventually.eql(okResponse)
+        return Promise.all([
+            token.create({ storeId : "1" }).should.eventually.eql(okResponse),
+            token.create({ merchantId : "1", storeId : "1" }).should.eventually.eql(okResponse)
+        ])
     })
 
     it("should call the api to delete token", () => {
         const okScope = scope
             .delete(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens\/[a-f0-9\-]+$/i)
+            .twice()
             .reply(204, null)
 
-        return token.delete({ storeId : "1", id: "123" }).should.eventually.be.null
+        return Promise.all([
+            token.delete({ storeId : "1", id: "123" }).should.eventually.be.null,
+            token.delete({ merchantId: "1", storeId : "1", id: "123" }).should.eventually.be.null
+        ])
     })
 
 })

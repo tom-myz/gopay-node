@@ -1,5 +1,4 @@
 import { ICRUDResource, CRUDResource, CRUDParamsCreate, CRUDParamsRead, CRUDParamsUpdate } from "../CRUDResource"
-import {IParams, URLSegments} from "../Resource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
@@ -25,13 +24,12 @@ export class Charge extends CRUDResource<PCharge> implements ICRUDResource<PChar
 
     public schemaCreate (): ValidationSchema {
         return {
-            token    : [ new Validator.Required() ],
             amount   : [ new Validator.Required(), new Validator.Numeric() ],
-            currency : [ new Validator.Required() ]
+            currency : [ new Validator.Required(), new Validator.LengthMin(3) ],
+            token    : [ new Validator.Required() ]
         }
-
     }
-    
+
     public create (params: CRUDParamsCreate<PCharge>): Promise<PCharge> {
         return this._create(params)
     }
@@ -44,7 +42,7 @@ export class Charge extends CRUDResource<PCharge> implements ICRUDResource<PChar
         return this._update(params)
     }
 
-    public delete (params: any): Promise<any> {
+    public delete (params?: any): Promise<any> {
         return Promise.reject(ACTION_NOT_PERMITTED)
     }
 

@@ -17,7 +17,7 @@ describe("Store Configuration", () => {
     let scope:Scope
 
     beforeEach(() => {
-        api = new RestAPI({endpoint: "/"})
+        api = new RestAPI({endpoint: "/", token : "token"})
         configuration = new StoreConfiguration(api)
         scope = nock("http://localhost:80")
     })
@@ -36,6 +36,35 @@ describe("Store Configuration", () => {
                 expect(e).to.be.an.instanceOf(RequestError)
                 expect(e.code).to.equal("ACTION_NOT_PERMITTED")
             })
+        ])
+    })
+
+    it("should call api for single store configuration", () => {
+        const okResponse = { status : "read" }
+        const okScope = scope
+            .get(/(merchants\/[a-f0-9\-]+\/)?stores\/[a-f0-9\-]+\/configuration$/i)
+            .twice()
+            .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+        return Promise.all([
+            configuration.read({ storeId : "123" }).should.eventually.eql(okResponse),
+            configuration.read({ merchantId: "1", storeId : "123" }).should.eventually.eql(okResponse)
+        ])
+    })
+
+    it("should call the api to update store configuration", () => {
+        const okResponse = { status : "updated" }
+        const okScope = scope
+            .patch(/(merchants\/[a-f0-9\-]+\/)?stores\/[a-f0-9\-]+\/configuration$/i)
+            .twice()
+            .reply(200, okResponse, { "Content-Type" : "application/json" })
+        const data = {
+            domains: ["test.com"]
+        }
+
+        return Promise.all([
+            configuration.update({ storeId : "123", data }).should.eventually.eql(okResponse),
+            configuration.update({ merchantId : "1", storeId : "123", data }).should.eventually.eql(okResponse)
         ])
     })
 

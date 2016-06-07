@@ -1,10 +1,10 @@
 import { request } from "popsicle"
 import prefix = require("popsicle-resolve")
 import { isEmpty, underscore, camelCase } from "../utils"
-import { Headers } from "~popsicle/dist/base";
+import { Headers } from "~popsicle/dist/base"
 import { RequestError } from "../errors/RequestError"
 import { ResponseError } from "../errors/ResponseError"
-import Response from "~popsicle/dist/response";
+import Response from "~popsicle/dist/response"
 import { RequestOptions } from "~popsicle/dist/request"
 import { SDK_WRONG_CREDENTIALS } from "../errors/ErrorsConstants"
 
@@ -19,20 +19,20 @@ export enum ResourceAccessType {
 }
 
 export interface RestAPIOptions {
-    endpoint : string
-    appId?   : string
-    secret?  : string
-    token?   : string
-    camel?   : boolean
+    endpoint: string
+    appId?: string
+    secret?: string
+    token?: string
+    camel?: boolean
 }
 
 export class RestAPI {
 
-    public token    : string
-    public endpoint : string
-    public appId    : string
-    public secret   : string
-    private camel   : boolean
+    public token: string
+    public endpoint: string
+    public appId: string
+    public secret: string
+    private camel: boolean
 
     constructor (options: RestAPIOptions) {
         this.endpoint = options.endpoint
@@ -86,13 +86,15 @@ export class RestAPI {
                 break
 
             default :
-                authorization = null
+                authorization = undefined
         }
 
-        return Object.assign({
-            "Accept"        : "application/json",
-            "Content-Type"  : "application/json"
-        }, !isEmpty(authorization) ? { "Authorization" : authorization } : {})
+        return Object.assign(
+            {
+                "Accept"        : "application/json",
+                "Content-Type"  : "application/json"
+            },
+            !isEmpty(authorization) ? { "Authorization" : authorization } : {})
     }
 
     public send (options: RequestOptions, accessType: ResourceAccessType = ResourceAccessType.None): Promise<Object> {
@@ -100,9 +102,9 @@ export class RestAPI {
             return Promise.reject<Object>(new RequestError(SDK_WRONG_CREDENTIALS))
         }
 
-        const body: Object = options.body  ? underscore(options.body) : null
+        const body: Object = options.body ? underscore(options.body) : undefined
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve: Function, reject: Function) => {
             request(Object.assign({}, options, { body, headers : this.getHeaders(accessType) }))
                 .use(prefix(this.endpoint))
                 .then((response: Response) => {
@@ -112,7 +114,7 @@ export class RestAPI {
                         reject(new ResponseError(response))
                     }
                 })
-                .catch((e) => reject(new ResponseError()))
+                .catch(() => reject(new ResponseError()))
         })
     }
 }

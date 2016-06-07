@@ -1,12 +1,13 @@
-import { ICRUDResource, CRUDResource, CRUDParamsRead, CRUDParamsCreate } from "../CRUDResource"
-import {IParams, URLSegments} from "../Resource"
+import { ICRUDResource, CRUDParamsRead, CRUDParamsCreate } from "../CRUDResource"
 import { ResourceAccessType } from "../../api/RestAPI"
 import { IValidatedResource, ValidationSchema } from "../../validation/Validation"
 import Validator from "../../validation/validators/Validator"
 import { ACTION_NOT_PERMITTED } from "../../errors/Errors"
+import { MerchantCRUDResource } from "../MerchantCRUDResource"
 
 export interface PTransfer {
     id?: string
+    merchantId?: string
     bankAccountId?: string
     amount?: number
     currency?: string
@@ -17,7 +18,9 @@ export interface PTransfer {
     updatedOn?: number
 }
 
-export class Transfer extends CRUDResource<PTransfer> implements ICRUDResource<PTransfer>, IValidatedResource<PTransfer> {
+export class Transfer
+    extends MerchantCRUDResource<PTransfer>
+    implements ICRUDResource<PTransfer>, IValidatedResource<PTransfer> {
 
     public urlSegment: string = "transfers"
     public accessType: ResourceAccessType = ResourceAccessType.Token

@@ -27,11 +27,11 @@ export interface PTokenCard {
     brand?: string
 }
 
-const TokenCardSchema: ValidationSchema = {
+const tokenCardSchema: ValidationSchema = {
     cardNumber : [ new Validator.Required(), new Validator.CardNumber() ],
-    expMonth : [ new Validator.Required(), new Validator.Numeric() ],
-    expYear : [ new Validator.Required(), new Validator.Numeric() ],
-    cvv : [ new Validator.Required(), new Validator.Numeric() ]
+    cvv        : [ new Validator.Required(), new Validator.Numeric() ],
+    expMonth   : [ new Validator.Required(), new Validator.Numeric() ],
+    expYear    : [ new Validator.Required(), new Validator.Numeric() ]
 }
 
 export interface ParamsTokenRead extends IParams {
@@ -42,17 +42,21 @@ export interface ParamsTokenCreate extends IParams {
     data: PTransactionToken<any>
 }
 
-export class TransactionToken extends CRUDResource<PTransactionToken<any>> implements ICRUDResource<PTransactionToken<any>>, IValidatedResource<PTransactionToken<any>> {
+export class TransactionToken
+    extends CRUDResource<PTransactionToken<any>>
+    implements ICRUDResource<PTransactionToken<any>>, IValidatedResource<PTransactionToken<any>> {
+
+    public accessType: ResourceAccessType = ResourceAccessType.Token
 
     public schemaCreate (data: PTransactionToken<any>): ValidationSchema {
         const schema: ValidationSchema = {
-            type : [ new Validator.Required() ],
-            storeId : [ new Validator.Required(), new Validator.UUID() ]
+            storeId : [ new Validator.Required(), new Validator.UUID() ],
+            type    : [ new Validator.Required() ]
         }
 
         switch (data.type) {
             case "card" :
-                (<any>schema)["data"] = TokenCardSchema
+                (schema as any).data = tokenCardSchema
                 break
 
             default:
@@ -60,8 +64,6 @@ export class TransactionToken extends CRUDResource<PTransactionToken<any>> imple
 
         return schema
     }
-
-    public accessType: ResourceAccessType = ResourceAccessType.Token
 
     public url (segments: URLSegments): string {
         return `/tokens${segments.id ? `/${segments.id}` : ""}`

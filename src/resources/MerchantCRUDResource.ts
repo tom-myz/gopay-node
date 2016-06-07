@@ -1,7 +1,5 @@
 import { ICRUDResource, CRUDResource } from "./CRUDResource"
 import { URLSegments, IParams } from "./Resource"
-import { ResourceAccessType } from "../api/RestAPI"
-import { ValidationSchema } from "../validation/Validation"
 import { isEmpty } from "../utils"
 
 export interface ParamsMerchantRead extends IParams {

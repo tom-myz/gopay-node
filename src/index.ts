@@ -16,11 +16,11 @@ import { BankAccount } from "./resources/bankAccounts/BankAccount"
 import { BankAccounts } from "./resources/bankAccounts/BankAccounts"
 
 export interface SDKOptions {
-    endpoint?  : string
-    token?     : string
-    appId?     : string
-    secret?    : string
-    camelCase? : boolean
+    appId?: string
+    camelCase?: boolean
+    endpoint?: string
+    secret?: string
+    token?: string
 }
 
 export class PaymentsSDK {
@@ -41,7 +41,7 @@ export class PaymentsSDK {
     public payouts: Payouts
     public bankAccount: BankAccount
     public bankAccounts: BankAccounts
-    
+
     constructor (options?: SDKOptions) {
         this.api = new RestAPI(this.getOptions(options))
 
@@ -60,14 +60,14 @@ export class PaymentsSDK {
         this.bankAccount = new BankAccount(this.api)
         this.bankAccounts = new BankAccounts(this.api)
     }
-    
-    public getOptions (options: SDKOptions = <SDKOptions>{}): RestAPIOptions  {
+
+    public getOptions (options: SDKOptions = {} as SDKOptions): RestAPIOptions  {
         return {
-            endpoint : options.endpoint || config.endpoint,
             appId    : options.appId || process.env[config.envAppId],
+            camel    : options.camelCase || false,
+            endpoint : options.endpoint || config.endpoint,
             secret   : options.secret || process.env[config.envSecret],
-            token    : options.token,
-            camel    : options.camelCase || false
+            token    : options.token
         }
     }
 }

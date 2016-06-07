@@ -3,10 +3,14 @@ import { isEmpty } from "../../utils"
 
 export class List implements IValidator {
 
-    constructor (public validators?: Array<IValidator>) {}
+    public validators: Array<IValidator>
+    public error: string = "INVALID_FORMAT_LIST"
 
-    error: string = "INVALID_FORMAT_LIST"
-    valid (value?: any): boolean {
+    constructor (validators: Array<IValidator> = []) {
+        this.validators = validators
+    }
+
+    public valid (value?: any): boolean {
         if (isEmpty(value)) {
             return true
         }
@@ -15,12 +19,12 @@ export class List implements IValidator {
             return false
         }
 
-        return (<Array<any>>value).reduce((r1, v) => {
+        return (value as Array<any>).reduce((r1: boolean, v: any) => {
             if (r1 === false) {
                 return false
             }
 
-            return this.validators.reduce((r2, validator) => {
+            return this.validators.reduce((r2: boolean, validator: IValidator) => {
                 if (r2 === false) {
                     return false
                 }

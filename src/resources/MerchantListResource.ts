@@ -1,7 +1,5 @@
 import { IListResource, ListResource } from "./ListResource"
 import { URLSegments, IListParams, PListResponse } from "./Resource"
-import { ResourceAccessType } from "../api/RestAPI"
-import { ValidationSchema } from "../validation/Validation"
 import { isEmpty } from "../utils"
 
 export interface ParamsMerchantListRead<P> extends IListParams<P> {

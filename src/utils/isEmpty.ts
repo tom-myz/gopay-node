@@ -3,7 +3,7 @@ export function isEmpty (input: any): boolean {
         return true
     } else if (typeof input === "object" && Object.getOwnPropertyNames(input).length === 0) {
         return true
-    } else if (Array.isArray(input) && (<Array<any>>input).length === 0) {
+    } else if (Array.isArray(input) && (input as Array<any>).length === 0) {
         return true
     }
     return false

@@ -8,7 +8,7 @@ export function equal (a: any, b: any): boolean {
     }
 
     if (Array.isArray(a)) {
-        return (<Array<any>>a).reduce((r, c, i) => {
+        return (a as Array<any>).reduce((r: boolean, c: any, i: any) => {
             if (r === false) {
                 return false
             }
@@ -21,7 +21,7 @@ export function equal (a: any, b: any): boolean {
             return false
         }
 
-        return Object.keys(a).reduce((r, k) => {
+        return Object.keys(a).reduce((r: boolean, k: string) => {
             if (r === false) {
                 return false
             }

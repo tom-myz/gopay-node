@@ -1,5 +1,9 @@
 import { RestAPI } from "./RestAPI"
 
 export abstract class WithAPI {
-    constructor (public api: RestAPI) {}
+    public api: RestAPI
+
+    constructor (api: RestAPI) {
+        this.api = api
+    }
 }

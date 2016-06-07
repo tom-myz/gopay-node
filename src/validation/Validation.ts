@@ -1,5 +1,4 @@
 import { IValidator } from "./validators/Validator"
-import {error} from "util";
 
 export type ValidationSchema = {
     [field: string]: Array<IValidator> | ValidationSchema
@@ -23,22 +22,22 @@ export interface IValidatedListResource<P> {
 }
 
 export class Validation {
-    static validate (obj: Object, schema: ValidationSchema, prefix: string = ""): Array<ValidationMessage> {
+    public static validate (obj: Object, schema: ValidationSchema, prefix: string = ""): Array<ValidationMessage> {
         const errors: Array<ValidationMessage> = []
 
         Object.keys(schema).forEach((k: string) => {
-            const value: any = (<any>obj)[k]
+            const value: any = (obj as any)[k]
             const validators: Array<IValidator> | ValidationSchema = schema[k] || []
 
             if (Array.isArray(validators)) {
                 for (let validator of validators) {
                     if (!validator.valid(value)) {
-                        errors.push(<ValidationMessage>{ [`${prefix}${k}`]: validator.error })
+                        errors.push({ [`${prefix}${k}`]: validator.error } as ValidationMessage)
                         break
                     }
                 }
             } else {
-                Validation.validate(value || {}, validators, `${prefix}${k}.`).forEach((e) => errors.push(e))
+                Validation.validate(value || {}, validators, `${prefix}${k}.`).forEach((e: any) => errors.push(e))
             }
         })
 
