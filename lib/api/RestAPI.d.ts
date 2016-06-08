@@ -1,5 +1,3 @@
-import { Headers } from "popsicle/dist/base";
-import { RequestOptions } from "~popsicle/dist/request";
 export declare type RestMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
 export declare enum ResourceAccessType {
     None = 0,
@@ -23,6 +21,6 @@ export declare class RestAPI {
     private camel;
     constructor(options: RestAPIOptions);
     hasCredentials(accessType: ResourceAccessType): boolean;
-    getHeaders(accessType: ResourceAccessType): Headers;
-    send(options: RequestOptions, accessType?: ResourceAccessType): Promise<Object>;
+    getHeaders(accessType: ResourceAccessType): any;
+    send(options: any, accessType?: ResourceAccessType): Promise<Object>;
 }
