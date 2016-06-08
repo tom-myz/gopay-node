@@ -1,5 +1,4 @@
 import { CommonError, ErrorMessage, ValidationErrorMessage } from "./CommonError"
-import Response from "~popsicle/dist/response"
 import { isEmpty } from "../utils"
 import * as Errors from "./ErrorsConstants"
 
@@ -11,9 +10,9 @@ type ErrorBody = {
 
 export class ResponseError extends CommonError {
 
-    private _raw: Response
+    private _raw: any
 
-    constructor (error?: Response) {
+    constructor (error?: any) {
         super()
 
         this._raw = error

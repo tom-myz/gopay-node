@@ -1,11 +1,8 @@
 import { request } from "popsicle"
 import prefix = require("popsicle-resolve")
 import { isEmpty, underscore, camelCase } from "../utils"
-import { Headers } from "~popsicle/dist/base"
 import { RequestError } from "../errors/RequestError"
 import { ResponseError } from "../errors/ResponseError"
-import Response from "~popsicle/dist/response"
-import { RequestOptions } from "~popsicle/dist/request"
 import { SDK_WRONG_CREDENTIALS } from "../errors/ErrorsConstants"
 
 export type RestMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT"
@@ -61,7 +58,7 @@ export class RestAPI {
         }
     }
 
-    public getHeaders (accessType: ResourceAccessType): Headers {
+    public getHeaders (accessType: ResourceAccessType): any {
         let authorization: string
 
         switch (accessType) {
@@ -97,7 +94,7 @@ export class RestAPI {
             !isEmpty(authorization) ? { "Authorization" : authorization } : {})
     }
 
-    public send (options: RequestOptions, accessType: ResourceAccessType = ResourceAccessType.None): Promise<Object> {
+    public send (options: any, accessType: ResourceAccessType = ResourceAccessType.None): Promise<Object> {
         if (!this.hasCredentials(accessType)) {
             return Promise.reject<Object>(new RequestError(SDK_WRONG_CREDENTIALS))
         }
@@ -107,7 +104,7 @@ export class RestAPI {
         return new Promise((resolve: Function, reject: Function) => {
             request(Object.assign({}, options, { body, headers : this.getHeaders(accessType) }))
                 .use(prefix(this.endpoint))
-                .then((response: Response) => {
+                .then((response: any) => {
                     if (response.status >= 200 && response.status < 400) {
                         resolve(this.camel ? camelCase(response.body) : response.body)
                     } else {

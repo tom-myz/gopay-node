@@ -3,7 +3,6 @@ import { ResourceAccessType } from "../api/RestAPI"
 import { IValidatedListResource, ValidatedResource, ValidationSchema, Validation } from "../validation/Validation"
 import { VALIDATION_ERROR } from "../errors/Errors"
 import { IParams, URLSegments, SendOptions, PListResponse } from "./Resource"
-import { Query } from "~popsicle/dist/base"
 import Validator from "../validation/validators/Validator"
 
 
@@ -40,7 +39,7 @@ export abstract class ListResource<P, R>
         return this.validate(options.data, schema)
             .then(() => this.api.send({
                 method : "GET",
-                query  : (options as any).data as Query,
+                query  : options.data,
                 url    : this.url(options as URLSegments)
             }, accessType))
     }

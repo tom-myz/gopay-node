@@ -1,4 +1,4 @@
-import { Headers } from "~popsicle/dist/base";
+import { Headers } from "popsicle/dist/base";
 import { RequestOptions } from "~popsicle/dist/request";
 export declare type RestMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
 export declare enum ResourceAccessType {
