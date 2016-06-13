@@ -28,8 +28,6 @@ node("master") {
 
         if (env.BRANCH_NAME == "master") {
             echo "Deploy to production"
-
-            input message: "Publish new release to s3?", ok: "Do it"
         }
 
     stage "Cleanup"

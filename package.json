@@ -51,6 +51,7 @@
     "linter": "./node_modules/tslint/bin/tslint src/**/*.ts",
     "start" : "webpack-dev-server",
     "clean": "npm prune && rm -rf node_modules typings lib",
-    "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts"
+    "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts",
+    "build": "tsc"
   }
 }
