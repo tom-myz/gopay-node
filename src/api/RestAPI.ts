@@ -69,7 +69,7 @@ export class RestAPI {
                 if (this.hasCredentials(ResourceAccessType.Token)) {
                     authorization = `Token ${this.token}`
                 } else if (this.hasCredentials(ResourceAccessType.Secret)) {
-                    authorization = `Credentials ${this.appId}:${this.secret}`
+                    authorization = `ApplicationToken ${this.appId}|${this.secret}`
                 }
                 break
 
@@ -78,11 +78,11 @@ export class RestAPI {
                 break
 
             case ResourceAccessType.Secret :
-                authorization = `Credentials ${this.appId}:${this.secret}`
+                authorization = `ApplicationToken ${this.appId}|${this.secret}`
                 break
 
             case ResourceAccessType.AppId :
-                authorization = `Credentials ${this.appId}`
+                authorization = `ApplicationToken ${this.appId}`
                 break
 
             default :
