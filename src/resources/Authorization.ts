@@ -29,11 +29,11 @@ export class Authorization extends WithAPI implements ValidatedResource<Authoriz
         return Promise.reject<AuthorizationCredentials>(VALIDATION_ERROR(errors))
     }
 
-    public authorize (credentials: AuthorizationCredentials): Promise<string> {
+    public authorize (credentials: AuthorizationCredentials): Promise<AuthorizationResponse> {
         const validationErrors: Array<any> = Validation.validate(credentials, this.validation)
 
         if (validationErrors.length !== 0) {
-           return Promise.reject<string>(VALIDATION_ERROR(validationErrors))
+           return Promise.reject<AuthorizationResponse>(VALIDATION_ERROR(validationErrors))
         }
 
         return this.validate(credentials, this.validation)
@@ -42,7 +42,10 @@ export class Authorization extends WithAPI implements ValidatedResource<Authoriz
                 method : "POST",
                 url    : "/authenticate"
             })
-            .then((response: AuthorizationResponse) => this.api.token = response.token))
+            .then((response: AuthorizationResponse) => {
+                this.api.token = response.token
+                return response
+            }))
     }
 
 }
