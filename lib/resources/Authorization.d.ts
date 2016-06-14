@@ -10,5 +10,5 @@ export interface AuthorizationResponse {
 export declare class Authorization extends WithAPI implements ValidatedResource<AuthorizationCredentials> {
     private validation;
     validate(data: AuthorizationCredentials, schema: ValidationSchema): Promise<AuthorizationCredentials>;
-    authorize(credentials: AuthorizationCredentials): Promise<string>;
+    authorize(credentials: AuthorizationCredentials): Promise<AuthorizationResponse>;
 }

@@ -36,8 +36,8 @@ describe("Authorization", () => {
         const promise = authorization.authorize(params)
 
         return promise.should.eventually.be.fulfilled
-            .then((token) => {
-                expect(token).to.equal("token")
+            .then((response) => {
+                expect(response).to.eql({ token : "token" })
                 expect(api.token).to.equal("token")
             })
     })
@@ -76,8 +76,8 @@ describe("Authorization", () => {
         const authScope = scope
             .post("/authenticate")
             .reply(
-                401, 
-                { status : "error", key : "INVALID_CREDENTIALS", errors : [] }, 
+                401,
+                { status : "error", key : "INVALID_CREDENTIALS", errors : [] },
                 { "Content-Type" : "application/json" }
             )
         const params = {
