@@ -31,14 +31,14 @@ describe("RestAPI", () => {
         const api: RestAPI = new RestAPI({ endpoint : "/", appId : "id", secret: "secret" })
         const headers = api.getHeaders(ResourceAccessType.Secret)
         expect(headers).to.have.property("Authorization")
-            .and.equal("Credentials id:secret")
+            .and.equal("ApplicationToken id|secret")
     })
 
     it("should create headers with appId authorization header", () => {
         const api: RestAPI = new RestAPI({ endpoint : "/", appId : "id" })
         const headers = api.getHeaders(ResourceAccessType.AppId)
         expect(headers).to.have.property("Authorization")
-            .and.equal("Credentials id")
+            .and.equal("ApplicationToken id")
     })
 
     it("should create headers with token or secret authorization header with token prioritized", () => {
@@ -49,13 +49,13 @@ describe("RestAPI", () => {
         const headers2 = api2.getHeaders(ResourceAccessType.SecretOrToken)
         const headers3 = api3.getHeaders(ResourceAccessType.SecretOrToken)
         expect(headers1).to.have.property("Authorization")
-            .and.equal("Credentials id:secret")
+            .and.equal("ApplicationToken id|secret")
         expect(headers2).to.have.property("Authorization")
             .and.equal("Token test")
         expect(headers3).to.have.property("Authorization")
             .and.equal("Token test")
     })
-    
+
     it("should correctly detect presence of authorization data", () => {
         const asserts: Array<any> = [
             [{ endpoint : "/" }, ResourceAccessType.None, true],
