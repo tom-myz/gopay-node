@@ -1,3 +1,4 @@
+/*
 import { CommonError } from "./CommonError"
 import { ValidationMessage } from "../validation/Validation"
 
@@ -9,3 +10,4 @@ export class ValidationError extends CommonError {
         this.errors = errors
     }
 }
+*/

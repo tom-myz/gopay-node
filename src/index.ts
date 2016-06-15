@@ -1,6 +1,5 @@
-import { process } from "process"
-import config from "./config"
 import { RestAPI, RestAPIOptions } from "./api/RestAPI"
+/*
 import { Authorization } from "./resources/Authorization"
 import { Merchant } from "./resources/merchants/Merchant"
 import { Merchants } from "./resources/merchants/Merchants"
@@ -14,20 +13,14 @@ import { Transfers } from "./resources/transfers/Transfers"
 import { Payouts } from "./resources/payouts/Payouts"
 import { BankAccount } from "./resources/bankAccounts/BankAccount"
 import { BankAccounts } from "./resources/bankAccounts/BankAccounts"
-
-export interface SDKOptions {
-    appId?: string
-    camelCase?: boolean
-    endpoint?: string
-    secret?: string
-    token?: string
-}
+*/
 
 export class PaymentsSDK {
 
     public api: RestAPI
 
     /* Resources */
+    /*
     public authorization: Authorization
     public token: TransactionToken
     public merchant: Merchant
@@ -41,11 +34,13 @@ export class PaymentsSDK {
     public payouts: Payouts
     public bankAccount: BankAccount
     public bankAccounts: BankAccounts
+    */
 
-    constructor (options?: SDKOptions) {
-        this.api = new RestAPI(this.getOptions(options))
+    constructor (options?: RestAPIOptions) {
+        this.api = new RestAPI(options)
 
         /* Resources */
+        /*
         this.authorization = new Authorization(this.api)
         this.token = new TransactionToken(this.api)
         this.merchant = new Merchant(this.api)
@@ -59,16 +54,7 @@ export class PaymentsSDK {
         this.payouts = new Payouts(this.api)
         this.bankAccount = new BankAccount(this.api)
         this.bankAccounts = new BankAccounts(this.api)
-    }
-
-    public getOptions (options: SDKOptions = {} as SDKOptions): RestAPIOptions  {
-        return {
-            appId    : options.appId || process.env[config.envAppId],
-            camel    : options.camelCase || false,
-            endpoint : options.endpoint || config.endpoint,
-            secret   : options.secret || process.env[config.envSecret],
-            token    : options.token
-        }
+        */
     }
 }
 

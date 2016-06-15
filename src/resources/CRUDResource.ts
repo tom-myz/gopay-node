@@ -24,7 +24,8 @@ export interface CRUDParamsUpdate<P> extends IParams {
     data: P
 }
 
-export abstract class CRUDResource<P>
+/*
+export abstract class CRUDResource1<P>
     extends WithAPI
     implements ValidatedResource<P> {
 
@@ -80,6 +81,27 @@ export abstract class CRUDResource<P>
             return Promise.resolve(data)
         }
         return Promise.reject<P>(VALIDATION_ERROR(errors))
+    }
+
+}
+*/
+
+export interface PathParams { [key: string]: (string | number) }
+
+export abstract class CRUDResource<P extends PathParams, R> {
+
+    public path: string
+    public pathParams: P
+
+    public compilePath (): string {
+        return this.path
+            .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
+                const part = o.replace(/:(\w+)/ig, (s: string, p: string) => {
+                    return this.pathParams[p] || s
+                })
+                return part.indexOf(":") === -1 ? part.replace(/\(|\)/g, "") : ""
+            })
+            .replace(/:(\w+)/ig, (_: string, p: string) => this.pathParams[p])
     }
 
 }
