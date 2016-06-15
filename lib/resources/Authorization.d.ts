@@ -6,6 +6,7 @@ export interface AuthorizationCredentials {
 }
 export interface AuthorizationResponse {
     token: string;
+    merchantId: string;
 }
 export declare class Authorization extends WithAPI implements ValidatedResource<AuthorizationCredentials> {
     private validation;
