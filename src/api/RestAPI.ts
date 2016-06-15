@@ -39,6 +39,10 @@ export class RestAPI {
         this.camel = options.camel
     }
 
+    public setToken (token?: string): void {
+        this.token = token
+    }
+
     public hasCredentials (accessType: ResourceAccessType): boolean {
         switch (accessType) {
             case ResourceAccessType.SecretOrToken :

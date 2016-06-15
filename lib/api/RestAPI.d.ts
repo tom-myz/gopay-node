@@ -20,6 +20,7 @@ export declare class RestAPI {
     secret: string;
     private camel;
     constructor(options: RestAPIOptions);
+    setToken(token?: string): void;
     hasCredentials(accessType: ResourceAccessType): boolean;
     getHeaders(accessType: ResourceAccessType): any;
     send(options: any, accessType?: ResourceAccessType): Promise<Object>;
