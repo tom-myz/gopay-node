@@ -1,60 +1,42 @@
 import { RestAPI, RestAPIOptions } from "./api/RestAPI"
-/*
 import { Authorization } from "./resources/Authorization"
-import { Merchant } from "./resources/merchants/Merchant"
-import { Merchants } from "./resources/merchants/Merchants"
-import { Store } from "./resources/stores/Store"
-import { Stores } from "./resources/stores/Stores"
-import { TransactionToken } from "./resources/charges/TransactionToken"
-import { Charge } from "./resources/charges/Charge"
-import { Charges } from "./resources/charges/Charges"
-import { Transfer } from "./resources/transfers/Transfer"
-import { Transfers } from "./resources/transfers/Transfers"
-import { Payouts } from "./resources/payouts/Payouts"
-import { BankAccount } from "./resources/bankAccounts/BankAccount"
-import { BankAccounts } from "./resources/bankAccounts/BankAccounts"
-*/
+import { Merchants } from "./resources/Merchants"
+import { Stores } from "./resources/Stores"
+import { Transfers } from "./resources/Transfers"
+import { Payouts } from "./resources/Payouts"
+import { BankAccounts } from "./resources/BankAccounts"
+import { WebHooks } from "./resources/WebHooks"
+import { ApplicationTokens } from "./resources/ApplicationTokens"
+import { Charges } from "./resources/Charges"
 
 export class PaymentsSDK {
 
     public api: RestAPI
 
     /* Resources */
-    /*
     public authorization: Authorization
-    public token: TransactionToken
-    public merchant: Merchant
     public merchants: Merchants
-    public store: Store
     public stores: Stores
-    public charge: Charge
     public charges: Charges
-    public transfer: Transfer
     public transfers: Transfers
     public payouts: Payouts
-    public bankAccount: BankAccount
     public bankAccounts: BankAccounts
-    */
+    public webHooks: WebHooks
+    public applicationTokens: ApplicationTokens
 
     constructor (options?: RestAPIOptions) {
         this.api = new RestAPI(options)
 
         /* Resources */
-        /*
         this.authorization = new Authorization(this.api)
-        this.token = new TransactionToken(this.api)
-        this.merchant = new Merchant(this.api)
         this.merchants = new Merchants(this.api)
-        this.store = new Store(this.api)
         this.stores = new Stores(this.api)
-        this.charge = new Charge(this.api)
         this.charges = new Charges(this.api)
-        this.transfer = new Transfer(this.api)
         this.transfers = new Transfers(this.api)
         this.payouts = new Payouts(this.api)
-        this.bankAccount = new BankAccount(this.api)
         this.bankAccounts = new BankAccounts(this.api)
-        */
+        this.webHooks = new WebHooks(this.api)
+        this.applicationTokens = new ApplicationTokens(this.api)
     }
 }
 

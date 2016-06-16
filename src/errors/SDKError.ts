@@ -1,4 +1,3 @@
-import _ = require("lodash")
 import superagent = require("superagent")
 
 export type SDKErrorType = "request" | "response"
@@ -21,7 +20,7 @@ const SDKErrorDefaults: SDKError = {
 }
 
 export function errorUnknown (type: SDKErrorType): SDKError {
-    return _.assign(SDKErrorDefaults, { type }) as SDKError
+    return Object.assign(SDKErrorDefaults, { type }) as SDKError
 }
 
 export function errorFromResponse (response: superagent.Response): SDKError {
@@ -37,5 +36,9 @@ export function errorFromResponse (response: superagent.Response): SDKError {
 
     }
 
+    return SDKErrorDefaults
+}
+
+export function errorFromValidation (errors: any): SDKError {
     return SDKErrorDefaults
 }

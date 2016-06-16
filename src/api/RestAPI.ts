@@ -1,5 +1,4 @@
 import { process } from "process"
-import _ = require("lodash")
 import superagent = require("superagent")
 import prefix = require("superagent-prefix")
 import {errorUnknown, errorFromResponse, SDKError} from "../errors/SDKError"
@@ -16,7 +15,7 @@ export interface RestAPIOptions {
     camel?: boolean
 }
 
-export type SDKCallbackFunction<A> = (err: SDKError, result: A) => void
+export type SDKCallbackFunction = (err: SDKError, result: any) => void
 
 export class RestAPI {
 
@@ -24,6 +23,7 @@ export class RestAPI {
     public appId: string
     public secret: string
     private camel: boolean
+    private token: string
 
     constructor (options: RestAPIOptions) {
         this.endpoint = options.endpoint || DEFAULT_ENDPOINT
@@ -36,30 +36,34 @@ export class RestAPI {
         return underscore(params)
     }
 
-    public send<A> (request: superagent.Request<any>, callback?: SDKCallbackFunction<A>, token?: string): Promise<any> {
-        const cb = typeof callback === "function" ? callback : () => {}
+    public setToken(token: string): void {
+        this.token = token
+    }
+
+    public send (request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any> {
+        const _token = token || this.token
 
         return new Promise((resolve, reject) => {
             request
                 .use(prefix(this.endpoint))
                 .accept("json")
                 .type("json")
-                .set("Authorization", token ? `Token ${token}` : `${this.appId}|${this.secret}`)
+                .set("Authorization", _token ? `Token ${_token}` : `${this.appId}|${this.secret}`)
                 .end((error: any, response: superagent.Response) => {
                     if (error) {
                         const unknownError = errorUnknown("response")
-                        cb(unknownError, null)
+                        callback(unknownError, null)
                         return reject(unknownError)
                     }
 
                     const err = errorFromResponse(response)
 
                     if (!err) {
-                        cb(err, null)
+                        callback(err, null)
                         reject(err)
                     } else {
                         const result = this.camel ? camelCase(response.body) : response.body
-                        cb(null, result)
+                        callback(null, result)
                         resolve(result)
                     }
                 })

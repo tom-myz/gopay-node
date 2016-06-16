@@ -9,6 +9,24 @@ import { CommonError } from "../src/errors/CommonError"
 
 const sdk = new SDK({ camel : true })
 
+sdk.authorization.authorize({ email: "root_admin@univapay.com", password: null })
+    .then((result) => sdk.api.setToken(result.token))
+    .then(() => {
+        return sdk.merchants.create({
+            email    : "demo@test.com",
+            password : "demotest"
+        })
+    })
+
+/*
+sdk.merchants.get("123", (err, result) => {
+    console.warn("callback works!!!", err, result)
+})
+    .then((result) => console.warn("promise success works!", result))
+    .catch((err) => console.warn("promise fail works!", err))
+    */
+
+/*
 const path = "/(merchants/:merchantId/)stores(/:storeId)/test/:id"
 const pathParams = {
     id: "33",
@@ -17,6 +35,7 @@ const pathParams = {
 }
 
 sdk.compilePath(path, pathParams)
+*/
 
 /*
 sdk.authorization.authorize({ email: "test@test.com", password: "testtest" })

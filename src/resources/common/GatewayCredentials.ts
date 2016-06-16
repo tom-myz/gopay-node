@@ -1,29 +1,18 @@
-import Validator from "../../validation/validators/Validator"
-import { ValidationSchema } from "../../validation/Validation"
+export interface GatewayCredentials {}
 
-export interface IGatewayCredentials {}
-
-export interface PavisionCredentials extends IGatewayCredentials {
+export interface PavisionCredentials extends GatewayCredentials {
     merchantId?: string
     merchantGuid?: string
 }
 
-export interface WorldpayCredentials extends IGatewayCredentials {
+export interface WorldpayCredentials extends GatewayCredentials {
     merchantId?: string
     password?: string
 }
 
-export interface PGatewayCredentials {
-    [gateway: string]: IGatewayCredentials
+export interface GatewayCredentialsCommonParams {
+    [gateway: string]: GatewayCredentials
 }
 
-export const payvisionSchema: ValidationSchema = {
-    merchantGuid: [ new Validator.UUID() ]
-}
-
-export const worldpaySchema: ValidationSchema = {}
-
-export const gatewayCredentialsSchema: ValidationSchema = {
-    payvision : payvisionSchema,
-    worldpay  : worldpaySchema
-}
+export interface GatewayCredentialsCreateParams extends GatewayCredentialsCommonParams {}
+export interface GatewayCredentialsUpdateParams extends GatewayCredentialsCommonParams {}
