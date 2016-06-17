@@ -1,6 +1,6 @@
 import { CRUDResource, CRUDDefinedRoute } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { authorizeSchema } from "../validation/authorization"
+import { authorizeSchema } from "../validation/schemas/authorization"
 
 export interface AuthorizeParams {
     email: string

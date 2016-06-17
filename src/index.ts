@@ -9,6 +9,14 @@ import { WebHooks } from "./resources/WebHooks"
 import { ApplicationTokens } from "./resources/ApplicationTokens"
 import { Charges } from "./resources/Charges"
 
+import Validator = require("validatorjs")
+import { ruleBoolean, ruleObject, ruleUUID } from "./validation/rules"
+
+/* Set up custom validators */
+Validator.register(ruleBoolean[0], ruleBoolean[1], ruleBoolean[2])
+Validator.register(ruleObject[0], ruleObject[1], ruleObject[2])
+Validator.register(ruleUUID[0], ruleUUID[1], ruleUUID[2])
+
 export class PaymentsSDK {
 
     public api: RestAPI

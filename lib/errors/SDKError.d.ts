@@ -1,14 +1,11 @@
 import superagent = require("superagent");
 export declare type SDKErrorType = "request" | "response";
-export interface SDKErrorParam {
-    [key: string]: string;
-}
 export interface SDKError {
     type: SDKErrorType;
     status: number;
     code: string;
-    message: string;
-    params: Array<SDKErrorParam>;
+    errors: Array<any>;
 }
 export declare function errorUnknown(type: SDKErrorType): SDKError;
 export declare function errorFromResponse(response: superagent.Response): SDKError;
+export declare function errorFromValidation(errors: any): SDKError;

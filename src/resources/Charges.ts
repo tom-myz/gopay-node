@@ -2,8 +2,8 @@ import {
     CRUDResource, CRUDStoreIdParam, CRUDIdStoreIdParam, CRUDPaginationParams,
     CRUDDefinedRoute
 } from "./CRUDResource"
-import { SDKCallbackFunction } from "../api/RestAPI"
-import { GatewayCredentialsCommonParams } from "./common/GatewayCredentials"
+import { SDKCallbackFunction, RestAPI } from "../api/RestAPI"
+import { chargeCreateSchema } from "../validation/schemas/charge"
 
 export interface ChargeCreateParams {
     token: string
@@ -14,9 +14,12 @@ export interface ChargeCreateParams {
 
 export class Charges extends CRUDResource {
 
-    public routeBase: string = "/(merchants/:merchantId/)stores/:storeId/charges"
+    static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/charges"
 
-    public _createRoute: CRUDDefinedRoute = this.defineRoute("POST", "/charges")
+    constructor (api: RestAPI) {
+        super(api)
+        this._createRoute = this.defineRoute("POST", "/charges")
+    }
 
     public list (storeId: string, data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDStoreIdParam = { storeId, merchantId }
@@ -25,7 +28,7 @@ export class Charges extends CRUDResource {
 
     public create (storeId: string, data: ChargeCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._createRoute(params, data, callback, { token })
+        return this._createRoute(params, data, callback, { token, validationSchema : chargeCreateSchema })
     }
 
     public get (storeId: string, id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {

@@ -1,6 +1,6 @@
 import { CRUDResource, CRUDMerchantIdParam, CRUDIdMerchantIdParam, CRUDPaginationParams } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { GatewayCredentialsCommonParams } from "./common/GatewayCredentials"
+import { bankAccountCreateSchema, bankAccountUpdateSchema } from "../validation/schemas/bank-account"
 
 export interface BankAccountCommonParams {
     holderName?: string
@@ -28,8 +28,8 @@ export interface BankAccountUpdateParams extends BankAccountCommonParams {}
 
 
 export class BankAccounts extends CRUDResource {
-    
-    public routeBase: string = "/(merchants/:merchantId/)bank_accounts"
+
+    static routeBase: string = "/(merchants/:merchantId/)bank_accounts"
 
     public list (data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDMerchantIdParam = { merchantId }
@@ -38,7 +38,7 @@ export class BankAccounts extends CRUDResource {
 
     public create (data:BankAccountCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDMerchantIdParam = { merchantId }
-        return this._createRoute(params, data, callback, { token })
+        return this._createRoute(params, data, callback, { token, validationSchema : bankAccountCreateSchema })
     }
 
     public get (id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
@@ -48,7 +48,7 @@ export class BankAccounts extends CRUDResource {
 
     public update (id: string, data?: BankAccountUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._updateRoute(params, data, callback, { token })
+        return this._updateRoute(params, data, callback, { token, validationSchema : bankAccountUpdateSchema })
     }
 
 }

@@ -10,9 +10,6 @@ export interface WorldpayCredentials extends GatewayCredentials {
     password?: string
 }
 
-export interface GatewayCredentialsCommonParams {
+export interface GatewayCredentialsParams {
     [gateway: string]: GatewayCredentials
 }
-
-export interface GatewayCredentialsCreateParams extends GatewayCredentialsCommonParams {}
-export interface GatewayCredentialsUpdateParams extends GatewayCredentialsCommonParams {}

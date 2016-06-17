@@ -1,6 +1,6 @@
 import { CRUDResource, CRUDStoreIdParam, CRUDIdStoreIdParam, CRUDPaginationParams } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { GatewayCredentialsCommonParams } from "./common/GatewayCredentials"
+import { webHookCreateSchema, webHookUpdateSchema } from "../validation/schemas/webhook"
 
 export interface WebHookCommonParams {
 }
@@ -11,7 +11,7 @@ export interface WebHookUpdateParams extends WebHookCommonParams {}
 
 export class WebHooks extends CRUDResource {
 
-    public routeBase: string = "/(merchants/:merchantId/)stores/:storeId/webhooks"
+    static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/webhooks"
 
     public list (storeId: string, data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDStoreIdParam = { storeId, merchantId }
@@ -20,7 +20,7 @@ export class WebHooks extends CRUDResource {
 
     public create (storeId: string, data: WebHookCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._createRoute(params, data, callback, { token })
+        return this._createRoute(params, data, callback, { token, validationSchema : webHookCreateSchema })
     }
 
     public get (storeId: string, id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
@@ -30,7 +30,7 @@ export class WebHooks extends CRUDResource {
 
     public update (storeId: string, id: string, data?: WebHookUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
-        return this._updateRoute(params, data, callback, { token })
+        return this._updateRoute(params, data, callback, { token, validationSchema : webHookUpdateSchema })
     }
 
 }

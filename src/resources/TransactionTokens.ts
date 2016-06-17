@@ -1,6 +1,7 @@
 import { CRUDResource, CRUDIdParam, CRUDPaginationParams } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { ContactInfoCommonParams } from "./common/ContactInfo"
+import { ContactInfoParams } from "./common/ContactInfo"
+import { getTransactionTokenSchema } from "../validation/schemas/transaction-token"
 
 export interface TokenCardData {
     cardholder: string
@@ -8,7 +9,7 @@ export interface TokenCardData {
     expMonth: number
     expYear: number
     cvv: string
-    address?: ContactInfoCommonParams
+    address?: ContactInfoParams
 }
 
 export interface TransactionTokenCreateParams<A> {
@@ -20,10 +21,11 @@ export interface TransactionTokenCreateParams<A> {
 
 export class TransactionTokens extends CRUDResource {
 
-    public routeBase: string = "/tokens"
+    static routeBase: string = "/tokens"
 
     public create (data: TransactionTokenCreateParams<any>, callback?: SDKCallbackFunction, token?: string) {
-        return this._createRoute(null, data, callback, { token })
+        const validationSchema = getTransactionTokenSchema(data.type)
+        return this._createRoute(null, data, callback, { token, validationSchema })
     }
 
     public get (id: string, callback?: SDKCallbackFunction, token?: string) {

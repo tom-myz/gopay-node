@@ -1,10 +1,11 @@
 import { CRUDResource, CRUDMerchantIdParam, CRUDIdMerchantIdParam, CRUDPaginationParams } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { GatewayCredentialsCommonParams } from "./common/GatewayCredentials"
+import { ConfigurationParams } from "./common/Configuration"
+import { storeCreateSchema, storeUpdateSchema } from "../validation/schemas/store"
 
 export interface StoreCommonParams {
     name?: string
-    gatewayCredentials?: GatewayCredentialsCommonParams
+    configuration?: ConfigurationParams
 }
 
 export interface StoreCreateParams extends StoreCommonParams {
@@ -16,7 +17,7 @@ export interface StoreUpdateParams extends StoreCommonParams {}
 
 export class Stores extends CRUDResource {
 
-    public routeBase: string = "/(merchants/:merchantId/)stores"
+    static routeBase: string = "/(merchants/:merchantId/)stores"
 
     public list (data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDMerchantIdParam = { merchantId }
@@ -25,7 +26,7 @@ export class Stores extends CRUDResource {
 
     public create (data:StoreCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDMerchantIdParam = { merchantId }
-        return this._createRoute(params, data, callback, { token })
+        return this._createRoute(params, data, callback, { token, validationSchema : storeCreateSchema })
     }
 
     public get (id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
@@ -35,7 +36,7 @@ export class Stores extends CRUDResource {
 
     public update (id: string, data?: StoreUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
         const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._updateRoute(params, data, callback, { token })
+        return this._updateRoute(params, data, callback, { token, validationSchema : storeUpdateSchema })
     }
 
 }

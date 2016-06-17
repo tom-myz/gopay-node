@@ -50,15 +50,9 @@ export class RestAPI {
                 .type("json")
                 .set("Authorization", _token ? `Token ${_token}` : `${this.appId}|${this.secret}`)
                 .end((error: any, response: superagent.Response) => {
-                    if (error) {
-                        const unknownError = errorUnknown("response")
-                        callback(unknownError, null)
-                        return reject(unknownError)
-                    }
-
                     const err = errorFromResponse(response)
 
-                    if (!err) {
+                    if (error || err !== null) {
                         callback(err, null)
                         reject(err)
                     } else {

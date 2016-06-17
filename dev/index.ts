@@ -9,14 +9,19 @@ import { CommonError } from "../src/errors/CommonError"
 
 const sdk = new SDK({ camel : true })
 
-sdk.authorization.authorize({ email: "root_admin@univapay.com", password: null })
-    .then((result) => sdk.api.setToken(result.token))
+sdk.authorization.authorize({ email: "root_admin@univapay.com", password: "changeme1" })
+    .then((result) => {
+        console.warn(result)
+        sdk.api.setToken(result.token)
+    //    return Promise.resolve()
+    })
     .then(() => {
         return sdk.merchants.create({
-            email    : "demo@test.com",
-            password : "demotest"
+            email    : "aaa",
+            password : ""
         })
     })
+    .catch((e) => console.error(e))
 
 /*
 sdk.merchants.get("123", (err, result) => {

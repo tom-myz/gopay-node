@@ -1,4 +1,4 @@
-export interface ContactInfoCommonParams {
+export interface ContactInfoParams {
     phoneNumber?: string
     line1?: string
     line2?: string
@@ -8,6 +8,3 @@ export interface ContactInfoCommonParams {
     contry?: string
     zip?: string
 }
-
-export interface ContactInfoCreateParams extends ContactInfoCommonParams {}
-export interface ContactInfoUpdateParams extends ContactInfoCommonParams {}

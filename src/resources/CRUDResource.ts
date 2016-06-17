@@ -1,8 +1,10 @@
 import superagent = require("superagent")
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
+import { RestAPI } from "../api/RestAPI"
 import Validator = require("validatorjs")
 import { errorFromValidation } from "../errors/SDKError"
+import { validationCodes } from "../validation/error-codes"
 
 export interface PathParams { [key: string]: (string | number) }
 
@@ -37,16 +39,39 @@ export interface CRUDOptionalParams {
     [key: string]: any
 }
 
-export abstract class CRUDResource extends WithAPI {
-    
-    public validationRules: any
-    public routeBase: string
+const methodsMap = {
+    "GET"    : "get",
+    "POST"   : "post",
+    "PUT"    : "put",
+    "PATCH"  : "patch",
+    "DELETE" : "del"
+}
 
-    public _listRoute: CRUDDefinedRoute = this.defineRoute("GET", this.routeBase)
-    public _createRoute: CRUDDefinedRoute = this.defineRoute("POST", this.routeBase)
-    public _getRoute: CRUDDefinedRoute = this.defineRoute("GET", `${this.routeBase}/:id`)
-    public _updateRoute: CRUDDefinedRoute = this.defineRoute("PATCH", `${this.routeBase}/:id`)
-    public _deleteRoute: CRUDDefinedRoute = this.defineRoute("DELETE", `${this.routeBase}/:id`)
+interface CRUDResourceStatic extends Function {
+    routeBase: string
+}
+
+export abstract class CRUDResource extends WithAPI {
+
+    public validationRules: any
+
+    public _listRoute: CRUDDefinedRoute
+    public _createRoute: CRUDDefinedRoute
+    public _getRoute: CRUDDefinedRoute
+    public _updateRoute: CRUDDefinedRoute
+    public _deleteRoute: CRUDDefinedRoute
+
+    constructor (api: RestAPI) {
+        super(api)
+
+        const routeBase: string = (this.constructor as CRUDResourceStatic).routeBase
+
+        this._listRoute = this.defineRoute("GET", routeBase)
+        this._createRoute = this.defineRoute("POST", routeBase)
+        this._getRoute = this.defineRoute("GET", `${routeBase}/:id`)
+        this._updateRoute = this.defineRoute("PATCH", `${routeBase}/:id`)
+        this._deleteRoute = this.defineRoute("DELETE", `${routeBase}/:id`)
+    }
 
     static compilePath<P> (path: string, pathParams: P): string {
         return path
@@ -69,10 +94,10 @@ export abstract class CRUDResource extends WithAPI {
                                      options: CRUDOptionalParams = defaultOptions): Promise<any> {
 
             const url: string = CRUDResource.compilePath(path, pathParams)
-            const req: superagent.Request<any> = (superagent as any)[(method as string).toLowerCase()](url)
+            const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
             const schema = options.validationSchema || {}
-            const validator: Validator = new Validator(data, schema)
-            
+            const validator: Validator = new Validator(data, schema, validationCodes)
+
             if (validator.fails()) {
                 const errors = validator.errors.all()
                 const err = errorFromValidation(errors)
