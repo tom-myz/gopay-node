@@ -24,7 +24,7 @@ export interface BankAccountUpdateParams extends BankAccountCommonParams {
 }
 export declare class BankAccounts extends CRUDResource {
     static routeBase: string;
-    list(data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
+    list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, token?: string): Promise<any>;
     create(data: BankAccountCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     update(id: string, data?: BankAccountUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;

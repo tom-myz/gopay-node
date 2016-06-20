@@ -3,11 +3,11 @@ import { SDKCallbackFunction } from "../api/RestAPI"
 
 export class ApplicationTokens extends CRUDResource {
 
-    public routeBase: string = "/(merchants/:merchantId/)stores/:storeId/app_tokens"
+    public static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/app_tokens"
 
     public list (storeId: string,
-                 data: CRUDPaginationParams,
                  callback?: SDKCallbackFunction,
+                 data?: CRUDPaginationParams,
                  merchantId?: string,
                  token?: string): Promise<any> {
         const params: CRUDStoreIdParam = { storeId, merchantId }

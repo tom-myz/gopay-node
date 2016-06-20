@@ -61,8 +61,8 @@ export function errorFromResponse (response: superagent.Response): SDKError {
 
     if (body) {
         return Object.assign({}, defaultSDKError, {
-            code   : body.code,
-            errors : body.errors,
+            code   : body.code || Code.UNKNOWN,
+            errors : body.errors || [],
             status,
             type   : "response"
         })

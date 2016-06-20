@@ -1,5 +1,8 @@
 import superagent = require("superagent");
 import { SDKError } from "../errors/SDKError";
+export declare const DEFAULT_ENDPOINT: string;
+export declare const DEFAULT_ENV_APP_ID: string;
+export declare const DEFAULT_ENV_SECRET: string;
 export interface RestAPIOptions {
     endpoint?: string;
     appId?: string;

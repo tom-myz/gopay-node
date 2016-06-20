@@ -4,9 +4,9 @@ import prefix = require("superagent-prefix")
 import { errorFromResponse, SDKError } from "../errors/SDKError"
 import { underscore, camelCase } from "../utils"
 
-const DEFAULT_ENDPOINT: string = "http://localhost:9000"
-const DEFAULT_ENV_APP_ID: string = "GPAY_APP_ID"
-const DEFAULT_ENV_SECRET: string = "GPAY_SECRET"
+export const DEFAULT_ENDPOINT: string = "http://localhost:9000"
+export const DEFAULT_ENV_APP_ID: string = "GPAY_APP_ID"
+export const DEFAULT_ENV_SECRET: string = "GPAY_SECRET"
 
 export interface RestAPIOptions {
     endpoint?: string
@@ -42,14 +42,25 @@ export class RestAPI {
 
     public send (request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any> {
         const _token: string = token || this.token
+        let header: string
+
+        if (_token) {
+            header = `Token ${_token}`
+        } else if (Boolean(this.appId)) {
+            header = `ApplicationToken ${this.appId}|${this.secret || ""}`
+        }
 
         return new Promise((resolve: Function, reject: Function) => {
             request
                 .use(prefix(this.endpoint))
                 .accept("json")
                 .type("json")
-                .set("Authorization", _token ? `Token ${_token}` : `${this.appId}|${this.secret}`)
-                .end((error: any, response: superagent.Response) => {
+
+            if (header) {
+                request.set("Authorization", header)
+            }
+
+            request.end((error: any, response: superagent.Response) => {
                     const err: SDKError = errorFromResponse(response)
 
                     if (error || err !== null) {

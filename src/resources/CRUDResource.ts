@@ -90,24 +90,25 @@ export abstract class CRUDResource extends WithAPI {
 
         return function route<P, D> (pathParams: P,
                                      data?: D,
-                                     callback: SDKCallbackFunction = (err: SDKError, result: any) => null,
+                                     callback?: SDKCallbackFunction,
                                      options: CRUDOptionalParams = defaultOptions): Promise<any> {
 
             const url: string = CRUDResource.compilePath(path, pathParams)
             const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
             const schema: any = options.validationSchema || {}
             const validator: Validator = new Validator(data, schema, validationCodes)
+            const cb: SDKCallbackFunction = callback || ((err: SDKError, result: any) => null)
 
             if (validator.fails()) {
                 const errors: any = validator.errors.all()
                 const err: SDKError = errorFromValidation(errors)
-                callback(err, null)
+                cb(err, null)
                 return Promise.reject(err)
             }
 
             return api.send(
                 ["GET", "DELETE"].indexOf(method) !== -1 ? req.query(data) : req.send(data),
-                callback,
+                cb,
                 options.token
             )
         }

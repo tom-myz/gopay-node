@@ -2,66 +2,69 @@ import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
-import { ApplicationToken } from "../../src/resources/stores/ApplicationToken"
+import { ApplicationTokens } from "../../src/resources/ApplicationTokens"
 import { Scope } from "~nock/index"
-import { CommonError } from "../../src/errors/CommonError"
-import { ValidationError } from "../../src/errors/ValidationError"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
-import {ResponseError} from "../../src/errors/ResponseError"
-import {RequestError} from "../../src/errors/RequestError"
 
-describe("Application Token", () => {
-
-    let api:RestAPI
-    let token:ApplicationToken
-    let scope:Scope
+describe("Application Tokens", () => {
+    let api: RestAPI
+    let scope: Scope
+    let applicationTokens: ApplicationTokens
+    const testEndpoint = "http://localhost:80"
 
     beforeEach(() => {
-        api = new RestAPI({endpoint: "/", token: "token"})
-        token = new ApplicationToken(api)
-        scope = nock("http://localhost:80")
+        api = new RestAPI({endpoint: testEndpoint, camel : true })
+        scope = nock(testEndpoint)
+        applicationTokens = new ApplicationTokens(api)
     })
 
     afterEach(() => {
         nock.cleanAll()
     })
 
-    it("should not allow to call forbidden actions", () => {
-        return Promise.all([
-            token.read().should.be.rejected.then((e: CommonError) => {
-                expect(e).to.be.an.instanceOf(RequestError)
-                expect(e.code).to.equal("ACTION_NOT_PERMITTED")
-            }),
-            token.update().should.be.rejected.then((e: CommonError) => {
-                expect(e).to.be.an.instanceOf(RequestError)
-                expect(e.code).to.equal("ACTION_NOT_PERMITTED")
-            })
-        ])
+    context("route GET /merchants/:merchantId/stores/:storeId/app_tokens", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "list" }
+            const okScope = scope
+                .get(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
+                .twice()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+            return Promise.all([
+                applicationTokens.list("1").should.eventually.eql(okResponse),
+                applicationTokens.list("1", null, null, "1").should.eventually.eql(okResponse),
+            ])
+        })
     })
 
-    it("should call the api without data and get successful response", () => {
-        const okResponse = { status : "created" }
-        const okScope = scope
-            .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
-            .twice()
-            .reply(201, okResponse, { "Content-Type" : "application/json" })
+    context("route POST /merchants/:merchantId/stores/:storeId/app_tokens", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "create" }
+            const okScope = scope
+                .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
+                .twice()
+                .reply(201, okResponse, { "Content-Type" : "application/json" })
 
-        return Promise.all([
-            token.create({ storeId : "1" }).should.eventually.eql(okResponse),
-            token.create({ merchantId : "1", storeId : "1" }).should.eventually.eql(okResponse)
-        ])
+            return Promise.all([
+                applicationTokens.create("1").should.eventually.eql(okResponse),
+                applicationTokens.create("1", null, "1").should.eventually.eql(okResponse),
+            ])
+        })
     })
 
-    it("should call the api to delete token", () => {
-        const okScope = scope
-            .delete(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens\/[a-f0-9\-]+$/i)
-            .twice()
-            .reply(204, null)
+    context("route DELETE /merchants/:merchantId/stores/:storeId/app_tokens/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "delete" }
+            const okScope = scope
+                .delete(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens\/[a-z0-9\-]+$/i)
+                .twice()
+                .reply(204, okResponse, { "Content-Type" : "application/json" })
 
-        return Promise.all([
-            token.delete({ storeId : "1", id: "123" }).should.eventually.be.null,
-            token.delete({ merchantId: "1", storeId : "1", id: "123" }).should.eventually.be.null
-        ])
+            return Promise.all([
+                applicationTokens.delete("1", "1").should.eventually.eql(okResponse),
+                applicationTokens.delete("1", "1", null, "1").should.eventually.eql(okResponse),
+            ])
+        })
     })
 
 })

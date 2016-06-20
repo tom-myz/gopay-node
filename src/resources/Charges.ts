@@ -24,21 +24,19 @@ export class Charges extends CRUDResource {
     }
 
     public list (storeId: string,
-                 data: CRUDPaginationParams,
                  callback?: SDKCallbackFunction,
+                 data?: CRUDPaginationParams,
                  merchantId?: string,
                  token?: string): Promise<any> {
         const params: CRUDStoreIdParam = { storeId, merchantId }
         return this._listRoute(params, data, callback, { token })
     }
 
-    public create (storeId: string,
-                   data: ChargeCreateParams,
+    public create (data: ChargeCreateParams,
                    callback?: SDKCallbackFunction,
                    merchantId?: string,
                    token?: string): Promise<any> {
-        const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._createRoute(params, data, callback, { token, validationSchema : chargeCreateSchema })
+        return this._createRoute(null, data, callback, { token, validationSchema : chargeCreateSchema })
     }
 
     public get (storeId: string,

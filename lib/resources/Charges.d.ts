@@ -9,7 +9,7 @@ export interface ChargeCreateParams {
 export declare class Charges extends CRUDResource {
     static routeBase: string;
     constructor(api: RestAPI);
-    list(storeId: string, data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    create(storeId: string, data: ChargeCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
+    list(storeId: string, callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, token?: string): Promise<any>;
+    create(data: ChargeCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     get(storeId: string, id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
 }
