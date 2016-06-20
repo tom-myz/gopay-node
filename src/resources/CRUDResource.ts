@@ -3,7 +3,7 @@ import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
 import { RestAPI } from "../api/RestAPI"
 import Validator = require("validatorjs")
-import { errorFromValidation } from "../errors/SDKError"
+import {errorFromValidation, SDKError} from "../errors/SDKError"
 import { validationCodes } from "../validation/error-codes"
 
 export interface PathParams { [key: string]: (string | number) }
@@ -39,7 +39,7 @@ export interface CRUDOptionalParams {
     [key: string]: any
 }
 
-const methodsMap = {
+const methodsMap: any = {
     "GET"    : "get",
     "POST"   : "post",
     "PUT"    : "put",
@@ -73,7 +73,7 @@ export abstract class CRUDResource extends WithAPI {
         this._deleteRoute = this.defineRoute("DELETE", `${routeBase}/:id`)
     }
 
-    static compilePath<P> (path: string, pathParams: P): string {
+    public static compilePath<P> (path: string, pathParams: P): string {
         return path
             .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
                 const part: string = o.replace(/:(\w+)/ig, (s: string, p: string) => {
@@ -85,22 +85,22 @@ export abstract class CRUDResource extends WithAPI {
     }
 
     public defineRoute (method: CRUDMethod, path: string): CRUDDefinedRoute {
-        const api = this.api
+        const api: RestAPI = this.api
         const defaultOptions: CRUDOptionalParams = {} as CRUDOptionalParams
 
         return function route<P, D> (pathParams: P,
                                      data?: D,
-                                     callback: SDKCallbackFunction = (err, result) => {},
+                                     callback: SDKCallbackFunction = (err: SDKError, result: any) => null,
                                      options: CRUDOptionalParams = defaultOptions): Promise<any> {
 
             const url: string = CRUDResource.compilePath(path, pathParams)
             const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
-            const schema = options.validationSchema || {}
+            const schema: any = options.validationSchema || {}
             const validator: Validator = new Validator(data, schema, validationCodes)
 
             if (validator.fails()) {
-                const errors = validator.errors.all()
-                const err = errorFromValidation(errors)
+                const errors: any = validator.errors.all()
+                const err: SDKError = errorFromValidation(errors)
                 callback(err, null)
                 return Promise.reject(err)
             }
@@ -112,7 +112,5 @@ export abstract class CRUDResource extends WithAPI {
             )
         }
     }
-
-    public validate () {}
 
 }

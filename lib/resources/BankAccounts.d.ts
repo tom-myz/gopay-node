@@ -28,4 +28,5 @@ export declare class BankAccounts extends CRUDResource {
     create(data: BankAccountCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     update(id: string, data?: BankAccountUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
+    delete(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
 }

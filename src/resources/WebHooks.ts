@@ -11,26 +11,52 @@ export interface WebHookUpdateParams extends WebHookCommonParams {}
 
 export class WebHooks extends CRUDResource {
 
-    static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/webhooks"
+    public static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/webhooks"
 
-    public list (storeId: string, data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public list (storeId: string,
+                 data: CRUDPaginationParams,
+                 callback?: SDKCallbackFunction,
+                 merchantId?: string,
+                 token?: string): Promise<any> {
         const params: CRUDStoreIdParam = { storeId, merchantId }
         return this._listRoute(params, data, callback, { token })
     }
 
-    public create (storeId: string, data: WebHookCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public create (storeId: string,
+                   data: WebHookCreateParams,
+                   callback?: SDKCallbackFunction,
+                   merchantId?: string,
+                   token?: string): Promise<any> {
         const params: CRUDStoreIdParam = { storeId, merchantId }
         return this._createRoute(params, data, callback, { token, validationSchema : webHookCreateSchema })
     }
 
-    public get (storeId: string, id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public get (storeId: string,
+                id: string,
+                callback?: SDKCallbackFunction,
+                merchantId?: string,
+                token?: string): Promise<any> {
         const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
         return this._getRoute(params, null, callback, { token })
     }
 
-    public update (storeId: string, id: string, data?: WebHookUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public update (storeId: string,
+                   id: string,
+                   data?: WebHookUpdateParams,
+                   callback?: SDKCallbackFunction,
+                   merchantId?: string,
+                   token?: string): Promise<any> {
         const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
         return this._updateRoute(params, data, callback, { token, validationSchema : webHookUpdateSchema })
+    }
+
+    public delete (storeId: string,
+                   id: string,
+                   callback?: SDKCallbackFunction,
+                   merchantId?: string,
+                   token?: string): Promise<any> {
+        const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
+        return this._deleteRoute(params, null, callback, { token })
     }
 
 }

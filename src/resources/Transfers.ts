@@ -20,24 +20,37 @@ export interface TransferUpdateParams extends TransferCommonParams {}
 
 export class Transfers extends CRUDResource {
 
-    static routeBase: string = "/(merchants/:merchantId/)transfers"
+    public static routeBase: string = "/(merchants/:merchantId/)transfers"
 
-    public list (data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public list (data: CRUDPaginationParams,
+                 callback?: SDKCallbackFunction,
+                 merchantId?: string,
+                 token?: string): Promise<any> {
         const params: CRUDMerchantIdParam = { merchantId }
         return this._listRoute(params, data, callback, { token })
     }
 
-    public create (data: TransferCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public create (data: TransferCreateParams,
+                   callback?: SDKCallbackFunction,
+                   merchantId?: string,
+                   token?: string): Promise<any> {
         const params: CRUDMerchantIdParam = { merchantId }
         return this._createRoute(params, data, callback, { token, validationSchema : transferSchema })
     }
 
-    public get (id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public get (id: string,
+                callback?: SDKCallbackFunction,
+                merchantId?: string,
+                token?: string): Promise<any> {
         const params: CRUDIdMerchantIdParam = { id, merchantId }
         return this._getRoute(params, null, callback, { token })
     }
 
-    public update (id: string, data?: TransferUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string) {
+    public update (id: string,
+                   data?: TransferUpdateParams,
+                   callback?: SDKCallbackFunction,
+                   merchantId?: string,
+                   token?: string): Promise<any> {
         const params: CRUDIdMerchantIdParam = { id, merchantId }
         return this._updateRoute(params, data, callback, { token, validationSchema : transferSchema })
     }

@@ -1,12 +1,12 @@
 import { process } from "process"
 import superagent = require("superagent")
 import prefix = require("superagent-prefix")
-import {errorUnknown, errorFromResponse, SDKError} from "../errors/SDKError"
+import { errorFromResponse, SDKError } from "../errors/SDKError"
 import { underscore, camelCase } from "../utils"
 
-const DEFAULT_ENDPOINT = "http://localhost:9000"
-const DEFAULT_ENV_APP_ID = ""
-const DEFAULT_ENV_SECRET = ""
+const DEFAULT_ENDPOINT: string = "http://localhost:9000"
+const DEFAULT_ENV_APP_ID: string = "GPAY_APP_ID"
+const DEFAULT_ENV_SECRET: string = "GPAY_SECRET"
 
 export interface RestAPIOptions {
     endpoint?: string
@@ -32,7 +32,7 @@ export class RestAPI {
         this.camel = options.camel || false
     }
 
-    static requestParams (params: Object): Object {
+    public static requestParams (params: Object): Object {
         return underscore(params)
     }
 
@@ -41,22 +41,22 @@ export class RestAPI {
     }
 
     public send (request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any> {
-        const _token = token || this.token
+        const _token: string = token || this.token
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve: Function, reject: Function) => {
             request
                 .use(prefix(this.endpoint))
                 .accept("json")
                 .type("json")
                 .set("Authorization", _token ? `Token ${_token}` : `${this.appId}|${this.secret}`)
                 .end((error: any, response: superagent.Response) => {
-                    const err = errorFromResponse(response)
+                    const err: SDKError = errorFromResponse(response)
 
                     if (error || err !== null) {
                         callback(err, null)
                         reject(err)
                     } else {
-                        const result = this.camel ? camelCase(response.body) : response.body
+                        const result: any = this.camel ? camelCase(response.body) : response.body
                         callback(null, result)
                         resolve(result)
                     }

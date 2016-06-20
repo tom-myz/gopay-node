@@ -38,5 +38,4 @@ export declare abstract class CRUDResource extends WithAPI {
     constructor(api: RestAPI);
     static compilePath<P>(path: string, pathParams: P): string;
     defineRoute(method: CRUDMethod, path: string): CRUDDefinedRoute;
-    validate(): void;
 }

@@ -16,4 +16,5 @@ export declare class Stores extends CRUDResource {
     create(data: StoreCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     update(id: string, data?: StoreUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
+    delete(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
 }

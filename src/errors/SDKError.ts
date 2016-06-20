@@ -4,21 +4,21 @@ import * as Code from "./ErrorsConstants"
 export type SDKErrorType = "request" | "response"
 
 export interface SDKError {
-    type: SDKErrorType
-    status: number
     code: string
-    errors : Array<any>
+    errors: Array<any>
+    status: number
+    type: SDKErrorType
 }
 
-const SDKErrorDefaults: SDKError = {
-    type    : "request",
-    status  : 0,
-    code    : Code.UNKNOWN,
-    errors  : []
+const defaultSDKError: SDKError = {
+    code   : Code.UNKNOWN,
+    errors : [],
+    status : 0,
+    type   : "request"
 }
 
-function getCodeByStatus (status: number) {
-    const codeMap = {
+function getCodeByStatus (status: number): string {
+    const codeMap: any = {
         400 : Code.BAD_REQUEST,
         401 : Code.NOT_AUTHORIZED,
         403 : Code.FORBIDDEN,
@@ -38,7 +38,7 @@ function getCodeByStatus (status: number) {
 }
 
 export function errorUnknown (type: SDKErrorType): SDKError {
-    return Object.assign(SDKErrorDefaults, { type }) as SDKError
+    return Object.assign({}, defaultSDKError, { type }) as SDKError
 }
 
 export function errorFromResponse (response: superagent.Response): SDKError {
@@ -60,19 +60,19 @@ export function errorFromResponse (response: superagent.Response): SDKError {
     }
 
     if (body) {
-        return Object.assign({}, SDKErrorDefaults, {
-            type   : "response",
+        return Object.assign({}, defaultSDKError, {
             code   : body.code,
             errors : body.errors,
-            status
+            status,
+            type   : "response"
         })
     }
 
-    return Object.assign({}, SDKErrorDefaults, {
-        type   : "response",
+    return Object.assign({}, defaultSDKError, {
         code   : getCodeByStatus(status),
         errors : [],
-        status
+        status,
+        type   : "response"
     })
 }
 
@@ -82,7 +82,7 @@ export function errorFromValidation (errors: any): SDKError {
         reason: string
     }
 
-    return Object.assign({}, SDKErrorDefaults, {
+    return Object.assign({}, defaultSDKError, {
         code   : Code.VALIDATION_ERROR,
         errors : Object.keys(errors).reduce((r: Array<ValidationError>, field: string) => {
             const codes: Array<string> = errors[field]

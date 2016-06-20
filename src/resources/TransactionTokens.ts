@@ -1,4 +1,4 @@
-import { CRUDResource, CRUDIdParam, CRUDPaginationParams } from "./CRUDResource"
+import { CRUDResource, CRUDIdParam } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { ContactInfoParams } from "./common/ContactInfo"
 import { getTransactionTokenSchema } from "../validation/schemas/transaction-token"
@@ -21,19 +21,21 @@ export interface TransactionTokenCreateParams<A> {
 
 export class TransactionTokens extends CRUDResource {
 
-    static routeBase: string = "/tokens"
+    public static routeBase: string = "/tokens"
 
-    public create (data: TransactionTokenCreateParams<any>, callback?: SDKCallbackFunction, token?: string) {
-        const validationSchema = getTransactionTokenSchema(data.type)
+    public create (data: TransactionTokenCreateParams<any>,
+                   callback?: SDKCallbackFunction,
+                   token?: string): Promise<any> {
+        const validationSchema: any = getTransactionTokenSchema(data.type)
         return this._createRoute(null, data, callback, { token, validationSchema })
     }
 
-    public get (id: string, callback?: SDKCallbackFunction, token?: string) {
+    public get (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
         const params: CRUDIdParam = { id }
         return this._getRoute(params, null, callback, { token })
     }
 
-    public delete (id: string, callback?: SDKCallbackFunction, token?: string) {
+    public delete (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
         const params: CRUDIdParam = { id }
         return this._updateRoute(params, null, callback, { token })
     }
