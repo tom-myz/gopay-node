@@ -45,7 +45,7 @@ describe("Transfers", () => {
                 .post(/(merchants\/[a-f0-9\-]+\/)?transfers$/i)
                 .twice()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = { daysPrior : 7 }
+            const data = { processTo : "2020-01-01T00:00:00Z" }
 
             return Promise.all([
                 transfers.create(data).should.eventually.eql(okResponse),
@@ -55,7 +55,8 @@ describe("Transfers", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { daysPrior : "" }
+                //{ processTo : "" },
+                { processFrom : "a", processTo : "a" }
             ]
 
             return Promise.all(asserts.map((a: any) => {
@@ -91,28 +92,12 @@ describe("Transfers", () => {
                 .patch(/(merchants\/[a-f0-9\-]+\/)?transfers\/[a-f-0-9\-]+$/i)
                 .twice()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
-            const data = { daysPrior : 7 }
+            const data = { status : "test" }
 
             return Promise.all([
                 transfers.update("1", data).should.eventually.eql(okResponse),
                 transfers.update("1", data, null, "1").should.eventually.eql(okResponse)
             ])
-        })
-
-        it("should return validation error if data is invalid", () => {
-            const asserts = [
-                { daysPrior : "" },
-                { daysPrior : "a" }
-            ]
-
-            return Promise.all(asserts.map((a: any) => {
-                return transfers.update("1", a).should.be.rejected
-                    .then((e: SDKError) => {
-                        expect(e.code).to.equal(VALIDATION_ERROR)
-                        expect(e.type).to.equal("request")
-                        expect(e.status).to.equal(0)
-                    })
-            }))
         })
     })
 

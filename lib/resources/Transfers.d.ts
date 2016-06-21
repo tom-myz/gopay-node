@@ -9,7 +9,8 @@ export interface TransferCommonParams {
     metadata?: Object;
 }
 export interface TransferCreateParams extends TransferCommonParams {
-    daysPrior: number;
+    processFrom?: string;
+    processTo: string;
 }
 export interface TransferUpdateParams extends TransferCommonParams {
 }

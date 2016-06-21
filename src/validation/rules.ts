@@ -23,3 +23,11 @@ export const ruleUUID: RuleDefinition = [
     },
     "The :attribute is valid UUID."
 ]
+
+export const ruleDate: RuleDefinition = [
+    "date",
+    function (val: string): boolean {
+        return (new Date(val)).toString() !== "Invalid Date"
+    },
+    "The :attribute is not valid date format."
+]

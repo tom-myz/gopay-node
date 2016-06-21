@@ -1,6 +1,6 @@
 import { CRUDResource, CRUDMerchantIdParam, CRUDIdMerchantIdParam, CRUDPaginationParams } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { transferSchema } from "../validation/schemas/transfer"
+import { transferCreateSchema, transferUpdateSchema } from "../validation/schemas/transfer"
 
 export interface TransferCommonParams {
     bankAccountId?: string
@@ -12,7 +12,8 @@ export interface TransferCommonParams {
 }
 
 export interface TransferCreateParams extends TransferCommonParams {
-    daysPrior: number
+    processFrom?: string
+    processTo: string
 }
 
 export interface TransferUpdateParams extends TransferCommonParams {}
@@ -35,7 +36,7 @@ export class Transfers extends CRUDResource {
                    merchantId?: string,
                    token?: string): Promise<any> {
         const params: CRUDMerchantIdParam = { merchantId }
-        return this._createRoute(params, data, callback, { token, validationSchema : transferSchema })
+        return this._createRoute(params, data, callback, { token, validationSchema : transferCreateSchema })
     }
 
     public get (id: string,
@@ -52,7 +53,7 @@ export class Transfers extends CRUDResource {
                    merchantId?: string,
                    token?: string): Promise<any> {
         const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._updateRoute(params, data, callback, { token, validationSchema : transferSchema })
+        return this._updateRoute(params, data, callback, { token, validationSchema : transferUpdateSchema })
     }
 
 }

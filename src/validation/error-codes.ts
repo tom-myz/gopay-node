@@ -1,6 +1,7 @@
 export const validationCodes: any = {
     between  : "INVALID_FORMAT_LENGTH",
     boolean  : "INVALID_FORMAT_BOOLEAN",
+    date     : "INVALID_FORMAT_DATE",
     email    : "INVALID_FORMAT_EMAIL",
     max : {
         string : "INVALID_FORMAT_LENGTH"

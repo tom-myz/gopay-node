@@ -2,6 +2,7 @@ import superagent = require("superagent")
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
 import { RestAPI } from "../api/RestAPI"
+import { DataValidator } from "../validation/validator"
 import Validator = require("validatorjs")
 import {errorFromValidation, SDKError} from "../errors/SDKError"
 import { validationCodes } from "../validation/error-codes"
@@ -81,7 +82,7 @@ export abstract class CRUDResource extends WithAPI {
                 })
                 return part.indexOf(":") === -1 ? part.replace(/\(|\)/g, "") : ""
             })
-            .replace(/:(\w+)/ig, (_: string, p: string) => (pathParams as any)[p])
+            .replace(/:(\w+)/ig, (s: string, p: string) => (pathParams as any)[p] || s)
     }
 
     public defineRoute (method: CRUDMethod, path: string): CRUDDefinedRoute {
@@ -96,7 +97,7 @@ export abstract class CRUDResource extends WithAPI {
             const url: string = CRUDResource.compilePath(path, pathParams)
             const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
             const schema: any = options.validationSchema || {}
-            const validator: Validator = new Validator(data || {}, schema, validationCodes)
+            const validator: Validator = DataValidator.create(data || {}, schema, validationCodes)
             const cb: SDKCallbackFunction = callback || ((err: SDKError, result: any) => null)
 
             if (validator.fails()) {

@@ -11,8 +11,8 @@ export function getTransactionTokenSchema (type?: string) {
             return Object.assign({}, transactionTokenSchema, {
                 "data.cardholder" : "required|string",
                 "data.cardNumber" : "required|string",
-                "data.expMonth"   : "required|string|size:2",
-                "data.expYear"    : "required|string|between:2,4",
+                "data.expMonth"   : "required|numeric",
+                "data.expYear"    : "required|numeric",
                 "data.cvv"        : "required|string|between:3,4"
             }, getContactInfoSchema("data.address."))
 
