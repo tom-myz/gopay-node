@@ -13,8 +13,6 @@ export interface TokenCardData {
 }
 
 export interface TransactionTokenCreateParams<A> {
-    storeId: string
-    token: string
     type: string
     data: A
 }
@@ -24,10 +22,9 @@ export class TransactionTokens extends CRUDResource {
     public static routeBase: string = "/tokens"
 
     public create (data: TransactionTokenCreateParams<any>,
-                   callback?: SDKCallbackFunction,
-                   token?: string): Promise<any> {
+                   callback?: SDKCallbackFunction): Promise<any> {
         const validationSchema: any = getTransactionTokenSchema(data.type)
-        return this._createRoute(null, data, callback, { token, validationSchema })
+        return this._createRoute(null, data, callback, { validationSchema })
     }
 
     public get (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
@@ -37,7 +34,7 @@ export class TransactionTokens extends CRUDResource {
 
     public delete (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
         const params: CRUDIdParam = { id }
-        return this._updateRoute(params, null, callback, { token })
+        return this._deleteRoute(params, null, callback, { token })
     }
 
 }

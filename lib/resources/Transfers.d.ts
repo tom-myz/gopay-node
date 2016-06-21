@@ -15,7 +15,7 @@ export interface TransferUpdateParams extends TransferCommonParams {
 }
 export declare class Transfers extends CRUDResource {
     static routeBase: string;
-    list(data: CRUDPaginationParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
+    list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, token?: string): Promise<any>;
     create(data: TransferCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     update(id: string, data?: TransferUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;

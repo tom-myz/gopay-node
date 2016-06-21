@@ -19,8 +19,8 @@ export class Stores extends CRUDResource {
 
     public static routeBase: string = "/(merchants/:merchantId/)stores"
 
-    public list (data: CRUDPaginationParams,
-                 callback?: SDKCallbackFunction,
+    public list (callback?: SDKCallbackFunction,
+                 data?: CRUDPaginationParams,
                  merchantId?: string,
                  token?: string): Promise<any> {
         const params: CRUDMerchantIdParam = { merchantId }

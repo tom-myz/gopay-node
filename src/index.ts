@@ -3,10 +3,11 @@ import { Authorization } from "./resources/Authorization"
 import { Merchants } from "./resources/Merchants"
 import { Stores } from "./resources/Stores"
 import { Transfers } from "./resources/Transfers"
-import { Payouts } from "./resources/Payouts"
+import { Ledger } from "./resources/Ledger"
 import { BankAccounts } from "./resources/BankAccounts"
 import { WebHooks } from "./resources/WebHooks"
 import { ApplicationTokens } from "./resources/ApplicationTokens"
+import { TransactionTokens } from "./resources/TransactionTokens"
 import { Charges } from "./resources/Charges"
 
 import Validator = require("validatorjs")
@@ -27,10 +28,11 @@ export class PaymentsSDK {
     public stores: Stores
     public charges: Charges
     public transfers: Transfers
-    public payouts: Payouts
+    public ledger: Ledger
     public bankAccounts: BankAccounts
     public webHooks: WebHooks
     public applicationTokens: ApplicationTokens
+    public transactionTokens: TransactionTokens
 
     constructor (options?: RestAPIOptions) {
         this.api = new RestAPI(options)
@@ -41,10 +43,11 @@ export class PaymentsSDK {
         this.stores = new Stores(this.api)
         this.charges = new Charges(this.api)
         this.transfers = new Transfers(this.api)
-        this.payouts = new Payouts(this.api)
+        this.ledger = new Ledger(this.api)
         this.bankAccounts = new BankAccounts(this.api)
         this.webHooks = new WebHooks(this.api)
         this.applicationTokens = new ApplicationTokens(this.api)
+        this.transactionTokens = new TransactionTokens(this.api)
     }
 }
 

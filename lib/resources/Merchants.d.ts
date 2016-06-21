@@ -25,7 +25,7 @@ export declare class Merchants extends CRUDResource {
     static routeBase: string;
     _changePasswordRoute: CRUDDefinedRoute;
     _resetPasswordRoute: CRUDDefinedRoute;
-    list(data: CRUDPaginationParams, callback?: SDKCallbackFunction, token?: string): Promise<any>;
+    list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, token?: string): Promise<any>;
     create(data: MerchantCreateParams, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     update(id: string, data?: MerchantUpdateParams, callback?: SDKCallbackFunction, token?: string): Promise<any>;

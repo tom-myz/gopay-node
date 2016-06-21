@@ -91,7 +91,6 @@ describe("Bank Accounts", () => {
     })
 
     context("route PATCH /merchants/:merchantId/bank_accounts/:id", () => {
-
         it("should return correct response", () => {
             const okResponse = { action : "update" }
             const okScope = scope

@@ -24,7 +24,6 @@ describe("Authorization", () => {
     })
 
     context("route POST /authenticate", () => {
-
         it("should correctly authorize user with credentials", function () {
             this.timeout(200)
             const authScope = scope

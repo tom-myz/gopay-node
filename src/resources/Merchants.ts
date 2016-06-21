@@ -48,7 +48,7 @@ export class Merchants extends CRUDResource {
     public _resetPasswordRoute: CRUDDefinedRoute =
         this.defineRoute("POST", "/reset_password")
 
-    public list (data: CRUDPaginationParams, callback?: SDKCallbackFunction, token?: string): Promise<any> {
+    public list (callback?: SDKCallbackFunction, data?: CRUDPaginationParams, token?: string): Promise<any> {
         return this._listRoute(null, data, callback, { token })
     }
 

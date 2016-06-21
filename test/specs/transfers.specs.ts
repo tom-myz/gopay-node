@@ -2,20 +2,20 @@ import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
-import { Merchants } from "../../src/resources/Merchants"
+import { Transfers } from "../../src/resources/Transfers"
 import { Scope } from "~nock/index"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 import { SDKError } from "../../src/errors/SDKError"
 
-describe("Merchants", () => {
+describe("Transfers", () => {
     let api: RestAPI
-    let merchants: Merchants
+    let transfers: Transfers
     let scope: Scope
     const testEndpoint = "http://localhost:80"
 
     beforeEach(() => {
         api = new RestAPI({endpoint: testEndpoint })
-        merchants = new Merchants(api)
+        transfers = new Transfers(api)
         scope = nock(testEndpoint)
     })
 
@@ -23,41 +23,43 @@ describe("Merchants", () => {
         nock.cleanAll()
     })
 
-    context("route GET /merchants", () => {
+    context("route GET /merchants/:merchantId/transfers", () => {
         it("should return correct response", () => {
             const okResponse = { action : "list" }
             const okScope = scope
-                .get("/merchants")
-                .once()
+                .get(/(merchants\/[a-f0-9\-]+\/)?transfers$/i)
+                .twice()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return merchants.list().should.eventually.eql(okResponse)
+            return Promise.all([
+                transfers.list().should.eventually.eql(okResponse),
+                transfers.list(null, null, "1").should.eventually.eql(okResponse),
+            ])
         })
     })
 
-    context("route POST /merchants", () => {
+    context("route POST /merchants/:merchantId/transfers", () => {
         it("should return correct response", () => {
             const okResponse = { action : "create" }
             const okScope = scope
-                .post("/merchants")
-                .once()
+                .post(/(merchants\/[a-f0-9\-]+\/)?transfers$/i)
+                .twice()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = {
-                email : "test@test.com",
-                password: "1234567890"
-            }
+            const data = { daysPrior : 7 }
 
-            return merchants.create(data).should.eventually.eql(okResponse)
+            return Promise.all([
+                transfers.create(data).should.eventually.eql(okResponse),
+                transfers.create(data, null, "1").should.eventually.eql(okResponse),
+            ])
         })
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { email: "", password: "" },
-                { email: "test", password: "1234" }
+                { daysPrior : "" }
             ]
 
             return Promise.all(asserts.map((a: any) => {
-                return merchants.create(a).should.be.rejected
+                return transfers.create(a).should.be.rejected
                     .then((e: SDKError) => {
                         expect(e.code).to.equal(VALIDATION_ERROR)
                         expect(e.type).to.equal("request")
@@ -67,37 +69,44 @@ describe("Merchants", () => {
         })
     })
 
-    context("route GET /merchants/:id", () => {
+    context("route GET /merchants/:merchantId/transfers/:id", () => {
         it("should return correct response", () => {
             const okResponse = { action : "read" }
             const scopeScope = scope
-                .get(/merchants\/[a-f-0-9\-]+$/i)
-                .once()
+                .get(/(merchants\/[a-f0-9\-]+\/)?transfers\/[a-f-0-9\-]+$/i)
+                .twice()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return merchants.get("1").should.eventually.eql(okResponse)
+            return Promise.all([
+                transfers.get("1").should.eventually.eql(okResponse),
+                transfers.get("1", null, "1").should.eventually.eql(okResponse),
+            ])
         })
     })
 
-    context("route PATCH /merchants/:id", () => {
+    context("route PATCH /merchants/:merchantId/transfers/:id", () => {
         it("should return correct response", () => {
             const okResponse = { action : "update" }
             const okScope = scope
-                .patch(/merchants\/[a-f0-9\-]+$/i)
-                .once()
+                .patch(/(merchants\/[a-f0-9\-]+\/)?transfers\/[a-f-0-9\-]+$/i)
+                .twice()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
-            const data = { email : "test@test.com" }
+            const data = { daysPrior : 7 }
 
-            return merchants.update("1", data).should.eventually.eql(okResponse)
+            return Promise.all([
+                transfers.update("1", data).should.eventually.eql(okResponse),
+                transfers.update("1", data, null, "1").should.eventually.eql(okResponse)
+            ])
         })
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { email : "test" }
+                { daysPrior : "" },
+                { daysPrior : "a" }
             ]
 
             return Promise.all(asserts.map((a: any) => {
-                return merchants.update("1", a).should.be.rejected
+                return transfers.update("1", a).should.be.rejected
                     .then((e: SDKError) => {
                         expect(e.code).to.equal(VALIDATION_ERROR)
                         expect(e.type).to.equal("request")

@@ -22,8 +22,8 @@ export class Transfers extends CRUDResource {
 
     public static routeBase: string = "/(merchants/:merchantId/)transfers"
 
-    public list (data: CRUDPaginationParams,
-                 callback?: SDKCallbackFunction,
+    public list (callback?: SDKCallbackFunction,
+                 data?: CRUDPaginationParams,
                  merchantId?: string,
                  token?: string): Promise<any> {
         const params: CRUDMerchantIdParam = { merchantId }

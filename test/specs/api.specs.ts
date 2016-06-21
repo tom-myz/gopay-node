@@ -157,5 +157,4 @@ describe("RestAPI", () => {
         return api.send(req, () => null).should.eventually.be.fulfilled
             .then((r: any) => expect(r).to.eql({ fooBar : true }))
     })
-
 })
