@@ -8,14 +8,13 @@
     "url"  : "git@github.com:ubicast/gyron-payments-js-sdk.git"
   },
   "main": "lib/index.js",
-  "typings": "lib/gyron-payments-js-sdk.d.ts",
+  "typings": "lib/index.d.ts",
   "files": [
     "lib/"
   ],
   "devDependencies" : {
     "chai": "~3.5.0",
     "chai-as-promised": "~5.3.0",
-    "dts-generator": "~1.7.0",
     "html-webpack-plugin": "~2.17.0",
     "jsdom": "~9.2.1",
     "jsdom-global": "~2.0.0",
@@ -50,7 +49,6 @@
     "clean": "npm prune && rm -rf node_modules typings lib",
     "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts",
     "compile": "./node_modules/typescript/bin/tsc",
-    "typings": "./node_modules/dts-generator/bin/dts-generator --name gyron-payments-js-sdk --out lib/gyron-payments-js-sdk.d.ts --project .",
-    "build": "npm run compile && npm run typings"
+    "build": "npm run compile"
   }
 }
