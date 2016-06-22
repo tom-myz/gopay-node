@@ -1,4 +1,4 @@
 export const authorizeSchema = {
     email    : "required|email",
-    password : "required|string|between:8,32"
+    password : "required|min:8|max:32"
 }

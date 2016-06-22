@@ -13,7 +13,7 @@ export function getTransactionTokenSchema (type?: string) {
                 "data.cardNumber" : "required|string",
                 "data.expMonth"   : "required|numeric",
                 "data.expYear"    : "required|numeric",
-                "data.cvv"        : "required|string|between:3,4"
+                "data.cvv"        : "required|min:3|max:4"
             }, getContactInfoSchema("data.address."))
 
         default :
