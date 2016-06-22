@@ -40,6 +40,10 @@ export class RestAPI {
         this.token = token
     }
 
+    public getToken(): string {
+        return this.token
+    }
+
     public send (request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any> {
         const _token: string = token || this.token
         let header: string

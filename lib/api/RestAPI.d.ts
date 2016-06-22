@@ -19,5 +19,6 @@ export declare class RestAPI {
     constructor(options: RestAPIOptions);
     static requestParams(params: Object): Object;
     setToken(token: string): void;
+    getToken(): string;
     send(request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any>;
 }
