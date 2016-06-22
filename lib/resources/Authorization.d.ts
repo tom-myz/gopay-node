@@ -1,15 +1,10 @@
-import { WithAPI } from "../api/WithAPI";
-import { ValidationSchema, ValidatedResource } from "../validation/Validation";
-export interface AuthorizationCredentials {
+import { CRUDResource } from "./CRUDResource";
+import { SDKCallbackFunction } from "../api/RestAPI";
+export interface AuthorizeParams {
     email: string;
     password: string;
 }
-export interface AuthorizationResponse {
-    token: string;
-    merchantId: string;
-}
-export declare class Authorization extends WithAPI implements ValidatedResource<AuthorizationCredentials> {
-    private validation;
-    validate(data: AuthorizationCredentials, schema: ValidationSchema): Promise<AuthorizationCredentials>;
-    authorize(credentials: AuthorizationCredentials): Promise<AuthorizationResponse>;
+export declare class Authorization extends CRUDResource {
+    private _authorizeRoute;
+    authorize(data: AuthorizeParams, callback?: SDKCallbackFunction): Promise<any>;
 }

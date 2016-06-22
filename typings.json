@@ -3,18 +3,15 @@
     "camelcase": "registry:dt/camelcase#0.0.0+20160316155526",
     "chai": "registry:dt/chai#3.4.0+20160317120654",
     "chai-as-promised": "registry:dt/chai-as-promised#0.0.0+20160423070304",
-    "core-js": "registry:dt/core-js#0.0.0+20160524134847",
     "decamelize": "registry:dt/decamelize#0.0.0+20160316155526",
-    "deep-equal": "registry:dt/deep-equal#0.0.0+20160316155526",
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",
     "node": "registry:dt/node#6.0.0+20160524002506",
-    "node-polyglot": "registry:dt/node-polyglot#0.4.1+20160317120654",
     "promises-a-plus": "registry:dt/promises-a-plus#0.0.0+20160317120654",
     "sinon": "registry:dt/sinon#1.16.0+20160517064723",
-    "sinon-chai": "registry:dt/sinon-chai#2.7.0+20160317120654"
+    "sinon-chai": "registry:dt/sinon-chai#2.7.0+20160317120654",
+    "superagent": "registry:dt/superagent#1.4.0+20160317120654"
   },
   "dependencies": {
-    "nock": "registry:npm/nock#0.7.0+20160211003958",
-    "popsicle": "npm:popsicle"
+    "nock": "registry:npm/nock#0.7.0+20160211003958"
   }
 }

@@ -34,16 +34,12 @@
     "webpack-dev-server": "~1.14.1"
   },
   "dependencies": {
-    "camelcase" : "~3.0.0",
-    "core-js": "~2.4.0",
-    "debug": "~2.2.0",
-    "decamelize" : "~1.2.0",
-    "deep-equal": "~1.0.1",
-    "node-polyglot": "~2.0.0",
-    "popsicle": "~6.2.0",
-    "popsicle-resolve": "~2.1.0",
-    "popsicle-status": "~2.0.0",
-    "process": "~0.11.3"
+    "camelcase" : "^3.0.0",
+    "decamelize" : "^1.2.0",
+    "process": "^0.11.3",
+    "superagent": "^2.0.0",
+    "superagent-prefix": "^0.0.2",
+    "validatorjs": "~2.1.0"
   },
 
   "scripts" : {
@@ -52,6 +48,7 @@
     "start" : "webpack-dev-server",
     "clean": "npm prune && rm -rf node_modules typings lib",
     "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts",
-    "build": "tsc"
+    "compile": "./node_modules/typescript/bin/tsc",
+    "build": "npm run compile"
   }
 }
