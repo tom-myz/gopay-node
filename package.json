@@ -39,7 +39,7 @@
     "process": "^0.11.3",
     "superagent": "^2.0.0",
     "superagent-prefix": "^0.0.2",
-    "validatorjs": "lkay/validatorjs"
+    "validatorjs": "~2.1.0"
   },
 
   "scripts" : {
