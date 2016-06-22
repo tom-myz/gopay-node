@@ -1,6 +1,6 @@
 
 {
-  "name"    : "gyron-payments-node-sdk",
+  "name"    : "gyron-payments-js-sdk",
   "version" : "0.0.1",
   "license" : "MIT",
   "repository" : {
@@ -50,7 +50,7 @@
     "clean": "npm prune && rm -rf node_modules typings lib",
     "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts",
     "compile": "./node_modules/typescript/bin/tsc",
-    "typings": "./node_modules/dts-generator/bin/dts-generator --name gyron-payments-node-sdk --out lib/gyron-payments-node-sdk.d.ts --project .",
+    "typings": "./node_modules/dts-generator/bin/dts-generator --name gyron-payments-js-sdk --out lib/gyron-payments-js-sdk.d.ts --project .",
     "build": "npm run compile && npm run typings"
   }
 }

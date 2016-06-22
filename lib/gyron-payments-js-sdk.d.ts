@@ -4183,7 +4183,7 @@ declare module "validatorjs" {
     export = Validator
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const BAD_REQUEST: string;
 	export const NOT_AUTHORIZED: string;
 	export const FORBIDDEN: string;
@@ -4197,7 +4197,7 @@ declare module 'gyron-payments-node-sdk' {
 	export const UNKNOWN: string;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import superagent = require("superagent");
 	export type SDKErrorType = "request" | "response";
 	export interface SDKError {
@@ -4211,20 +4211,20 @@ declare module 'gyron-payments-node-sdk' {
 	export function errorFromValidation(errors: any): SDKError;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export function camelCase(obj: Object): Object;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export function underscore(obj: Object): Object;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export { camelCase } from 'camelCase';
 	export { underscore } from 'underscore';
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import superagent = require("superagent");
 	import { SDKError } from '../errors/SDKError';
 	export const DEFAULT_ENDPOINT: string;
@@ -4250,7 +4250,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { RestAPI } from 'RestAPI';
 	export abstract class WithAPI {
 	    api: RestAPI;
@@ -4258,7 +4258,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	 var _default: {
 	    endpoint: string;
 	    envAppId: string;
@@ -4267,7 +4267,7 @@ declare module 'gyron-payments-node-sdk' {
 	export default _default;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export type RuleDefinition = [string, (val: any, req?: any, attr?: string) => boolean, string];
 	export const ruleBoolean: RuleDefinition;
 	export const ruleObject: RuleDefinition;
@@ -4275,18 +4275,18 @@ declare module 'gyron-payments-node-sdk' {
 	export const ruleDate: RuleDefinition;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import Validator = require("validatorjs");
 	export class DataValidator {
 	    static create(data: any, schema: any, messages?: any): Validator;
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const validationCodes: any;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	import { WithAPI } from '../api/WithAPI';
 	import { RestAPI } from '../api/RestAPI';
@@ -4330,14 +4330,14 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const authorizeSchema: {
 	    email: string;
 	    password: string;
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	export interface AuthorizeParams {
@@ -4350,7 +4350,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export interface ContactInfoParams {
 	    phoneNumber?: string;
 	    line1?: string;
@@ -4363,7 +4363,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export interface GatewayCredentials {
 	}
 	export interface PavisionCredentials extends GatewayCredentials {
@@ -4379,7 +4379,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { GatewayCredentialsParams } from 'GatewayCredentials';
 	export interface ConfigurationParams {
 	    domains?: Array<string>;
@@ -4389,26 +4389,26 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export function getGatewayCredentialsSchema(prefix?: string): {};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export function getConfigurationSchema(prefix?: string): {} & {};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export function getContactInfoSchema(prefix?: string): {};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const merchantCreateSchema: any;
 	export const merchantUpdateSchema: any;
 	export function merchantChangePasswordSchema(isAdmin: boolean): any;
 	export const merchantResetPasswordSchema: any;
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams, CRUDDefinedRoute } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	import { ContactInfoParams } from 'common/ContactInfo';
@@ -4445,7 +4445,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const storeCreateSchema: {
 	    name: string;
 	} & {} & {};
@@ -4454,7 +4454,7 @@ declare module 'gyron-payments-node-sdk' {
 	} & {} & {};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	import { ConfigurationParams } from 'common/Configuration';
@@ -4477,7 +4477,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const transferCreateSchema: {
 	    processFrom: string;
 	    processTo: string;
@@ -4488,7 +4488,7 @@ declare module 'gyron-payments-node-sdk' {
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	export interface TransferCommonParams {
@@ -4514,14 +4514,14 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const ledgerUpdateSchema: {
 	    status: string;
 	    note: string;
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	export interface LedgerUpdateParams {
@@ -4535,7 +4535,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const bankAccountCreateSchema: {
 	    holderName: string;
 	    bankName: string;
@@ -4561,7 +4561,7 @@ declare module 'gyron-payments-node-sdk' {
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	export interface BankAccountCommonParams {
@@ -4596,7 +4596,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const webHookCreateSchema: {
 	    triggers: string;
 	    url: string;
@@ -4607,7 +4607,7 @@ declare module 'gyron-payments-node-sdk' {
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	export interface WebHookCommonParams {
@@ -4626,7 +4626,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	export class ApplicationTokens extends CRUDResource {
@@ -4637,13 +4637,13 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export function getTransactionTokenSchema(type?: string): {
 	    type: string;
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource } from 'CRUDResource';
 	import { SDKCallbackFunction } from '../api/RestAPI';
 	import { ContactInfoParams } from 'common/ContactInfo';
@@ -4667,7 +4667,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	export const chargeCreateSchema: {
 	    token: string;
 	    amount: string;
@@ -4676,7 +4676,7 @@ declare module 'gyron-payments-node-sdk' {
 	};
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { CRUDResource, CRUDPaginationParams } from 'CRUDResource';
 	import { SDKCallbackFunction, RestAPI } from '../api/RestAPI';
 	export interface ChargeCreateParams {
@@ -4694,7 +4694,7 @@ declare module 'gyron-payments-node-sdk' {
 	}
 
 }
-declare module 'gyron-payments-node-sdk' {
+declare module 'gyron-payments-js-sdk' {
 	import { RestAPI, RestAPIOptions } from 'api/RestAPI';
 	import { Authorization } from 'resources/Authorization';
 	import { Merchants } from 'resources/Merchants';
