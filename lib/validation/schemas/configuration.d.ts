@@ -1,1 +1,1 @@
-export declare function getConfigurationSchema(prefix?: string): any;
+export declare function getConfigurationSchema(prefix?: string): {} & {};
