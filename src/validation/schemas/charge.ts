@@ -1,7 +1,7 @@
 export const chargeCreateSchema = {
-    token    : "required|string",
+    token    : "required",
     amount   : "required|numeric",
-    currency : "required|string|min:3",
+    currency : "required|min:3",
     metadata : "object"
 }
 

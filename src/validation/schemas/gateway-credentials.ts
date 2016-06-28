@@ -1,8 +1,8 @@
 export function getGatewayCredentialsSchema (prefix: string = "") {
     return {
-        [`${prefix}payvision.merchantId`]   : "string",
+        [`${prefix}payvision.merchantId`]   : "",
         [`${prefix}payvision.merchantGuid`] : "uuid",
-        [`${prefix}worldpay.merchantId`]    : "string",
-        [`${prefix}worldpay.password`]      : "string"
+        [`${prefix}worldpay.merchantId`]    : "",
+        [`${prefix}worldpay.password`]      : ""
     }
 }

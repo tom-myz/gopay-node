@@ -1,5 +1,5 @@
 export const ledgerUpdateSchema = {
-    status : "string",
-    note   : "string"
+    status : "",
+    note   : ""
 }
 

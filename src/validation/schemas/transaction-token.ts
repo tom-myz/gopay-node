@@ -9,8 +9,8 @@ export function getTransactionTokenSchema (type?: string) {
     switch (type) {
         case "card" :
             return Object.assign({}, transactionTokenSchema, {
-                "data.cardholder" : "required|string",
-                "data.cardNumber" : "required|string",
+                "data.cardholder" : "required",
+                "data.cardNumber" : "required",
                 "data.expMonth"   : "required|numeric",
                 "data.expYear"    : "required|numeric",
                 "data.cvv"        : "required|min:3|max:4"

@@ -5,5 +5,5 @@ export const transferCreateSchema = {
 }
 
 export const transferUpdateSchema = {
-    status : "string"
+    status : ""
 }
