@@ -55,7 +55,7 @@ describe("Transfers", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                //{ processTo : "" },
+                { processTo : "" },
                 { processFrom : "a", processTo : "a" }
             ]
 

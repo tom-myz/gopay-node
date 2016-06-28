@@ -16,12 +16,14 @@ import {
 } from "../validation/schemas/merchant"
 
 export interface MerchantCommonParams {
+    name?: string
     email?: string
     address?: ContactInfoParams
     configuration?: ConfigurationParams
 }
 
 export interface MerchantCreateParams extends MerchantCommonParams {
+    name: string
     email: string
     password: string
 }

@@ -1,11 +1,13 @@
 export function getContactInfoSchema (prefix: string = "") {
     return {
-        [`${prefix}phoneNumber`] : "",
-        [`${prefix}line1`]       : "",
-        [`${prefix}line2`]       : "",
-        [`${prefix}state`]       : "",
-        [`${prefix}city`]        : "",
-        [`${prefix}country`]     : "",
-        [`${prefix}zip`]         : ""
+        [`${prefix}name`]        : "string",
+        [`${prefix}companyName`] : "string",
+        [`${prefix}phoneNumber`] : "string",
+        [`${prefix}line1`]       : "string",
+        [`${prefix}line2`]       : "string",
+        [`${prefix}state`]       : "string",
+        [`${prefix}city`]        : "string",
+        [`${prefix}country`]     : "string",
+        [`${prefix}zip`]         : "string"
     }
 }

@@ -5,5 +5,5 @@ export const storeCreateSchema = Object.assign({
 }, getConfigurationSchema("configuration."))
 
 export const storeUpdateSchema = Object.assign({
-    name : ""
+    name : "string"
 }, getConfigurationSchema("configuration."))

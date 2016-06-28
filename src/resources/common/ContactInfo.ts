@@ -1,4 +1,6 @@
 export interface ContactInfoParams {
+    name?: string
+    companyName?: string
     phoneNumber?: string
     line1?: string
     line2?: string

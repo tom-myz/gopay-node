@@ -43,6 +43,7 @@ describe("Merchants", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data = {
+                name : "test",
                 email : "test@test.com",
                 password: "1234567890"
             }
@@ -52,8 +53,8 @@ describe("Merchants", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { email: "", password: "" },
-                { email: "test", password: "1234" }
+                { name: "", email: "", password: "" },
+                { name: "test", email: "test", password: "1234" }
             ]
 
             return Promise.all(asserts.map((a: any) => {

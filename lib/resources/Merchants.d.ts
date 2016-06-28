@@ -3,11 +3,13 @@ import { SDKCallbackFunction } from "../api/RestAPI";
 import { ContactInfoParams } from "./common/ContactInfo";
 import { ConfigurationParams } from "./common/Configuration";
 export interface MerchantCommonParams {
+    name?: string;
     email?: string;
     address?: ContactInfoParams;
     configuration?: ConfigurationParams;
 }
 export interface MerchantCreateParams extends MerchantCommonParams {
+    name: string;
     email: string;
     password: string;
 }
