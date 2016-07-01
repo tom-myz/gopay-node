@@ -43,6 +43,7 @@ describe("Merchants", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data = {
+                name : "test",
                 email : "test@test.com",
                 password: "1234567890"
             }
@@ -52,8 +53,8 @@ describe("Merchants", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { email: "", password: "" },
-                { email: "test", password: "1234" }
+                { name: "", email: "", password: "" },
+                { name: "test", email: "test", password: "1234" }
             ]
 
             return Promise.all(asserts.map((a: any) => {
@@ -104,6 +105,18 @@ describe("Merchants", () => {
                         expect(e.status).to.equal(0)
                     })
             }))
+        })
+    })
+
+    context("route DELETE /merchants/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "delete" }
+            const scopeScope = scope
+                .delete(/merchants\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+            return merchants.delete("1").should.eventually.eql(okResponse)
         })
     })
 

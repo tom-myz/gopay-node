@@ -3,11 +3,13 @@ import { SDKCallbackFunction } from "../api/RestAPI";
 import { ContactInfoParams } from "./common/ContactInfo";
 import { ConfigurationParams } from "./common/Configuration";
 export interface MerchantCommonParams {
+    name?: string;
     email?: string;
     address?: ContactInfoParams;
     configuration?: ConfigurationParams;
 }
 export interface MerchantCreateParams extends MerchantCommonParams {
+    name: string;
     email: string;
     password: string;
 }
@@ -29,6 +31,7 @@ export declare class Merchants extends CRUDResource {
     create(data: MerchantCreateParams, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     update(id: string, data?: MerchantUpdateParams, callback?: SDKCallbackFunction, token?: string): Promise<any>;
+    delete(id: string, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     changePassword(data: MerchantChangePassword, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     resetPassword(data: MerchantResetPassword, callback?: SDKCallbackFunction): Promise<any>;
 }

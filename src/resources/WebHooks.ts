@@ -14,7 +14,7 @@ export class WebHooks extends CRUDResource {
     public static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/webhooks"
 
     public list (storeId: string,
-                 data: CRUDPaginationParams,
+                 data?: CRUDPaginationParams,
                  callback?: SDKCallbackFunction,
                  merchantId?: string,
                  token?: string): Promise<any> {

@@ -16,12 +16,14 @@ import {
 } from "../validation/schemas/merchant"
 
 export interface MerchantCommonParams {
+    name?: string
     email?: string
     address?: ContactInfoParams
     configuration?: ConfigurationParams
 }
 
 export interface MerchantCreateParams extends MerchantCommonParams {
+    name: string
     email: string
     password: string
 }
@@ -64,6 +66,11 @@ export class Merchants extends CRUDResource {
     public update (id: string, data?: MerchantUpdateParams, callback?: SDKCallbackFunction, token?: string): Promise<any> {
         const params: CRUDIdParam = { id }
         return this._updateRoute(params, data, callback, { token, validationSchema : merchantUpdateSchema })
+    }
+
+    public delete (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
+        const params: CRUDIdParam = { id }
+        return this._deleteRoute(params, null, callback, { token })
     }
 
     public changePassword (data: MerchantChangePassword,
