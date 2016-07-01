@@ -12,6 +12,7 @@ node("master") {
         sh "node -v"
 
         try {
+          sh "npm run clean"
           sh "npm prune"
           sh "npm install"
           sh "./node_modules/typings/dist/bin.js install"
