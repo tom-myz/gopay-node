@@ -4,8 +4,8 @@ import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
 import { Authorization } from "../../src/resources/Authorization"
 import { Scope } from "~nock/index"
-import {SDKError} from "../../src/errors/SDKError";
-import {VALIDATION_ERROR} from "../../src/errors/ErrorsConstants";
+import { SDKError } from "../../src/errors/SDKError"
+import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 describe("Authorization", () => {
     let api: RestAPI

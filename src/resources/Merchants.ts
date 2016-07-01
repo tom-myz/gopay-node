@@ -68,6 +68,11 @@ export class Merchants extends CRUDResource {
         return this._updateRoute(params, data, callback, { token, validationSchema : merchantUpdateSchema })
     }
 
+    public delete (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
+        const params: CRUDIdParam = { id }
+        return this._deleteRoute(params, null, callback, { token })
+    }
+
     public changePassword (data: MerchantChangePassword,
                            callback?: SDKCallbackFunction,
                            merchantId?: string,

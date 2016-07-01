@@ -108,4 +108,16 @@ describe("Merchants", () => {
         })
     })
 
+    context("route DELETE /merchants/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "delete" }
+            const scopeScope = scope
+                .delete(/merchants\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+            return merchants.delete("1").should.eventually.eql(okResponse)
+        })
+    })
+
 })

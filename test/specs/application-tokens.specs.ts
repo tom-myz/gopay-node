@@ -4,6 +4,7 @@ import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
 import { ApplicationTokens } from "../../src/resources/ApplicationTokens"
 import { Scope } from "~nock/index"
+import { SDKError } from "../../src/errors/SDKError"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 describe("Application Tokens", () => {
@@ -39,7 +40,7 @@ describe("Application Tokens", () => {
 
     context("route POST /merchants/:merchantId/stores/:storeId/app_tokens", () => {
         it("should return correct response", () => {
-            const okResponse = { action : "create" }
+            const okResponse = { action : "update" }
             const okScope = scope
                 .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
                 .twice()
@@ -49,6 +50,37 @@ describe("Application Tokens", () => {
                 applicationTokens.create("1").should.eventually.eql(okResponse),
                 applicationTokens.create("1", null, "1").should.eventually.eql(okResponse),
             ])
+        })
+    })
+
+    context("route PATCH /merchants/:merchantId/stores/:storeId/app_tokens/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "create" }
+            const okScope = scope
+                .patch(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens\/[a-f0-9\-]+$/i)
+                .twice()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+            const data = { domains : ["test.com"] }
+
+            return Promise.all([
+                applicationTokens.update("1", "1", data).should.eventually.eql(okResponse),
+                applicationTokens.update("1", "1", data, null, "1").should.eventually.eql(okResponse),
+            ])
+        })
+
+        it("should return validation error if data is invalid", () => {
+            const asserts = [
+                { domains: "aa" }
+            ]
+
+            return Promise.all(asserts.map((a: any) => {
+                return applicationTokens.update("1", "1", a).should.be.rejected
+                    .then((e: SDKError) => {
+                        expect(e.code).to.equal(VALIDATION_ERROR)
+                        expect(e.type).to.equal("request")
+                        expect(e.status).to.equal(0)
+                    })
+            }))
         })
     })
 
