@@ -9,7 +9,7 @@ export const merchantCreateSchema: any = Object.assign({
 }, getConfigurationSchema("configuration."), getContactInfoSchema("address."))
 
 export const merchantUpdateSchema: any = Object.assign({
-    name  : "",
+    name  : "string",
     email : "email"
 }, getConfigurationSchema("configuration."), getContactInfoSchema("address."))
 
