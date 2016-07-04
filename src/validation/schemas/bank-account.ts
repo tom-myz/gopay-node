@@ -4,21 +4,21 @@ export const bankAccountCreateSchema = {
     branchName    : "string",
     currency      : "required|min:3",
     accountNumber : "required",
-    routingNumber : "",
-    swiftCode     : "",
-    ifscCode      : "",
-    routingCode   : ""
+    routingNumber : "string",
+    swiftCode     : "string",
+    ifscCode      : "string",
+    routingCode   : "string"
 }
 
 export const bankAccountUpdateSchema = {
     isPrimary     : "boolean",
-    holderName    : "",
-    bankName      : "",
-    branchName    : "",
+    holderName    : "string",
+    bankName      : "string",
+    branchName    : "string",
     currency      : "min:3",
-    accountNumber : "",
-    routingNumber : "",
-    swiftCode     : "",
-    ifscCode      : "",
-    routingCode   : ""
+    accountNumber : "string",
+    routingNumber : "string",
+    swiftCode     : "string",
+    ifscCode      : "string",
+    routingCode   : "string"
 }
