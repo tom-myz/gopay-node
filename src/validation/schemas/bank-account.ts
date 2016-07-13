@@ -2,6 +2,7 @@ export const bankAccountCreateSchema = {
     holderName    : "required",
     bankName      : "required",
     branchName    : "string",
+    country       : "required",
     currency      : "required|min:3",
     accountNumber : "required",
     routingNumber : "string",
