@@ -6,6 +6,7 @@ import { DataValidator } from "../validation/validator"
 import Validator = require("validatorjs")
 import {errorFromValidation, SDKError} from "../errors/SDKError"
 import { validationCodes } from "../validation/error-codes"
+import {underscore} from "../utils/underscore";
 
 export interface PathParams { [key: string]: (string | number) }
 
@@ -107,8 +108,10 @@ export abstract class CRUDResource extends WithAPI {
                 return Promise.reject(err)
             }
 
+            const apiData = underscore(data)
+
             return api.send(
-                ["GET", "DELETE"].indexOf(method) !== -1 ? req.query(data) : req.send(data),
+                ["GET", "DELETE"].indexOf(method) !== -1 ? req.query(apiData) : req.send(apiData),
                 cb,
                 options.token
             )
