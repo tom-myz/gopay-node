@@ -3,7 +3,7 @@ import { Authorization } from "./resources/Authorization";
 import { Merchants } from "./resources/Merchants";
 import { Stores } from "./resources/Stores";
 import { Transfers } from "./resources/Transfers";
-import { Ledger } from "./resources/Ledger";
+import { Ledgers } from "./resources/Ledgers";
 import { BankAccounts } from "./resources/BankAccounts";
 import { WebHooks } from "./resources/WebHooks";
 import { ApplicationTokens } from "./resources/ApplicationTokens";
@@ -16,7 +16,7 @@ export declare class PaymentsSDK {
     stores: Stores;
     charges: Charges;
     transfers: Transfers;
-    ledger: Ledger;
+    ledgers: Ledgers;
     bankAccounts: BankAccounts;
     webHooks: WebHooks;
     applicationTokens: ApplicationTokens;

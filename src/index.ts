@@ -3,7 +3,7 @@ import { Authorization } from "./resources/Authorization"
 import { Merchants } from "./resources/Merchants"
 import { Stores } from "./resources/Stores"
 import { Transfers } from "./resources/Transfers"
-import { Ledger } from "./resources/Ledger"
+import { Ledgers } from "./resources/Ledgers"
 import { BankAccounts } from "./resources/BankAccounts"
 import { WebHooks } from "./resources/WebHooks"
 import { ApplicationTokens } from "./resources/ApplicationTokens"
@@ -20,7 +20,7 @@ export class PaymentsSDK {
     public stores: Stores
     public charges: Charges
     public transfers: Transfers
-    public ledger: Ledger
+    public ledgers: Ledgers
     public bankAccounts: BankAccounts
     public webHooks: WebHooks
     public applicationTokens: ApplicationTokens
@@ -35,7 +35,7 @@ export class PaymentsSDK {
         this.stores = new Stores(this.api)
         this.charges = new Charges(this.api)
         this.transfers = new Transfers(this.api)
-        this.ledger = new Ledger(this.api)
+        this.ledgers = new Ledgers(this.api)
         this.bankAccounts = new BankAccounts(this.api)
         this.webHooks = new WebHooks(this.api)
         this.applicationTokens = new ApplicationTokens(this.api)

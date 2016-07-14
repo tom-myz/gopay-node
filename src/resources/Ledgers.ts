@@ -7,7 +7,7 @@ export interface LedgerUpdateParams {
     status?: string
 }
 
-export class Ledger extends CRUDResource {
+export class Ledgers extends CRUDResource {
 
     public static routeBase: string = "/(merchants/:merchantId/)(stores/:storeId/)ledgers"
 

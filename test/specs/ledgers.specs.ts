@@ -2,20 +2,20 @@ import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
-import { Ledger } from "../../src/resources/Ledger"
+import { Ledgers } from "../../src/resources/Ledgers"
 import { Scope } from "~nock/index"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 import { SDKError } from "../../src/errors/SDKError"
 
 describe("Ledger", () => {
     let api: RestAPI
-    let ledger: Ledger
+    let ledgers: Ledgers
     let scope: Scope
     const testEndpoint = "http://localhost:80"
 
     beforeEach(() => {
         api = new RestAPI({endpoint: testEndpoint })
-        ledger = new Ledger(api)
+        ledgers = new Ledgers(api)
         scope = nock(testEndpoint)
     })
 
@@ -32,10 +32,10 @@ describe("Ledger", () => {
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
             return Promise.all([
-                ledger.list().should.eventually.eql(okResponse),
-                ledger.list(null, null, "1").should.eventually.eql(okResponse),
-                ledger.list(null, null, null, "1").should.eventually.eql(okResponse),
-                ledger.list(null, null, "1", "1").should.eventually.eql(okResponse)
+                ledgers.list().should.eventually.eql(okResponse),
+                ledgers.list(null, null, "1").should.eventually.eql(okResponse),
+                ledgers.list(null, null, null, "1").should.eventually.eql(okResponse),
+                ledgers.list(null, null, "1", "1").should.eventually.eql(okResponse)
             ])
         })
     })
@@ -50,10 +50,10 @@ describe("Ledger", () => {
             const data = { status : "done" }
 
             return Promise.all([
-                ledger.update("1", data).should.eventually.eql(okResponse),
-                ledger.update("1", data, null, "1").should.eventually.eql(okResponse),
-                ledger.update("1", data, null, null, "1").should.eventually.eql(okResponse),
-                ledger.update("1", data, null, "1", "1").should.eventually.eql(okResponse)
+                ledgers.update("1", data).should.eventually.eql(okResponse),
+                ledgers.update("1", data, null, "1").should.eventually.eql(okResponse),
+                ledgers.update("1", data, null, null, "1").should.eventually.eql(okResponse),
+                ledgers.update("1", data, null, "1", "1").should.eventually.eql(okResponse)
             ])
 
         })
