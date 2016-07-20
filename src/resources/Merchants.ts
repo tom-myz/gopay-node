@@ -125,8 +125,9 @@ export class Merchants extends CRUDResource {
         return this._updateVerification(params, data, callback, { token, validationSchema : merchantUpdateVerificationSchema })
     }
 
-    public verify (data: MerchantVerify, callback?: SDKCallbackFunction, token?: string): Promise<any> {
-        return this._createVerify(null, data, callback, { token, validationSchema : merchantCreateVerifySchema })
+    public verify (merchantId: string, data: MerchantVerify, callback?: SDKCallbackFunction, token?: string): Promise<any> {
+        const params: CRUDMerchantIdParam = { merchantId }
+        return this._createVerify(params, data, callback, { token, validationSchema : merchantCreateVerifySchema })
     }
 
     public changePassword (data: MerchantChangePassword,

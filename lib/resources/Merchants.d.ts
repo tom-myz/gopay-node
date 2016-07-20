@@ -59,7 +59,7 @@ export declare class Merchants extends CRUDResource {
     createVerification(merchantId: string, data: MerchantCreateVerification, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     getVerification(merchantId: string, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     updateVerification(merchantId: string, data?: MerchantUpdateVerification, callback?: SDKCallbackFunction, token?: string): Promise<any>;
-    verify(data: MerchantVerify, callback?: SDKCallbackFunction, token?: string): Promise<any>;
+    verify(merchantId: string, data: MerchantVerify, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     changePassword(data: MerchantChangePassword, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     forgotPassword(data: MerchantResetPassword, callback?: SDKCallbackFunction): Promise<any>;
     resetPassword(token: string, data: MerchantResetPassword, callback?: SDKCallbackFunction): Promise<any>;
