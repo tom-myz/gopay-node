@@ -1,5 +1,5 @@
 export function getContactInfoSchema (prefix: string = "", required: boolean = false) {
-    const requiredRule: string = required ? "required." : ""
+    const requiredRule: string = required ? "required|" : ""
 
     return {
         [`${prefix}name`]        : `${requiredRule}string`,
