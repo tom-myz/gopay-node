@@ -5,12 +5,13 @@ export const merchantCreateSchema: any = Object.assign({
     name     : "required",
     email    : "required|email",
     password : "required|min:8|max:32",
-    roles    : "array"
+    roles    : "required|array"
 }, getConfigurationSchema("configuration."))
 
 export const merchantUpdateSchema: any = Object.assign({
     name  : "string",
-    email : "email"
+    email : "email",
+    roles : "array"
 }, getConfigurationSchema("configuration."))
 
 export function merchantChangePasswordSchema (isAdmin: boolean): any {
