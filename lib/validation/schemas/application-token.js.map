@@ -1,1 +1,1 @@
-{"version":3,"file":"application-token.js","sourceRoot":"","sources":["../../../src/validation/schemas/application-token.ts"],"names":[],"mappings":";AAAa,oCAA4B,GAAG;IACxC,OAAO,EAAG,OAAO;CACpB,CAAA"}
+{"version":3,"file":"application-token.js","sourceRoot":"","sources":["../../../src/validation/schemas/application-token.ts"],"names":[],"mappings":";AAAa,oCAA4B,GAAG;IACxC,OAAO,EAAI,OAAO;IAClB,QAAQ,EAAG,kBAAkB;CAChC,CAAA;AAEY,oCAA4B,GAAG;IACxC,OAAO,EAAG,OAAO;CACpB,CAAA"}

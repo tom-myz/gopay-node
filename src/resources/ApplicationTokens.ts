@@ -1,9 +1,13 @@
 import { CRUDResource, CRUDStoreIdParam, CRUDPaginationParams, CRUDIdStoreIdParam } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { applicationTokenUpdateSchema } from "../validation/schemas/application-token"
+import { applicationTokenUpdateSchema, applicationTokenCreateSchema } from "../validation/schemas/application-token"
 
 export interface ApplicationTokenParams {
     domains?: Array<string>
+}
+
+export interface ApplicationTokenCreateParams extends ApplicationTokenParams {
+    testMode: boolean
 }
 
 export class ApplicationTokens extends CRUDResource {
@@ -20,11 +24,12 @@ export class ApplicationTokens extends CRUDResource {
     }
 
     public create (storeId: string,
+                   data: ApplicationTokenCreateParams,
                    callback?: SDKCallbackFunction,
                    merchantId?: string,
                    token?: string): Promise<any> {
         const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._createRoute(params, null, callback, { token })
+        return this._createRoute(params, data, callback, { token, validationSchema : applicationTokenCreateSchema })
     }
 
     public update (storeId: string,
