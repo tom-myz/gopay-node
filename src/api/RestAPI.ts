@@ -65,17 +65,17 @@ export class RestAPI {
             }
 
             request.end((error: any, response: superagent.Response) => {
-                    const err: SDKError = errorFromResponse(response)
+                const err: SDKError = errorFromResponse(response)
 
-                    if (error || err !== null) {
-                        callback(err, null)
-                        reject(err)
-                    } else {
-                        const result: any = this.camel ? camelCase(response.body) : response.body
-                        callback(null, result)
-                        resolve(result)
-                    }
-                })
+                if (error || err !== null) {
+                    callback(err, null)
+                    reject(err)
+                } else {
+                    const result: any = this.camel ? camelCase(response.body) : response.body
+                    callback(null, result)
+                    resolve(result)
+                }
+            })
         })
     }
 }

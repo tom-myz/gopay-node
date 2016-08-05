@@ -9,6 +9,7 @@ import { WebHooks } from "./resources/WebHooks"
 import { ApplicationTokens } from "./resources/ApplicationTokens"
 import { TransactionTokens } from "./resources/TransactionTokens"
 import { Charges } from "./resources/Charges"
+import { Credentials } from "./resources/Credentials"
 
 export class PaymentsSDK {
 
@@ -25,6 +26,7 @@ export class PaymentsSDK {
     public webHooks: WebHooks
     public applicationTokens: ApplicationTokens
     public transactionTokens: TransactionTokens
+    public credentials: Credentials
 
     constructor (options?: RestAPIOptions) {
         this.api = new RestAPI(options)
@@ -40,6 +42,7 @@ export class PaymentsSDK {
         this.webHooks = new WebHooks(this.api)
         this.applicationTokens = new ApplicationTokens(this.api)
         this.transactionTokens = new TransactionTokens(this.api)
+        this.credentials = new Credentials(this.api)
     }
 }
 
