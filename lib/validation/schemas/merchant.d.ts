@@ -6,3 +6,4 @@ export declare const merchantResetPasswordSchema: any;
 export declare const merchantCreateVerificationSchema: any;
 export declare const merchantUpdateVerificationSchema: any;
 export declare const merchantCreateVerifySchema: any;
+export declare const merchantTransactionHistory: any;

@@ -41,6 +41,10 @@ export interface MerchantCreateVerification extends MerchantUpdateVerification {
 export interface MerchantVerify {
     percentFee: number;
 }
+export interface MerchantTransactionHistory {
+    from?: string;
+    to?: string;
+}
 export declare class Merchants extends CRUDResource {
     static routeBase: string;
     static routeVerification: string;
@@ -51,6 +55,7 @@ export declare class Merchants extends CRUDResource {
     _changePassword: CRUDDefinedRoute;
     _forgotPassword: CRUDDefinedRoute;
     _resetPassword: CRUDDefinedRoute;
+    _getTransactionHistory: CRUDDefinedRoute;
     list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, token?: string): Promise<any>;
     create(data: MerchantCreateParams, callback?: SDKCallbackFunction, token?: string): Promise<any>;
     get(id: string, callback?: SDKCallbackFunction, token?: string): Promise<any>;
@@ -63,4 +68,5 @@ export declare class Merchants extends CRUDResource {
     changePassword(data: MerchantChangePassword, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
     forgotPassword(data: MerchantResetPassword, callback?: SDKCallbackFunction): Promise<any>;
     resetPassword(token: string, data: MerchantResetPassword, callback?: SDKCallbackFunction): Promise<any>;
+    getTransactionHistory(id: string, data: MerchantTransactionHistory, storeId?: string, callback?: SDKCallbackFunction, token?: string): Promise<any>;
 }

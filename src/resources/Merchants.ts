@@ -3,7 +3,8 @@ import {
     CRUDIdParam,
     CRUDPaginationParams,
     CRUDMerchantIdParam,
-    CRUDDefinedRoute
+    CRUDDefinedRoute,
+    CRUDIdStoreIdParam
 } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { ContactInfoParams } from "./common/ContactInfo"
@@ -16,7 +17,8 @@ import {
     merchantForgotPasswordSchema,
     merchantCreateVerificationSchema,
     merchantUpdateVerificationSchema,
-    merchantCreateVerifySchema
+    merchantCreateVerifySchema,
+    merchantTransactionHistory
 } from "../validation/schemas/merchant"
 
 export interface MerchantCommonParams {
@@ -65,6 +67,11 @@ export interface MerchantVerify {
     percentFee: number
 }
 
+export interface MerchantTransactionHistory {
+    from?: string,
+    to?: string
+}
+
 export class Merchants extends CRUDResource {
 
     public static routeBase: string = "/merchants"
@@ -78,6 +85,8 @@ export class Merchants extends CRUDResource {
     public _changePassword: CRUDDefinedRoute = this.defineRoute("POST", "/merchants/:merchantId/password/reset")
     public _forgotPassword: CRUDDefinedRoute = this.defineRoute("POST", "/merchants/password/forgot")
     public _resetPassword: CRUDDefinedRoute = this.defineRoute("POST", "/merchants/password/:token")
+
+    public _getTransactionHistory: CRUDDefinedRoute = this.defineRoute("GET", "/merchants/:id/(stores/:storeId/)transaction_history")
 
     public list (callback?: SDKCallbackFunction, data?: CRUDPaginationParams, token?: string): Promise<any> {
         return this._listRoute(null, data, callback, { token })
@@ -145,6 +154,15 @@ export class Merchants extends CRUDResource {
 
     public resetPassword (token: string, data: MerchantResetPassword, callback?: SDKCallbackFunction): Promise<any> {
         return this._resetPassword({ token }, data, callback, { validationSchema : merchantResetPasswordSchema })
+    }
+
+    public getTransactionHistory (id: string,
+                                  data: MerchantTransactionHistory,
+                                  storeId?: string,
+                                  callback?: SDKCallbackFunction,
+                                  token?: string): Promise<any> {
+        const params: CRUDIdStoreIdParam = { id, storeId }
+        return this._getTransactionHistory(params, data, callback, { token, validationSchema : merchantTransactionHistory })
     }
 
 }

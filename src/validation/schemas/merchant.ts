@@ -52,3 +52,8 @@ export const merchantUpdateVerificationSchema: any = Object.assign({
 export const merchantCreateVerifySchema: any = {
     percentFee : "required|numeric|min:0|max:1"
 }
+
+export const merchantTransactionHistory: any = {
+    from : "string",
+    to   : "string"
+}
