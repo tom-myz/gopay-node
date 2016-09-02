@@ -18,6 +18,9 @@ export interface CRUDStoreIdParam extends CRUDMerchantIdParam {
 }
 export interface CRUDIdStoreIdParam extends CRUDIdParam, CRUDStoreIdParam {
 }
+export interface CRUDTransferIdParam extends CRUDMerchantIdParam {
+    transferId?: string;
+}
 export interface CRUDPaginationParams {
     page?: number;
     pageSize?: number;
