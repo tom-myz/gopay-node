@@ -1,143 +1,160 @@
 import "../utils"
 import { expect } from "chai"
+import sinon = require("sinon")
 import nock = require("nock")
-import { RestAPI, ResourceAccessType, RestAPIOptions } from "../../src/api/RestAPI"
+import superagent = require("superagent")
+import { RestAPI, RestAPIOptions, DEFAULT_ENV_APP_ID, DEFAULT_ENV_SECRET } from "../../src/api/RestAPI"
 import { Scope } from "~nock/index"
-import { RequestError } from "../../src/errors/RequestError"
-import { CommonError } from "../../src/errors/CommonError"
-import { SDK_WRONG_CREDENTIALS } from "../../src/errors/ErrorsConstants"
-import {ResponseError} from "../../src/errors/ResponseError";
+import { SDKError } from "../../src/errors/SDKError"
+import { UNKNOWN } from "../../src/errors/ErrorsConstants"
 
 describe("RestAPI", () => {
+    let mockOk: Scope
+    let mockError: Scope
+    const testEndpoint = "http://localhost:80"
 
-    afterEach(() => {
+    before(() => {
+        const REPEATS = 100
+        const scope = nock(testEndpoint)
+        mockOk = scope
+            .get("/ok")
+            .times(REPEATS)
+            .reply(200, { ok : true }, { "Content-Type" : "application/json" })
+
+        mockError = scope
+            .get("/error")
+            .times(REPEATS)
+            .reply(400, { error : true }, { "Content-Type" : "application/json" })
+    })
+
+    after(() => {
         nock.cleanAll()
     })
 
-    it("should create headers without authorization", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/" })
-        const headers = api.getHeaders(ResourceAccessType.None)
-        expect(headers).to.not.have.property("Authorization")
-    })
-
-    it("should create headers with token authorization header", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/", token : "test" })
-        const headers = api.getHeaders(ResourceAccessType.Token)
-        expect(headers).to.have.property("Authorization")
-            .and.equal("Token test")
-    })
-
-    it("should create headers with appId and secret authorization header", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/", appId : "id", secret: "secret" })
-        const headers = api.getHeaders(ResourceAccessType.Secret)
-        expect(headers).to.have.property("Authorization")
-            .and.equal("ApplicationToken id|secret")
-    })
-
-    it("should create headers with appId authorization header", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/", appId : "id" })
-        const headers = api.getHeaders(ResourceAccessType.AppId)
-        expect(headers).to.have.property("Authorization")
-            .and.equal("ApplicationToken id")
-    })
-
-    it("should create headers with token or secret authorization header with token prioritized", () => {
-        const api1: RestAPI = new RestAPI({ endpoint : "/", appId : "id", secret : "secret" })
-        const api2: RestAPI = new RestAPI({ endpoint : "/", token: "test" })
-        const api3: RestAPI = new RestAPI({ endpoint : "/", token: "test", appId : "id", secret : "secret" })
-        const headers1 = api1.getHeaders(ResourceAccessType.SecretOrToken)
-        const headers2 = api2.getHeaders(ResourceAccessType.SecretOrToken)
-        const headers3 = api3.getHeaders(ResourceAccessType.SecretOrToken)
-        expect(headers1).to.have.property("Authorization")
-            .and.equal("ApplicationToken id|secret")
-        expect(headers2).to.have.property("Authorization")
-            .and.equal("Token test")
-        expect(headers3).to.have.property("Authorization")
-            .and.equal("Token test")
-    })
-
-    it("should correctly detect presence of authorization data", () => {
-        const asserts: Array<any> = [
-            [{ endpoint : "/" }, ResourceAccessType.None, true],
-            [{ endpoint : "/", token: "test" }, ResourceAccessType.Token, true],
-            [{ endpoint : "/", token: "test", appId : "id", secret : "secret" }, ResourceAccessType.Token, true],
-            [{ endpoint : "/", appId : "id", secret : "secret" }, ResourceAccessType.Token, false],
-            [{ endpoint : "/", appId : "id" }, ResourceAccessType.Token, false],
-            [{ endpoint : "/" }, ResourceAccessType.Token, false],
-            [{ endpoint : "/", token: "test", appId : "id", secret : "secret" }, ResourceAccessType.Secret, true],
-            [{ endpoint : "/", appId : "id", secret : "secret" }, ResourceAccessType.Secret, true],
-            [{ endpoint : "/", appId : "id" }, ResourceAccessType.Secret, false],
-            [{ endpoint : "/" }, ResourceAccessType.Secret, false],
-            [{ endpoint : "/", token: "test" }, ResourceAccessType.SecretOrToken, true],
-            [{ endpoint : "/", token: "test", appId : "id", secret : "secret" }, ResourceAccessType.SecretOrToken, true],
-            [{ endpoint : "/", appId : "id", secret : "secret" }, ResourceAccessType.SecretOrToken, true],
-            [{ endpoint : "/", appId : "id" }, ResourceAccessType.SecretOrToken, false],
-            [{ endpoint : "/" }, ResourceAccessType.SecretOrToken, false],
-            [{ endpoint : "/", token: "test" }, ResourceAccessType.AppId, false],
-            [{ endpoint : "/", token: "test", appId : "id", secret : "secret" }, ResourceAccessType.AppId, true],
-            [{ endpoint : "/", appId : "id", secret : "secret" }, ResourceAccessType.AppId, true],
-            [{ endpoint : "/", appId : "id" }, ResourceAccessType.AppId, true],
-            [{ endpoint : "/" }, ResourceAccessType.AppId, false]
+    it("should create instance with proper parameters", () => {
+        const asserts = [
+            [{ endpoint : "/" }, "/", undefined, undefined, false],
+            [{ endpoint : "/", appId: "id" }, "/", "id", undefined, false],
+            [{ endpoint : "/", appId: "id", secret : "secret" }, "/", "id", "secret", false],
+            [{ endpoint : "/", camel : true }, "/", undefined, undefined, true]
         ]
 
-        asserts.forEach((a) => {
+        asserts.forEach((a: any) => {
             const api: RestAPI = new RestAPI(a[0])
-            expect(api.hasCredentials(a[1])).to.equal(a[2])
+            expect(api.endpoint).to.equal(a[1])
+            expect(api.appId).to.equal(a[2])
+            expect(api.secret).to.equal(a[3])
+            expect((api as any).camel).to.equal(a[4])
         })
     })
 
-    it("should return error if no correct authorization data is present", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/" })
-        const scope = nock("http://localhost:80")
-            .get("/")
-            .reply(200, null, { "Content-Type" : "application/json" })
-        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.Token)
+    it("should take appId and secret from environment variable", () => {
+        process.env[DEFAULT_ENV_APP_ID] = "envId"
+        process.env[DEFAULT_ENV_SECRET] = "envSecret"
 
-        return promise.should.be.rejected
-            .then((e: CommonError) => {
-                expect(e).to.be.an.instanceOf(RequestError)
-                expect(e.code).to.equal(SDK_WRONG_CREDENTIALS)
+        const api: RestAPI = new RestAPI({ endpoint : "/" })
+        expect(api.appId).to.equal("envId")
+        expect(api.secret).to.equal("envSecret")
+
+        delete process.env[DEFAULT_ENV_APP_ID]
+        delete process.env[DEFAULT_ENV_SECRET]
+    })
+
+    it("should set token for future use", () => {
+        const api: RestAPI = new RestAPI({ endpoint : "/" })
+        expect((api as any).token).to.be.empty
+        api.setToken("token")
+        expect((api as any).token).to.equal("token")
+    })
+
+    it("should send request to the api", function () {
+        this.timeout(200)
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+        const req = superagent.get("/ok")
+        return api.send(req, () => null).should.eventually.be.fulfilled
+            .then((r: any) => expect(r).to.eql({ ok : true }))
+    })
+
+    it("should send request with authorization header", function () {
+        this.timeout(200)
+        const asserts = [
+            [{}, null, null, null],
+            [{ appId : "id" }, null, null, "ApplicationToken id|"],
+            [{ appId : "id", secret : "secret" }, null, null, "ApplicationToken id|secret"],
+            [{}, "token1", null, "Token token1"],
+            [{}, null, "token2", "Token token2"],
+            [{}, "token1", "token2", "Token token2"]
+        ]
+
+        return Promise.all(asserts.map((a: any) => {
+            const api: RestAPI = new RestAPI(Object.assign({}, { endpoint : testEndpoint }, a[0]))
+            if (a[1]) {
+                api.setToken(a[1])
+            }
+            const req = superagent.get("/ok")
+            const spy = sinon.spy(req, "set").withArgs("Authorization")
+
+            return api.send(req, () => null, a[2]).should.eventually.be.fulfilled
+                .then((r: any) => {
+                    if (!a[3]) {
+                        expect(spy).to.have.not.been.called
+                    } else {
+                        expect(spy).to.have.been.calledWith("Authorization", a[3])
+                    }
+                    expect(r).to.eql({ ok : true })
+                })
+                .then(() => (req as any).set.restore())
+        }))
+    })
+
+    it("should use callback to return result", function () {
+        this.timeout(200)
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+        const req = superagent.get("/ok")
+        const spy = sinon.spy()
+
+        return api.send(req, spy).should.eventually.be.fulfilled
+            .then(() => expect(spy).to.have.been.calledOnce.and.calledWith(null, { ok : true }))
+    })
+
+    it("should return SDKError for error response", function () {
+        this.timeout(200)
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+        const req = superagent.get("/error")
+        const spy = sinon.spy()
+        const error: SDKError = { code : UNKNOWN, errors : [], status : 400, type : "response" }
+
+        return api.send(req, spy).should.eventually.be.rejected
+            .then((e) => {
+                expect(e).to.eql(error)
+                expect(spy).to.have.been.calledOnce.and.calledWith(error, null)
             })
     })
 
-    it("should call the api and return correct response", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/", token : "test" })
-        const response = { success : true }
-        const scope = nock("http://localhost:80")
-            .get("/")
-            .reply(200, response, { "Content-Type" : "application/json" })
-        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.Token)
+    it("should convert all params to underscore", () => {
+        const expectation = { foo: "bar", "fizz_buzz": true }
+        const asserts = [
+            { foo: "bar", "fizz_buzz": true },
+            { foo: "bar", fizzBuzz: true }
+        ]
 
-        return promise.should.eventually.eql(response)
+        asserts.forEach((a: any) => {
+            expect(RestAPI.requestParams(a)).to.eql(expectation)
+        })
     })
 
-    it("should return responses in underscore format", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/", camel : false })
-        const response = { some_value : true }
-        const scope = nock("http://localhost:80")
-            .get("/")
-            .reply(200, response, { "Content-Type" : "application/json" })
-        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.None)
-        return promise.should.eventually.eql({ some_value : true })
-    })
+    it("should return response with camel case properties names if parameter is set", function () {
+        this.timeout(200)
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint, camel : true })
+        const mock = nock(testEndpoint)
+            .get("/camel")
+            .once()
+            .reply(200, { "foo_bar" : true }, { "Content-Type" : "application/json" })
+        const req = superagent.get("/camel")
 
-    it("should return responses in camelCase format", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/", camel : true })
-        const response = { some_value : true }
-        const scope = nock("http://localhost:80")
-            .get("/")
-            .reply(200, response, { "Content-Type" : "application/json" })
-        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.None)
-        return promise.should.eventually.eql({ someValue : true })
-    })
+        const error: SDKError = { code : UNKNOWN, errors : [], status : 400, type : "response" }
 
-    it("should return error when api returns error response", () => {
-        const api: RestAPI = new RestAPI({ endpoint : "/" })
-        const scope = nock("http://localhost:80")
-            .get("/")
-            .reply(400, null)
-        const promise = api.send({ method: "GET", url: "/" }, ResourceAccessType.None)
-        return promise.should.be.rejectedWith(ResponseError)
+        return api.send(req, () => null).should.eventually.be.fulfilled
+            .then((r: any) => expect(r).to.eql({ fooBar : true }))
     })
-
 })

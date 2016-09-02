@@ -1,85 +1,125 @@
+import superagent = require("superagent")
+import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
-import { ResourceAccessType } from "../api/RestAPI"
-import { IValidatedResource, ValidatedResource, ValidationSchema, Validation } from "../validation/Validation"
-import { VALIDATION_ERROR } from "../errors/Errors"
-import { IParams, URLSegments, SendOptions } from "./Resource"
+import { RestAPI } from "../api/RestAPI"
+import { DataValidator } from "../validation/validator"
+import Validator = require("validatorjs")
+import {errorFromValidation, SDKError} from "../errors/SDKError"
+import { validationCodes } from "../validation/error-codes"
+import { underscore } from "../utils/underscore"
 
-export interface ICRUDResource<P> {
-    create (params: IParams): Promise<P>
-    read (params: IParams): Promise<P>
-    update (params: IParams): Promise<P>
-    delete (params: IParams): Promise<P>
-}
+export interface PathParams { [key: string]: (string | number) }
 
-export interface CRUDParamsRead extends IParams {
+export type CRUDMethod = "GET" | "POST" | "UPDATE" | "PATCH" | "DELETE"
+
+export interface CRUDIdParam {
     id: string
 }
 
-export interface CRUDParamsCreate<P> extends IParams {
-    data: P
+export interface CRUDMerchantIdParam {
+    merchantId?: string
 }
 
-export interface CRUDParamsUpdate<P> extends IParams {
-    id: string
-    data: P
+export interface CRUDIdMerchantIdParam extends CRUDIdParam, CRUDMerchantIdParam {}
+
+export interface CRUDStoreIdParam extends CRUDMerchantIdParam {
+    storeId?: string
 }
 
-export abstract class CRUDResource<P>
-    extends WithAPI
-    implements ValidatedResource<P> {
+export interface CRUDIdStoreIdParam extends CRUDIdParam, CRUDStoreIdParam {}
 
-    public urlSegment: string = ""
-    public accessType: ResourceAccessType = ResourceAccessType.None
+export interface CRUDTransferIdParam extends CRUDMerchantIdParam {
+    transferId?: string
+}
 
-    public url (segments: URLSegments): string {
-        return `/${this.urlSegment}${segments.id ? `/${segments.id}` : ""}`
+export interface CRUDPaginationParams {
+    page?: number
+    pageSize?: number
+}
+
+export type CRUDDefinedRoute = (pathParams: any, data?: any, callback?: SDKCallbackFunction, options?: CRUDOptionalParams) => Promise<any>
+
+export interface CRUDOptionalParams {
+    token?: string
+    validationSchema?: any
+    [key: string]: any
+}
+
+const methodsMap: any = {
+    "GET"    : "get",
+    "POST"   : "post",
+    "PUT"    : "put",
+    "PATCH"  : "patch",
+    "DELETE" : "del"
+}
+
+interface CRUDResourceStatic extends Function {
+    routeBase: string
+}
+
+export abstract class CRUDResource extends WithAPI {
+
+    public validationRules: any
+
+    public _listRoute: CRUDDefinedRoute
+    public _createRoute: CRUDDefinedRoute
+    public _getRoute: CRUDDefinedRoute
+    public _updateRoute: CRUDDefinedRoute
+    public _deleteRoute: CRUDDefinedRoute
+
+    constructor (api: RestAPI) {
+        super(api)
+
+        const routeBase: string = (this.constructor as CRUDResourceStatic).routeBase
+
+        this._listRoute = this.defineRoute("GET", routeBase)
+        this._createRoute = this.defineRoute("POST", routeBase)
+        this._getRoute = this.defineRoute("GET", `${routeBase}/:id`)
+        this._updateRoute = this.defineRoute("PATCH", `${routeBase}/:id`)
+        this._deleteRoute = this.defineRoute("DELETE", `${routeBase}/:id`)
     }
 
-    public _create (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
-        const fn: (...a: any[]) => ValidationSchema | void = (this as IValidatedResource<any>).schemaCreate || (() => undefined)
-        const schema: ValidationSchema =  Object.assign({}, fn(options.data))
-
-        return this.validate(options.data, schema)
-            .then(() => this.api.send({
-                body   : options.data,
-                method : "POST",
-                url    : this.url(options as URLSegments)
-            }, accessType))
+    public static compilePath<P> (path: string, pathParams: P): string {
+        return path
+            .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
+                const part: string = o.replace(/:(\w+)/ig, (s: string, p: string) => {
+                    return (pathParams as any)[p] || s
+                })
+                return part.indexOf(":") === -1 ? part.replace(/\(|\)/g, "") : ""
+            })
+            .replace(/:(\w+)/ig, (s: string, p: string) => (pathParams as any)[p] || s)
     }
 
-    public _read (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
-        return this.api.send({
-            method : "GET",
-            url    : this.url(options as URLSegments)
-        }, accessType)
-    }
+    public defineRoute (method: CRUDMethod, path: string): CRUDDefinedRoute {
+        const api: RestAPI = this.api
+        const defaultOptions: CRUDOptionalParams = {} as CRUDOptionalParams
 
-    public _update (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<P> {
-        const fn: (...a: any[]) => ValidationSchema | void = (this as IValidatedResource<any>).schemaUpdate || (() => undefined)
-        const schema: ValidationSchema = Object.assign({}, fn(options.data))
+        return function route<P, D> (pathParams: P,
+                                     data?: D,
+                                     callback?: SDKCallbackFunction,
+                                     options: CRUDOptionalParams = defaultOptions): Promise<any> {
 
-        return this.validate(options.data, schema)
-            .then(() => this.api.send({
-                body   : options.data,
-                method : "PATCH",
-                url    : this.url(options as URLSegments)
-            }, accessType))
-    }
+            const url: string = CRUDResource.compilePath(path, pathParams)
+            const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
+            const schema: any = options.validationSchema || {}
+            const validator: Validator = DataValidator.create(data || {}, schema, validationCodes)
+            const cb: SDKCallbackFunction = callback || ((err: SDKError, result: any) => null)
 
-    public _delete (options: SendOptions<P>, accessType: ResourceAccessType = this.accessType): Promise<any> {
-        return this.api.send({
-            method : "DELETE",
-            url    : this.url(options as URLSegments)
-        }, accessType)
-    }
+            if (validator.fails()) {
+                const errors: any = validator.errors.all()
+                const err: SDKError = errorFromValidation(errors)
+                cb(err, null)
+                return Promise.reject(err)
+            }
 
-    public validate (data: P = {} as P, schema: ValidationSchema): Promise<P> {
-        const errors: Array<any> = Validation.validate(data, schema)
+            const apiData: Object = underscore(data)
 
-        if (errors.length === 0) {
-            return Promise.resolve(data)
+            return api.send(
+                ["GET", "DELETE"].indexOf(method) !== -1 ? req.query(apiData) : req.send(apiData),
+                cb,
+                options.token
+            )
         }
-        return Promise.reject<P>(VALIDATION_ERROR(errors))
     }
 
 }

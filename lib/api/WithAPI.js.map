@@ -1,1 +1,1 @@
-{"version":3,"file":"WithAPI.js","sourceRoot":"","sources":["../../src/api/WithAPI.ts"],"names":[],"mappings":";AAEA;IAGI,iBAAa,GAAY;QACrB,IAAI,CAAC,GAAG,GAAG,GAAG,CAAA;IAClB,CAAC;IACL,cAAC;AAAD,CAAC,AAND,IAMC;AANqB,eAAO,UAM5B,CAAA"}
+{"version":3,"file":"WithAPI.js","sourceRoot":"","sources":["../../src/api/WithAPI.ts"],"names":[],"mappings":";AAEA;IAGI,YAAa,GAAY;QACrB,IAAI,CAAC,GAAG,GAAG,GAAG,CAAA;IAClB,CAAC;AACL,CAAC;AANqB,eAAO,UAM5B,CAAA"}

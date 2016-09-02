@@ -1,27 +1,29 @@
 node("master") {
 
     stage "Checkout"
-
         checkout scm
 
-    stage "Test"
-
-        env.NODE_ENV = "test"
-
-        print "Running tests in environment: ${env.NODE_ENV}"
-
-        sh "node -v"
-        sh "npm prune"
-        sh "npm install"
-        sh "./node_modules/typings/dist/bin.js install"
-        sh "npm test"
-
     stage "Build"
+        slackSend channel: "#dev-notifications", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
 
-        echo "Building dist files"
+    stage "Test"
+        env.NODE_ENV = "test"
+        print "Running tests in environment: ${env.NODE_ENV}"
+        sh "node -v"
+
+        try {
+          sh "npm run clean"
+          sh "npm prune"
+          sh "npm install"
+          sh "./node_modules/typings/dist/bin.js install"
+          sh "npm test"
+          slackSend channel: "#dev-notifications", color: "good", message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
+        } catch (error) {
+          slackSend channel: "#dev-notifications", color: "danger", message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
+          throw error
+        }
 
     stage "Deploy"
-
         if (env.BRANCH_NAME == "develop") {
             echo "Deploy to staging"
         }
@@ -29,11 +31,10 @@ node("master") {
         if (env.BRANCH_NAME == "master") {
             echo "Deploy to production"
         }
+        slackSend channel: "#dev-notifications", color: "good", message: "!giphy|deployed"
 
     stage "Cleanup"
-
         echo "Cleaning up build"
-
         sh "npm run clean"
 
 }

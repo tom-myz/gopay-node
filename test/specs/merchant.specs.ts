@@ -2,96 +2,123 @@ import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
-import { Merchant } from "../../src/resources/merchants/Merchant"
-import { Merchants } from "../../src/resources/merchants/Merchants"
+import { Merchants } from "../../src/resources/Merchants"
 import { Scope } from "~nock/index"
-import { CommonError } from "../../src/errors/CommonError"
-import { ValidationError } from "../../src/errors/ValidationError"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
-import {ResponseError} from "../../src/errors/ResponseError";
+import { SDKError } from "../../src/errors/SDKError"
 
-describe("Merchant", () => {
-
-    let api:RestAPI
-    let merchant:Merchant
-    let merchants:Merchants
-    let scope:Scope
+describe("Merchants", () => {
+    let api: RestAPI
+    let merchants: Merchants
+    let scope: Scope
+    const testEndpoint = "http://localhost:80"
 
     beforeEach(() => {
-        api = new RestAPI({endpoint: "/", token : "token"})
-        merchant = new Merchant(api)
+        api = new RestAPI({endpoint: testEndpoint })
         merchants = new Merchants(api)
-        scope = nock("http://localhost:80")
+        scope = nock(testEndpoint)
     })
 
     afterEach(() => {
         nock.cleanAll()
     })
 
-    it("should call the api to create merchant", () => {
-        const okResponse = { status : "created" }
-        const okScope = scope
-            .post("/merchants")
-            .reply(201, okResponse, { "Content-Type" : "application/json" })
-        const data = {
-            email    : "test@test.com",
-            password : "testtest"
-        }
+    context("route GET /merchants", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "list" }
+            const okScope = scope
+                .get("/merchants")
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-        return merchant.create({ data }).should.eventually.eql(okResponse)
+            return merchants.list().should.eventually.eql(okResponse)
+        })
     })
 
-    it("should not call api if request data is invalid", () => {
-        const asserts: Array<any> = [
-            [{ email: "", password: "" }, [{ email : "REQUIRED_VALUE" }, { password : "REQUIRED_VALUE" } ]],
-            [{ email: "test", password: "test" }, [{ email : "INVALID_FORMAT_EMAIL" }, { password : "INVALID_FORMAT_LENGTH_BETWEEN" } ]]
-        ]
+    context("route POST /merchants", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "create" }
+            const okScope = scope
+                .post("/merchants")
+                .once()
+                .reply(201, okResponse, { "Content-Type" : "application/json" })
+            const data = {
+                name     : "test",
+                email    : "test@test.com",
+                password : "1234567890",
+                roles    : ["merchant"]
+            }
 
-        return Promise.all(
-            asserts.map((a) => {
-                return merchant.create({ data : a[0] }).should.be.rejected.then((e: CommonError) => {
-                    expect(e).to.be.an.instanceOf(ValidationError)
-                    expect(e.code).to.equal(VALIDATION_ERROR)
-                    expect(e.errors).to.eql(a[1])
-                })
-            })
-        )
+            return merchants.create(data).should.eventually.eql(okResponse)
+        })
+
+        it("should return validation error if data is invalid", () => {
+            const asserts = [
+                { name: "", email: "", password: "" },
+                { name: "test", email: "test", password: "1234" }
+            ]
+
+            return Promise.all(asserts.map((a: any) => {
+                return merchants.create(a).should.be.rejected
+                    .then((e: SDKError) => {
+                        expect(e.code).to.equal(VALIDATION_ERROR)
+                        expect(e.type).to.equal("request")
+                        expect(e.status).to.equal(0)
+                    })
+            }))
+        })
     })
 
-    it("should call api for single merchant", () => {
-        const okResponse = { status : "read" }
-        const scopeScope = scope
-            .get(/merchants\/[a-f-0-9\-]+$/)
-            .reply(200, okResponse, { "Content-Type" : "application/json" })
+    context("route GET /merchants/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "read" }
+            const scopeScope = scope
+                .get(/merchants\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-        return merchant.read({ id : "123" }).should.eventually.eql(okResponse)
+            return merchants.get("1").should.eventually.eql(okResponse)
+        })
     })
 
-    it("should call api to update merchant", () => {
-        const okResponse = { status : "updated" }
-        const scopeScope = scope
-            .patch(/merchants\/[a-f-0-9\-]+$/)
-            .reply(200, okResponse, { "Content-Type" : "application/json" })
-        const data = {}
+    context("route PATCH /merchants/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "update" }
+            const okScope = scope
+                .patch(/merchants\/[a-f0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+            const data = { email : "test@test.com" }
 
-        return merchant.update({ id : "123", data }).should.eventually.eql(okResponse)
+            return merchants.update("1", data).should.eventually.eql(okResponse)
+        })
+
+        it("should return validation error if data is invalid", () => {
+            const asserts = [
+                { email : "test" }
+            ]
+
+            return Promise.all(asserts.map((a: any) => {
+                return merchants.update("1", a).should.be.rejected
+                    .then((e: SDKError) => {
+                        expect(e.code).to.equal(VALIDATION_ERROR)
+                        expect(e.type).to.equal("request")
+                        expect(e.status).to.equal(0)
+                    })
+            }))
+        })
     })
 
-    it("should call api to delete merchant", () => {
-        const scopeScope = scope
-            .delete(/merchants\/[a-f-0-9\-]+$/)
-            .reply(204, null)
+    context("route DELETE /merchants/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "delete" }
+            const scopeScope = scope
+                .delete(/merchants\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-        return merchant.delete({ id : "123" }).should.eventually.be.null
-    })
-
-    it("should call api for list of merchants", () => {
-        const okResponse = { status : "read" }
-        const scopeScope = scope
-            .get("/merchants")
-            .reply(200, okResponse, { "Content-Type" : "application/json" })
-
-        return merchants.read().should.eventually.eql(okResponse)
+            return merchants.delete("1").should.eventually.eql(okResponse)
+        })
     })
 
 })

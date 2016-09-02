@@ -1,40 +1,28 @@
 import { RestAPI, RestAPIOptions } from "./api/RestAPI";
 import { Authorization } from "./resources/Authorization";
-import { Merchant } from "./resources/merchants/Merchant";
-import { Merchants } from "./resources/merchants/Merchants";
-import { Store } from "./resources/stores/Store";
-import { Stores } from "./resources/stores/Stores";
-import { TransactionToken } from "./resources/charges/TransactionToken";
-import { Charge } from "./resources/charges/Charge";
-import { Charges } from "./resources/charges/Charges";
-import { Transfer } from "./resources/transfers/Transfer";
-import { Transfers } from "./resources/transfers/Transfers";
-import { Payouts } from "./resources/payouts/Payouts";
-import { BankAccount } from "./resources/bankAccounts/BankAccount";
-import { BankAccounts } from "./resources/bankAccounts/BankAccounts";
-export interface SDKOptions {
-    appId?: string;
-    camelCase?: boolean;
-    endpoint?: string;
-    secret?: string;
-    token?: string;
-}
+import { Merchants } from "./resources/Merchants";
+import { Stores } from "./resources/Stores";
+import { Transfers } from "./resources/Transfers";
+import { Ledgers } from "./resources/Ledgers";
+import { BankAccounts } from "./resources/BankAccounts";
+import { WebHooks } from "./resources/WebHooks";
+import { ApplicationTokens } from "./resources/ApplicationTokens";
+import { TransactionTokens } from "./resources/TransactionTokens";
+import { Charges } from "./resources/Charges";
+import { Credentials } from "./resources/Credentials";
 export declare class PaymentsSDK {
     api: RestAPI;
     authorization: Authorization;
-    token: TransactionToken;
-    merchant: Merchant;
     merchants: Merchants;
-    store: Store;
     stores: Stores;
-    charge: Charge;
     charges: Charges;
-    transfer: Transfer;
     transfers: Transfers;
-    payouts: Payouts;
-    bankAccount: BankAccount;
+    ledgers: Ledgers;
     bankAccounts: BankAccounts;
-    constructor(options?: SDKOptions);
-    getOptions(options?: SDKOptions): RestAPIOptions;
+    webHooks: WebHooks;
+    applicationTokens: ApplicationTokens;
+    transactionTokens: TransactionTokens;
+    credentials: Credentials;
+    constructor(options?: RestAPIOptions);
 }
 export default PaymentsSDK;

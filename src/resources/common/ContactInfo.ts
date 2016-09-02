@@ -1,6 +1,6 @@
-import { ValidationSchema } from "../../validation/Validation"
-
-export interface PContactInfo {
+export interface ContactInfoParams {
+    name?: string
+    companyName?: string
     phoneNumber?: string
     line1?: string
     line2?: string
@@ -10,5 +10,3 @@ export interface PContactInfo {
     contry?: string
     zip?: string
 }
-
-export const contactInfoSchema: ValidationSchema = {}

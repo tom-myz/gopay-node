@@ -1,17 +1,13 @@
-import { ValidationSchema } from "../../validation/Validation";
-export interface IGatewayCredentials {
+export interface GatewayCredentials {
 }
-export interface PavisionCredentials extends IGatewayCredentials {
+export interface PavisionCredentials extends GatewayCredentials {
     merchantId?: string;
     merchantGuid?: string;
 }
-export interface WorldpayCredentials extends IGatewayCredentials {
+export interface WorldpayCredentials extends GatewayCredentials {
     merchantId?: string;
     password?: string;
 }
-export interface PGatewayCredentials {
-    [gateway: string]: IGatewayCredentials;
+export interface GatewayCredentialsParams {
+    [gateway: string]: GatewayCredentials;
 }
-export declare const payvisionSchema: ValidationSchema;
-export declare const worldpaySchema: ValidationSchema;
-export declare const gatewayCredentialsSchema: ValidationSchema;
