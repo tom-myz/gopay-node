@@ -3,7 +3,8 @@ import {
     CRUDPaginationParams,
     CRUDStoreIdParam,
     CRUDIdStoreIdParam,
-    CRUDDefinedRoute
+    CRUDDefinedRoute,
+    CRUDTransferIdParam
 } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { ledgerUpdateSchema, ledgerCreateForTransferSchema, ledgerBalanceSchema } from "../validation/schemas/ledger"
@@ -29,6 +30,7 @@ export class Ledgers extends CRUDResource {
 
     public _createLedgerForTransfer: CRUDDefinedRoute = this.defineRoute("POST", "/merchants/:merchantId/transfers/:transferId/ledgers")
     public _getBalance: CRUDDefinedRoute = this.defineRoute("GET", "/merchants/:id/(stores/:storeId/)balance")
+    public _getForTransfer: CRUDDefinedRoute = this.defineRoute("GET", "/(merchants/:merchantId/)transfers/:transferId/ledgers")
 
     public list (callback?: SDKCallbackFunction,
                  data?: CRUDPaginationParams,
@@ -56,10 +58,22 @@ export class Ledgers extends CRUDResource {
                                     merchantId?: string,
                                     transferId?: string,
                                     token?: string): Promise<any> {
-        return this._createLedgerForTransfer({ merchantId, transferId },
+
+        const params: CRUDTransferIdParam = { merchantId, transferId }
+        return this._createLedgerForTransfer(params,
                                              data,
                                              callback,
                                              { token, validationSchema : ledgerCreateForTransferSchema })
+    }
+
+    public getForTransfer (callback?: SDKCallbackFunction,
+                           data?: CRUDPaginationParams,
+                           merchantId?: string,
+                           transferId?: string,
+                           token?: string): Promise<any> {
+
+        const params: CRUDTransferIdParam = { merchantId, transferId }
+        return this._getForTransfer(params, data, callback, { token })
     }
 
     public getBalance (callback?: SDKCallbackFunction,
