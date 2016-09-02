@@ -30,7 +30,7 @@ export class Ledgers extends CRUDResource {
 
     public _createLedgerForTransfer: CRUDDefinedRoute = this.defineRoute("POST", "/merchants/:merchantId/transfers/:transferId/ledgers")
     public _getBalance: CRUDDefinedRoute = this.defineRoute("GET", "/merchants/:id/(stores/:storeId/)balance")
-    public _getForTransfer: CRUDDefinedRoute = this.defineRoute("GET", "/transfers/:transferId/ledgers")
+    public _getForTransfer: CRUDDefinedRoute = this.defineRoute("GET", "/(merchants/:merchantId/)transfers/:transferId/ledgers")
 
     public list (callback?: SDKCallbackFunction,
                  data?: CRUDPaginationParams,
@@ -68,10 +68,11 @@ export class Ledgers extends CRUDResource {
 
     public getForTransfer (callback?: SDKCallbackFunction,
                            data?: CRUDPaginationParams,
+                           merchantId?: string,
                            transferId?: string,
                            token?: string): Promise<any> {
 
-        const params: CRUDTransferIdParam = { transferId }
+        const params: CRUDTransferIdParam = { merchantId, transferId }
         return this._getForTransfer(params, data, callback, { token })
     }
 
