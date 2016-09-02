@@ -20,6 +20,6 @@ export declare class Ledgers extends CRUDResource {
     list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, storeId?: string, token?: string): Promise<any>;
     update(id: string, data?: LedgerUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, storeId?: string, token?: string): Promise<any>;
     createLedgerForTransfer(data: LedgerCreateForTransferParams, callback?: SDKCallbackFunction, merchantId?: string, transferId?: string, token?: string): Promise<any>;
-    getForTransfer(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, transferId?: string, token?: string): Promise<any>;
+    getForTransfer(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, transferId?: string, token?: string): Promise<any>;
     getBalance(callback?: SDKCallbackFunction, data?: LedgerBalanceParams, id?: string, storeId?: string, token?: string): Promise<any>;
 }
