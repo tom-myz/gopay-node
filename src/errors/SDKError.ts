@@ -1,4 +1,3 @@
-import superagent = require("superagent")
 import * as Code from "./ErrorsConstants"
 
 export type SDKErrorType = "request" | "response"
@@ -41,19 +40,16 @@ export function errorUnknown (type: SDKErrorType): SDKError {
     return Object.assign({}, defaultSDKError, { type }) as SDKError
 }
 
-export function errorFromResponse (response: superagent.Response): SDKError {
-    interface ErrorResponseBody {
-        status: string
-        code: string
-        errors: Array<any>
-    }
+export interface ErrorResponseBody {
+    status: string
+    code: string
+    errors: Array<any>
+}
 
-    if (!response) {
+export function errorFromResponse (status: number, body: ErrorResponseBody): SDKError {
+    if ((status < 100 && status >= 600) || !body) {
         return errorUnknown("response")
     }
-
-    const status: number = response.status
-    const body: ErrorResponseBody = response.body
 
     if (status >= 200 && status < 400) {
         return null

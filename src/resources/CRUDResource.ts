@@ -1,4 +1,3 @@
-import superagent = require("superagent")
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
 import { RestAPI } from "../api/RestAPI"
@@ -37,6 +36,7 @@ export type CRUDDefinedRoute = (pathParams: any, data?: any, callback?: SDKCallb
 export interface CRUDOptionalParams {
     token?: string
     validationSchema?: any
+    payloadType?: string
     [key: string]: any
 }
 
@@ -87,7 +87,9 @@ export abstract class CRUDResource extends WithAPI {
 
     public defineRoute (method: CRUDMethod, path: string): CRUDDefinedRoute {
         const api: RestAPI = this.api
-        const defaultOptions: CRUDOptionalParams = {} as CRUDOptionalParams
+        const defaultOptions: CRUDOptionalParams = {
+            payloadType : "json"
+        } as CRUDOptionalParams
 
         return function route<P, D> (pathParams: P,
                                      data?: D,
@@ -95,7 +97,6 @@ export abstract class CRUDResource extends WithAPI {
                                      options: CRUDOptionalParams = defaultOptions): Promise<any> {
 
             const url: string = CRUDResource.compilePath(path, pathParams)
-            const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
             const schema: any = options.validationSchema || {}
             const validator: Validator = DataValidator.create(data || {}, schema, validationCodes)
             const cb: SDKCallbackFunction = callback || ((err: SDKError, result: any) => null)
@@ -107,10 +108,30 @@ export abstract class CRUDResource extends WithAPI {
                 return Promise.reject(err)
             }
 
+            let body: any = null
+
+            if (["GET", "DELETE"].indexOf(method) !== -1) {
+                const queryString: string = Object.keys(data)
+                    .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
+                    .join("&")
+                body = new URLSearchParams(queryString)
+            } else {
+                switch (options.payloadType) {
+                    case "formData" :
+                        body = data // TODO: form data file
+                        break
+
+                    case "json" :
+                    default :
+                        body = JSON.stringify(data)
+                }
+            }
+
             return api.send(
-                ["GET", "DELETE"].indexOf(method) !== -1 ? req.query(data) : req.send(data),
+                new Request(url, { method }),
+                body,
                 cb,
-                options.token
+                options
             )
         }
     }

@@ -1,4 +1,4 @@
-import SDK from "../src/index.ts"
+import SDK from "../src/index"
 /*
 import { PMerchant } from "../src/resources/merchants/Merchant"
 import { PStore } from "../src/resources/stores/Store"
@@ -17,6 +17,7 @@ sdk.authorization.authorize({ email: "root_admin@univapay.com", password: "chang
     })
     .then(() => {
         return sdk.merchants.create({
+            name     : "aaaa",
             email    : "aaa",
             password : ""
         })

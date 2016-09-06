@@ -1,12 +1,14 @@
 const webpack = require("webpack")
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const DashboardPlugin = require("webpack-dashboard/plugin")
 
 const plugins = [
+    new DashboardPlugin({ port : 3004 }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
-        title : "Admin Console - DEV",
+        title : "JS SDK - DEV",
         cache : true
     })
 ]
@@ -21,7 +23,9 @@ module.exports = {
     output : {
         path          : path.join(__dirname, "build"),
         publicPath    : "http://localhost:8080/",
-        filename      : "bundle.js"
+        filename      : "bundle.js",
+        hotUpdateChunkFilename: "[id].hot-update.js",
+        hotUpdateMainFilename: "hot-update.json"
     },
 
     devtool : "eval-source-maps",
@@ -37,7 +41,7 @@ module.exports = {
 
     module : {
         loaders : [
-            { test : /\.ts$/, exclude: /node_modules/, loader: "ts" }
+            { test : /\.tsx?$/, exclude: /node_modules/, loaders : ["babel", "awesome-typescript", "source-map"] },
         ]
     }
 }
