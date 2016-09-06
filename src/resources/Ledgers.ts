@@ -42,6 +42,14 @@ export class Ledgers extends CRUDResource {
         return this._listRoute(params, data, callback, { token })
     }
 
+    public get (id: string,
+                callback?: SDKCallbackFunction,
+                merchantId?: string,
+                token?: string): Promise<any> {
+        const params: CRUDIdMerchantIdParam = { id, merchantId }
+        return this._getRoute(params, null, callback, { token })
+    }
+
     public update (id: string,
                    data?: LedgerUpdateParams,
                    callback?: SDKCallbackFunction,
