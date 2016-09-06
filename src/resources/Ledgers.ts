@@ -4,14 +4,14 @@ import {
     CRUDStoreIdParam,
     CRUDIdStoreIdParam,
     CRUDDefinedRoute,
-    CRUDTransferIdParam
+    CRUDTransferIdParam,
+    CRUDIdMerchantIdParam
 } from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { ledgerUpdateSchema, ledgerCreateForTransferSchema, ledgerBalanceSchema } from "../validation/schemas/ledger"
 
 export interface LedgerUpdateParams {
     note?: string
-    status?: string
 }
 
 export interface LedgerCreateForTransferParams {
@@ -46,10 +46,9 @@ export class Ledgers extends CRUDResource {
                    data?: LedgerUpdateParams,
                    callback?: SDKCallbackFunction,
                    merchantId?: string,
-                   storeId?: string,
                    token?: string): Promise<any> {
 
-        const params: CRUDIdStoreIdParam = { id, merchantId, storeId }
+        const params: CRUDIdMerchantIdParam = { id, merchantId }
         return this._updateRoute(params, data, callback, { token, validationSchema : ledgerUpdateSchema })
     }
 
