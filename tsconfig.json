@@ -5,9 +5,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "declaration": true,
-        "noImplicitAny": true,
-        "removeComments": true,
-        "sourceMap": true
+        "noImplicitAny": true
     },
     "include": [
         "src/**/*.ts"

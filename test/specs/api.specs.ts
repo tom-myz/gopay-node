@@ -11,10 +11,11 @@ describe("RestAPI", () => {
     let mockOk: Scope
     let mockError: Scope
     const testEndpoint = "http://localhost:80"
+    let scope: Scope
 
     before(() => {
         const REPEATS = 100
-        const scope = nock(testEndpoint)
+        scope = nock(testEndpoint)
         mockOk = scope
             .get("/ok")
             .times(REPEATS)
@@ -29,6 +30,8 @@ describe("RestAPI", () => {
     after(() => {
         nock.cleanAll()
     })
+
+
 
     it("should create instance with proper parameters", () => {
         const asserts = [
@@ -84,26 +87,36 @@ describe("RestAPI", () => {
             [{}, null, "token2", "Token token2"],
             [{}, "token1", "token2", "Token token2"]
         ]
+        let mock: Scope
 
-        return Promise.all(asserts.map((a: any) => {
+        const spy = sinon.spy(global, "fetch")
+
+        return Promise.all(asserts.map((a: any, i: number) => {
             const api: RestAPI = new RestAPI(Object.assign({}, { endpoint : testEndpoint }, a[0]))
             if (a[1]) {
                 api.setToken(a[1])
             }
-            const req = { method : "GET", url: "/ok" }
-            const spy = sinon.spy(req, "set").withArgs("Authorization")
+            const req = { method : "GET", url: "/header" }
 
-            return api.send(req, () => null, a[2]).should.eventually.be.fulfilled
+            mock = scope
+                .get("/header")
+                .once()
+                .reply(200, { ok : true }, Object.assign(
+                    { "Content-Type" : "application/json" },
+                    a[3] ? { "Authorization" : a[3] } : null
+                ))
+
+            return api.send(req, () => null, { token : a[2] }).should.eventually.be.fulfilled
                 .then((r: any) => {
                     if (!a[3]) {
-                        expect(spy).to.have.not.been.called
+                        expect((spy.getCall(i).args[0].headers as Headers).has("Authorization")).to.be.false
                     } else {
-                        expect(spy).to.have.been.calledWith("Authorization", a[3])
+                        expect((spy.getCall(i).args[0].headers as Headers).get("Authorization")).to.equal(a[3])
                     }
                     expect(r).to.eql({ ok : true })
                 })
-                .then(() => (req as any).set.restore())
-        }))
+
+        })).then(() => (global as any).fetch.restore())
     })
 
     it("should use callback to return result", function () {

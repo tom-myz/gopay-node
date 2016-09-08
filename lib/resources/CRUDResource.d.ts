@@ -26,6 +26,7 @@ export declare type CRUDDefinedRoute = (pathParams: any, data?: any, callback?: 
 export interface CRUDOptionalParams {
     token?: string;
     validationSchema?: any;
+    payloadType?: string;
     [key: string]: any;
 }
 export declare abstract class CRUDResource extends WithAPI {

@@ -1,5 +1,6 @@
-import superagent = require("superagent");
+import "isomorphic-fetch";
 import { SDKError } from "../errors/SDKError";
+import { CRUDOptionalParams } from "../resources/CRUDResource";
 export declare const DEFAULT_ENDPOINT: string;
 export declare const DEFAULT_ENV_APP_ID: string;
 export declare const DEFAULT_ENV_SECRET: string;
@@ -10,6 +11,11 @@ export interface RestAPIOptions {
     camel?: boolean;
 }
 export declare type SDKCallbackFunction = (err: SDKError, result: any) => void;
+export interface SendParams {
+    body?: any;
+    url: string;
+    method: string;
+}
 export declare class RestAPI {
     endpoint: string;
     appId: string;
@@ -20,5 +26,5 @@ export declare class RestAPI {
     static requestParams(params: Object): Object;
     setToken(token: string): void;
     getToken(): string;
-    send(request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any>;
+    send(params: SendParams, callback: SDKCallbackFunction, options?: CRUDOptionalParams): Promise<any>;
 }

@@ -1,1 +1,1 @@
-{"version":3,"file":"application-token.js","sourceRoot":"","sources":["../../../src/validation/schemas/application-token.ts"],"names":[],"mappings":";AAAa,oCAA4B,GAAG;IACxC,OAAO,EAAG,OAAO;CACpB,CAAA"}
+{"version":3,"sources":["application-token.js"],"names":["exports","applicationTokenUpdateSchema","domains"],"mappings":"AAAA;;AACAA,QAAQC,4BAAR,GAAuC;AACnCC,aAAS;AAD0B,CAAvC","file":"application-token.js","sourcesContent":["\"use strict\";\nexports.applicationTokenUpdateSchema = {\n    domains: \"array\"\n};\n"]}

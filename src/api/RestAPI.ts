@@ -1,4 +1,4 @@
-// import { process } from "process"
+import "isomorphic-fetch"
 import { errorFromResponse, SDKError } from "../errors/SDKError"
 import { underscore, camelCase } from "../utils"
 import { CRUDOptionalParams } from "../resources/CRUDResource"
@@ -32,8 +32,8 @@ export class RestAPI {
 
     constructor (options: RestAPIOptions) {
         this.endpoint = options.endpoint || DEFAULT_ENDPOINT
-        this.appId = options.appId // || process.env[DEFAULT_ENV_APP_ID]
-        this.secret = options.secret // || process.env[DEFAULT_ENV_SECRET]
+        this.appId = options.appId || process.env[DEFAULT_ENV_APP_ID]
+        this.secret = options.secret || process.env[DEFAULT_ENV_SECRET]
         this.camel = options.camel || false
     }
 
@@ -50,8 +50,7 @@ export class RestAPI {
     }
 
     public send (params: SendParams, callback: SDKCallbackFunction, options: CRUDOptionalParams = {}): Promise<any> {
-        const _token: string = options.token || this.token
-        console.warn(Headers)
+        const _token: string = (options || {}).token || this.token
         const headers: Headers = new Headers()
 
         if (_token) {
@@ -60,15 +59,12 @@ export class RestAPI {
             headers.append("Authorization", `ApplicationToken ${this.appId}|${this.secret || ""}`)
         }
 
-        switch (options.payloadType) {
-            case "formData" :
-                headers.append("Content-Type", "multipart/form-data")
-                break
 
-            default :
-                headers.append("Content-Type", "application/json")
+        if (!(params.body instanceof FormData)) {
+            headers.append("Content-Type", "application/json")
+        } else if (params.body) {
+            headers.append("Accept", "application/json")
         }
-        headers.append("Accept", "application/json")
 
         return new Promise((resolve: Function, reject: Function) => {
             const request: Request = new Request(`${this.endpoint}${params.url}`, {
@@ -79,18 +75,20 @@ export class RestAPI {
             })
 
             fetch(request)
-                .then((response: Response) => {
-                    return response.json()
-                        .then((body: any) => {
-                            const err: SDKError = errorFromResponse(response.status, body)
-
-                            if (err !== null) {
-                                callback(err, null)
-                                reject(err)
-                            }
-                        })
+                .then((response: Response) => Promise.all([Promise.resolve(response.status), response.text()]))
+                .then(([status, text]: [number, string]) => {
+                    return Promise.all([
+                        Promise.resolve(status),
+                        Promise.resolve(text ? JSON.parse(text) : {})
+                    ])
                 })
-                .then((body: any) => {
+                .then(([status, body]: [number, any]) => {
+                    const err: SDKError = errorFromResponse(status, body)
+
+                    if (err !== null) {
+                        throw err
+                    }
+
                     const result: any = this.camel ? camelCase(body) : body
                     callback(null, result)
                     resolve(result)

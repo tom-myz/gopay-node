@@ -9,8 +9,18 @@ import { CommonError } from "../src/errors/CommonError"
 
 const sdk = new SDK({ camel : true })
 
-sdk.authorization.authorize({ email: "root_admin@univapay.com", password: "changeme1" })
-    .then((result) => {
+
+sdk.merchants.list(null, { page : 1 })
+    .catch((e: any) => console.error(e))
+
+const params: any = { email: "root_admin@univapay.com", password: "changeme1" }
+const paramsFormData: FormData = new FormData()
+paramsFormData.append("email", "root_admin@univapay.com")
+paramsFormData.append("password", "changeme")
+
+/*
+sdk.authorization.authorize(paramsFormData)
+    .then((result: any) => {
         console.warn(result)
         sdk.api.setToken(result.token)
     //    return Promise.resolve()
@@ -22,7 +32,8 @@ sdk.authorization.authorize({ email: "root_admin@univapay.com", password: "chang
             password : ""
         })
     })
-    .catch((e) => console.error(e))
+    .catch((e: any) => console.error(e))
+    */
 
 /*
 sdk.merchants.get("123", (err, result) => {

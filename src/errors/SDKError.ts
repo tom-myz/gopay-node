@@ -47,15 +47,15 @@ export interface ErrorResponseBody {
 }
 
 export function errorFromResponse (status: number, body: ErrorResponseBody): SDKError {
-    if ((status < 100 && status >= 600) || !body) {
-        return errorUnknown("response")
-    }
-
     if (status >= 200 && status < 400) {
         return null
     }
 
-    if (body) {
+    if ((status < 100 && status >= 600) || !body) {
+        return errorUnknown("response")
+    }
+
+    if (Object.getOwnPropertyNames(body).length !== 0) {
         return Object.assign({}, defaultSDKError, {
             code   : body.code || Code.UNKNOWN,
             errors : body.errors || [],

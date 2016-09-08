@@ -6,5 +6,5 @@ export interface AuthorizeParams {
 }
 export declare class Authorization extends CRUDResource {
     private _authorizeRoute;
-    authorize(data: AuthorizeParams, callback?: SDKCallbackFunction): Promise<any>;
+    authorize(data: AuthorizeParams | FormData, callback?: SDKCallbackFunction): Promise<any>;
 }

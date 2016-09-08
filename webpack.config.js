@@ -16,6 +16,9 @@ const plugins = [
         "URLSearchParams"   : "exports?global.URLSearchParams!url-search-params"
 
     }),
+    new webpack.SourceMapDevToolPlugin({
+        test: /\.ts$/i
+    })
 ]
 
 module.exports = {
@@ -33,7 +36,7 @@ module.exports = {
         hotUpdateMainFilename: "hot-update.json"
     },
 
-    devtool : "eval-source-maps",
+    devtool : "inline-source-maps",
     devServer : {
         contentBase        : path.join(__dirname, "build"),
         port               : 8080,

@@ -1,1 +1,3 @@
-export declare function getContactInfoSchema(prefix?: string): {};
+export declare function getContactInfoSchema(prefix?: string): {
+    [x: string]: string;
+};
