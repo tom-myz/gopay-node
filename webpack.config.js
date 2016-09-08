@@ -10,7 +10,12 @@ const plugins = [
     new HtmlWebpackPlugin({
         title : "JS SDK - DEV",
         cache : true
-    })
+    }),
+    new webpack.ProvidePlugin({
+        "fetch"             : "exports?global.fetch!whatwg-fetch",
+        "URLSearchParams"   : "exports?global.URLSearchParams!url-search-params"
+
+    }),
 ]
 
 module.exports = {

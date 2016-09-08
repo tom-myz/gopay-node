@@ -3,7 +3,7 @@ import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
 import { WebHooks } from "../../src/resources/WebHooks"
-import { Scope } from "~nock/index"
+import { Scope } from "nock"
 import { SDKError } from "../../src/errors/SDKError"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 

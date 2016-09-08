@@ -1,23 +1,20 @@
 import "../utils"
 import { expect } from "chai"
-import superagent = require("superagent")
 import * as Codes from "../../src/errors/ErrorsConstants"
-import { SDKError, errorFromResponse, errorFromValidation } from "../../src/errors/SDKError"
+import { SDKError, errorFromResponse, errorFromValidation, ErrorResponseBody } from "../../src/errors/SDKError"
 
 describe("Errors", () => {
 
     context("errorFromResponse", () => {
         it("should create SDKError from api error response", () => {
-            const response: superagent.Response = {
-                body : {
-                    code   : "INTERNAL_SERVER_ERROR",
-                    errors : [],
-                    status : "error"
-                },
-                status : 400
-            } as superagent.Response
+            const status: number = 400
+            const response: ErrorResponseBody = {
+                code   : "INTERNAL_SERVER_ERROR",
+                errors : [],
+                status : "error"
+            }
 
-            expect(errorFromResponse(response)).to.eql({
+            expect(errorFromResponse(status, response)).to.eql({
                 code   : "INTERNAL_SERVER_ERROR",
                 errors : [],
                 status : 400,

@@ -2,11 +2,10 @@ import "../utils"
 import { expect } from "chai"
 import sinon = require("sinon")
 import nock = require("nock")
-import superagent = require("superagent")
 import { RestAPI, RestAPIOptions, DEFAULT_ENV_APP_ID, DEFAULT_ENV_SECRET } from "../../src/api/RestAPI"
-import { Scope } from "~nock/index"
 import { SDKError } from "../../src/errors/SDKError"
 import { UNKNOWN } from "../../src/errors/ErrorsConstants"
+import { Scope } from "nock"
 
 describe("RestAPI", () => {
     let mockOk: Scope
@@ -70,7 +69,7 @@ describe("RestAPI", () => {
     it("should send request to the api", function () {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-        const req = superagent.get("/ok")
+        const req = { method : "GET", url: "/ok" }
         return api.send(req, () => null).should.eventually.be.fulfilled
             .then((r: any) => expect(r).to.eql({ ok : true }))
     })
@@ -91,7 +90,7 @@ describe("RestAPI", () => {
             if (a[1]) {
                 api.setToken(a[1])
             }
-            const req = superagent.get("/ok")
+            const req = { method : "GET", url: "/ok" }
             const spy = sinon.spy(req, "set").withArgs("Authorization")
 
             return api.send(req, () => null, a[2]).should.eventually.be.fulfilled
@@ -110,7 +109,7 @@ describe("RestAPI", () => {
     it("should use callback to return result", function () {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-        const req = superagent.get("/ok")
+        const req = { method : "GET", url: "/ok" }
         const spy = sinon.spy()
 
         return api.send(req, spy).should.eventually.be.fulfilled
@@ -120,7 +119,7 @@ describe("RestAPI", () => {
     it("should return SDKError for error response", function () {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-        const req = superagent.get("/error")
+        const req = { method : "GET", url: "/error" }
         const spy = sinon.spy()
         const error: SDKError = { code : UNKNOWN, errors : [], status : 400, type : "response" }
 
@@ -150,7 +149,7 @@ describe("RestAPI", () => {
             .get("/camel")
             .once()
             .reply(200, { "foo_bar" : true }, { "Content-Type" : "application/json" })
-        const req = superagent.get("/camel")
+        const req = { method : "GET", url: "/camel" }
 
         const error: SDKError = { code : UNKNOWN, errors : [], status : 400, type : "response" }
 

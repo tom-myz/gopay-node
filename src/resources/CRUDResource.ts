@@ -40,14 +40,6 @@ export interface CRUDOptionalParams {
     [key: string]: any
 }
 
-const methodsMap: any = {
-    "GET"    : "get",
-    "POST"   : "post",
-    "PUT"    : "put",
-    "PATCH"  : "patch",
-    "DELETE" : "del"
-}
-
 interface CRUDResourceStatic extends Function {
     routeBase: string
 }
@@ -87,9 +79,7 @@ export abstract class CRUDResource extends WithAPI {
 
     public defineRoute (method: CRUDMethod, path: string): CRUDDefinedRoute {
         const api: RestAPI = this.api
-        const defaultOptions: CRUDOptionalParams = {
-            payloadType : "json"
-        } as CRUDOptionalParams
+        const defaultOptions: CRUDOptionalParams = { payloadType : "json" } as CRUDOptionalParams
 
         return function route<P, D> (pathParams: P,
                                      data?: D,
@@ -108,28 +98,30 @@ export abstract class CRUDResource extends WithAPI {
                 return Promise.reject(err)
             }
 
-            let body: any = null
+            let body: any
 
             if (["GET", "DELETE"].indexOf(method) !== -1) {
-                const queryString: string = Object.keys(data)
+                const queryString: string = Object.keys(data || {})
                     .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
                     .join("&")
                 body = new URLSearchParams(queryString)
             } else {
                 switch (options.payloadType) {
                     case "formData" :
-                        body = data // TODO: form data file
+                        body = data
                         break
 
                     case "json" :
-                    default :
                         body = JSON.stringify(data)
+                        break
+
+                    default :
+                        body = null
                 }
             }
 
             return api.send(
-                new Request(url, { method }),
-                body,
+                { url, method, body },
                 cb,
                 options
             )

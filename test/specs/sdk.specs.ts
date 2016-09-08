@@ -1,6 +1,6 @@
 import "../utils"
 import { expect } from "chai"
-import SDK from "../../src/index.ts"
+import SDK from "../../src/index"
 import { RestAPI } from "../../src/api/RestAPI"
 import { Authorization } from "../../src/resources/Authorization"
 import { Merchants } from "../../src/resources/Merchants"

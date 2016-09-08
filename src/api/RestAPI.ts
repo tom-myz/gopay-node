@@ -1,7 +1,7 @@
-//import { process } from "process"
+// import { process } from "process"
 import { errorFromResponse, SDKError } from "../errors/SDKError"
 import { underscore, camelCase } from "../utils"
-import {CRUDOptionalParams} from "../resources/CRUDResource";
+import { CRUDOptionalParams } from "../resources/CRUDResource"
 
 export const DEFAULT_ENDPOINT: string = "http://localhost:9000"
 export const DEFAULT_ENV_APP_ID: string = "GPAY_APP_ID"
@@ -16,6 +16,12 @@ export interface RestAPIOptions {
 
 export type SDKCallbackFunction = (err: SDKError, result: any) => void
 
+export interface SendParams {
+    body?: any
+    url: string
+    method: string
+}
+
 export class RestAPI {
 
     public endpoint: string
@@ -26,8 +32,8 @@ export class RestAPI {
 
     constructor (options: RestAPIOptions) {
         this.endpoint = options.endpoint || DEFAULT_ENDPOINT
-        this.appId = options.appId //|| process.env[DEFAULT_ENV_APP_ID]
-        this.secret = options.secret //|| process.env[DEFAULT_ENV_SECRET]
+        this.appId = options.appId // || process.env[DEFAULT_ENV_APP_ID]
+        this.secret = options.secret // || process.env[DEFAULT_ENV_SECRET]
         this.camel = options.camel || false
     }
 
@@ -43,8 +49,9 @@ export class RestAPI {
         return this.token
     }
 
-    public send (req: Request, body: any, callback: SDKCallbackFunction, options: CRUDOptionalParams = {}): Promise<any> {
+    public send (params: SendParams, callback: SDKCallbackFunction, options: CRUDOptionalParams = {}): Promise<any> {
         const _token: string = options.token || this.token
+        console.warn(Headers)
         const headers: Headers = new Headers()
 
         if (_token) {
@@ -58,17 +65,16 @@ export class RestAPI {
                 headers.append("Content-Type", "multipart/form-data")
                 break
 
-            case "json" :
             default :
                 headers.append("Content-Type", "application/json")
         }
         headers.append("Accept", "application/json")
 
         return new Promise((resolve: Function, reject: Function) => {
-            const request: Request = new Request(`${this.endpoint}${req.url}`, {
+            const request: Request = new Request(`${this.endpoint}${params.url}`, {
+                body    : params.body,
                 headers,
-                method  : req.method,
-                body,
+                method  : params.method,
                 mode    : "cors"
             })
 
