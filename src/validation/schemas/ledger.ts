@@ -1,11 +1,10 @@
 export const ledgerUpdateSchema = {
-    status : "string",
-    note   : "string"
+    note : "string"
 }
 
 export const ledgerCreateForTransferSchema = {
-    amount   : "required|number",
-    currency : "required|string",
+    amount   : "required|numeric",
+    currency : "required|min:3",
     note     : "string"
 }
 

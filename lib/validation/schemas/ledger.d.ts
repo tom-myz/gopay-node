@@ -1,5 +1,4 @@
 export declare const ledgerUpdateSchema: {
-    status: string;
     note: string;
 };
 export declare const ledgerCreateForTransferSchema: {
