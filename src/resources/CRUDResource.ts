@@ -1,12 +1,10 @@
-import superagent = require("superagent")
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
 import { RestAPI } from "../api/RestAPI"
 import { DataValidator } from "../validation/validator"
-import Validator = require("validatorjs")
-import {errorFromValidation, SDKError} from "../errors/SDKError"
+import { errorFromValidation, SDKError } from "../errors/SDKError"
 import { validationCodes } from "../validation/error-codes"
-import { underscore } from "../utils/underscore"
+import Validator = ValidatorJS.Validator
 
 export interface PathParams { [key: string]: (string | number) }
 
@@ -42,15 +40,8 @@ export type CRUDDefinedRoute = (pathParams: any, data?: any, callback?: SDKCallb
 export interface CRUDOptionalParams {
     token?: string
     validationSchema?: any
+    payloadType?: string
     [key: string]: any
-}
-
-const methodsMap: any = {
-    "GET"    : "get",
-    "POST"   : "post",
-    "PUT"    : "put",
-    "PATCH"  : "patch",
-    "DELETE" : "del"
 }
 
 interface CRUDResourceStatic extends Function {
@@ -92,17 +83,26 @@ export abstract class CRUDResource extends WithAPI {
 
     public defineRoute (method: CRUDMethod, path: string): CRUDDefinedRoute {
         const api: RestAPI = this.api
-        const defaultOptions: CRUDOptionalParams = {} as CRUDOptionalParams
 
         return function route<P, D> (pathParams: P,
                                      data?: D,
                                      callback?: SDKCallbackFunction,
-                                     options: CRUDOptionalParams = defaultOptions): Promise<any> {
+                                     options?: CRUDOptionalParams): Promise<any> {
 
             const url: string = CRUDResource.compilePath(path, pathParams)
-            const req: superagent.Request<any> = (superagent as any)[(methodsMap as any)[(method as string)]](url)
             const schema: any = options.validationSchema || {}
-            const validator: Validator = DataValidator.create(data || {}, schema, validationCodes)
+
+            let validatorData: any = {}
+
+            if (data instanceof FormData) {
+                for (let pair of (data as FormData).entries()) {
+                    validatorData[pair[0] as string] = pair[1]
+                }
+            } else {
+                validatorData = data
+            }
+
+            const validator: Validator<D> = DataValidator.create(validatorData, schema, validationCodes)
             const cb: SDKCallbackFunction = callback || ((err: SDKError, result: any) => null)
 
             if (validator.fails()) {
@@ -112,12 +112,30 @@ export abstract class CRUDResource extends WithAPI {
                 return Promise.reject(err)
             }
 
-            const apiData: Object = underscore(data)
+            function getBody(): any {
+                if (data instanceof FormData) {
+                    return data
+                } else if (typeof data === "object" && ["GET", "DELETE"].indexOf(method) === -1) {
+                    return JSON.stringify(data)
+                }
+                return null
+            }
+
+            function getUrl(_url: string): string {
+                let queryString: string
+
+                if (["GET", "DELETE"].indexOf(method) !== -1) {
+                    queryString = Object.keys(data || {})
+                        .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
+                        .join("&")
+                }
+                return queryString ? `${_url}?${queryString}` : _url
+            }
 
             return api.send(
-                ["GET", "DELETE"].indexOf(method) !== -1 ? req.query(apiData) : req.send(apiData),
+                { body : getBody(), method, url : getUrl(url) },
                 cb,
-                options.token
+                options
             )
         }
     }

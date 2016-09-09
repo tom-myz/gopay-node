@@ -2,7 +2,6 @@ import {
     CRUDResource,
     CRUDPaginationParams,
     CRUDStoreIdParam,
-    CRUDIdStoreIdParam,
     CRUDDefinedRoute,
     CRUDTransferIdParam,
     CRUDIdMerchantIdParam

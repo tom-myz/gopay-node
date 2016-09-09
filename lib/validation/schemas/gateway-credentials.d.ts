@@ -1,1 +1,3 @@
-export declare function getGatewayCredentialsSchema(prefix?: string): {};
+export declare function getGatewayCredentialsSchema(prefix?: string): {
+    [x: string]: string;
+};

@@ -3,7 +3,7 @@ import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI } from "../../src/api/RestAPI"
 import { Transfers } from "../../src/resources/Transfers"
-import { Scope } from "~nock/index"
+import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 import { SDKError } from "../../src/errors/SDKError"
 
@@ -45,7 +45,7 @@ describe("Transfers", () => {
                 .post(/(merchants\/[a-f0-9\-]+\/)?transfers$/i)
                 .twice()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = { processTo : "2020-01-01T00:00:00Z" }
+            const data = { to : "2020-01-01T00:00:00Z" }
 
             return Promise.all([
                 transfers.create(data).should.eventually.eql(okResponse),
@@ -55,8 +55,8 @@ describe("Transfers", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { processTo : "" },
-                { processFrom : "a", processTo : "a" }
+                { to : "" },
+                { from : "a", to : "a" }
             ]
 
             return Promise.all(asserts.map((a: any) => {

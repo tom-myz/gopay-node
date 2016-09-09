@@ -1,13 +1,23 @@
 const webpack = require("webpack")
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const DashboardPlugin = require("webpack-dashboard/plugin")
 
 const plugins = [
+    new DashboardPlugin({ port : 3004 }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
-        title : "Admin Console - DEV",
+        title : "JS SDK - DEV",
         cache : true
+    }),
+    new webpack.ProvidePlugin({
+        "fetch"             : "exports?global.fetch!whatwg-fetch",
+        "URLSearchParams"   : "exports?global.URLSearchParams!url-search-params"
+
+    }),
+    new webpack.SourceMapDevToolPlugin({
+        test: /\.ts$/i
     })
 ]
 
@@ -21,10 +31,12 @@ module.exports = {
     output : {
         path          : path.join(__dirname, "build"),
         publicPath    : "http://localhost:8080/",
-        filename      : "bundle.js"
+        filename      : "bundle.js",
+        hotUpdateChunkFilename: "[id].hot-update.js",
+        hotUpdateMainFilename: "hot-update.json"
     },
 
-    devtool : "eval-source-maps",
+    devtool : "inline-source-maps",
     devServer : {
         contentBase        : path.join(__dirname, "build"),
         port               : 8080,
@@ -37,7 +49,7 @@ module.exports = {
 
     module : {
         loaders : [
-            { test : /\.ts$/, exclude: /node_modules/, loader: "ts" }
+            { test : /\.tsx?$/, exclude: /node_modules/, loaders : ["babel", "awesome-typescript", "source-map"] },
         ]
     }
 }

@@ -11,7 +11,7 @@ export class Authorization extends CRUDResource {
 
     private _authorizeRoute: CRUDDefinedRoute = this.defineRoute("POST", "/authenticate")
 
-    public authorize (data: AuthorizeParams, callback?: SDKCallbackFunction): Promise<any> {
+    public authorize (data: AuthorizeParams | FormData, callback?: SDKCallbackFunction): Promise<any> {
         return this._authorizeRoute(null, data, callback, { validationSchema : authorizeSchema })
     }
 

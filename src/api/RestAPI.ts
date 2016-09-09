@@ -1,8 +1,7 @@
-import { process } from "process"
-import superagent = require("superagent")
-import prefix = require("superagent-prefix")
+import "isomorphic-fetch"
 import { errorFromResponse, SDKError } from "../errors/SDKError"
 import { underscore, camelCase } from "../utils"
+import { CRUDOptionalParams } from "../resources/CRUDResource"
 
 export const DEFAULT_ENDPOINT: string = "http://localhost:9000"
 export const DEFAULT_ENV_APP_ID: string = "GPAY_APP_ID"
@@ -16,6 +15,12 @@ export interface RestAPIOptions {
 }
 
 export type SDKCallbackFunction = (err: SDKError, result: any) => void
+
+export interface SendParams {
+    body?: any
+    url: string
+    method: string
+}
 
 export class RestAPI {
 
@@ -44,38 +49,54 @@ export class RestAPI {
         return this.token
     }
 
-    public send (request: superagent.Request<any>, callback: SDKCallbackFunction, token?: string): Promise<any> {
-        const _token: string = token || this.token
-        let header: string
+    public send (params: SendParams, callback: SDKCallbackFunction, options: CRUDOptionalParams = {}): Promise<any> {
+        const _token: string = (options || {}).token || this.token
+        const headers: Headers = new Headers()
 
         if (_token) {
-            header = `Token ${_token}`
+            headers.append("Authorization", `Token ${_token}`)
         } else if (Boolean(this.appId)) {
-            header = `ApplicationToken ${this.appId}|${this.secret || ""}`
+            headers.append("Authorization", `ApplicationToken ${this.appId}|${this.secret || ""}`)
+        }
+
+
+        if (!(params.body instanceof FormData)) {
+            headers.append("Content-Type", "application/json")
+        } else if (params.body) {
+            headers.append("Accept", "application/json")
         }
 
         return new Promise((resolve: Function, reject: Function) => {
-            request
-                .use(prefix(this.endpoint))
-                .accept("json")
-                .type("json")
+            const request: Request = new Request(`${this.endpoint}${params.url}`, {
+                body    : params.body,
+                headers,
+                method  : params.method,
+                mode    : "cors"
+            })
 
-            if (header) {
-                request.set("Authorization", header)
-            }
+            fetch(request)
+                .then((response: Response) => Promise.all([Promise.resolve(response.status), response.text()]))
+                .then(([status, text]: [number, string]) => {
+                    return Promise.all([
+                        Promise.resolve(status),
+                        Promise.resolve(text ? JSON.parse(text) : {})
+                    ])
+                })
+                .then(([status, body]: [number, any]) => {
+                    const err: SDKError = errorFromResponse(status, body)
 
-            request.end((error: any, response: superagent.Response) => {
-                const err: SDKError = errorFromResponse(response)
+                    if (err !== null) {
+                        throw err
+                    }
 
-                if (error || err !== null) {
-                    callback(err, null)
-                    reject(err)
-                } else {
-                    const result: any = this.camel ? camelCase(response.body) : response.body
+                    const result: any = this.camel ? camelCase(body) : body
                     callback(null, result)
                     resolve(result)
-                }
-            })
+                })
+                .catch((error: any) => {
+                    callback(error, null)
+                    reject(error)
+                })
         })
     }
 }

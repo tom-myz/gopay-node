@@ -1,4 +1,4 @@
-import Validator = require("validatorjs");
+import Validator = ValidatorJS.Validator;
 export declare class DataValidator {
-    static create(data: any, schema: any, messages?: any): Validator;
+    static create<A>(data: A, schema: any, messages?: any): Validator<A>;
 }
