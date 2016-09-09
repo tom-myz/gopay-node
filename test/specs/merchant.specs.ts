@@ -43,9 +43,10 @@ describe("Merchants", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data = {
-                name : "test",
-                email : "test@test.com",
-                password: "1234567890"
+                name     : "test",
+                email    : "test@test.com",
+                password : "1234567890",
+                roles    : ["merchant"]
             }
 
             return merchants.create(data).should.eventually.eql(okResponse)

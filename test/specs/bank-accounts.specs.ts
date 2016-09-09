@@ -49,6 +49,7 @@ describe("Bank Accounts", () => {
                 holderName : "Joe Doe",
                 bankName : "SMBC",
                 currency : "USD",
+                country : "JP",
                 accountNumber: "1234567890"
             }
 

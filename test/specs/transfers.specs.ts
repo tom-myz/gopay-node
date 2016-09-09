@@ -45,7 +45,7 @@ describe("Transfers", () => {
                 .post(/(merchants\/[a-f0-9\-]+\/)?transfers$/i)
                 .twice()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = { processTo : "2020-01-01T00:00:00Z" }
+            const data = { to : "2020-01-01T00:00:00Z" }
 
             return Promise.all([
                 transfers.create(data).should.eventually.eql(okResponse),
@@ -55,8 +55,8 @@ describe("Transfers", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { processTo : "" },
-                { processFrom : "a", processTo : "a" }
+                { to : "" },
+                { from : "a", to : "a" }
             ]
 
             return Promise.all(asserts.map((a: any) => {

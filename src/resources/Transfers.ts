@@ -1,6 +1,12 @@
-import { CRUDResource, CRUDMerchantIdParam, CRUDIdMerchantIdParam, CRUDPaginationParams } from "./CRUDResource"
+import {
+    CRUDResource,
+    CRUDMerchantIdParam,
+    CRUDIdMerchantIdParam,
+    CRUDPaginationParams,
+    CRUDDefinedRoute
+} from "./CRUDResource"
 import { SDKCallbackFunction } from "../api/RestAPI"
-import { transferCreateSchema, transferUpdateSchema } from "../validation/schemas/transfer"
+import { transferCreateSchema, transferUpdateSchema, transferPendingMerchantsSchema } from "../validation/schemas/transfer"
 
 export interface TransferCommonParams {
     bankAccountId?: string
@@ -12,16 +18,25 @@ export interface TransferCommonParams {
 }
 
 export interface TransferCreateParams extends TransferCommonParams {
-    processFrom?: string
-    processTo: string
+    from?: string
+    to: string
 }
 
 export interface TransferUpdateParams extends TransferCommonParams {}
+
+export interface TransferPendingMerchantParams {
+    from?: string
+    to: string
+}
 
 
 export class Transfers extends CRUDResource {
 
     public static routeBase: string = "/(merchants/:merchantId/)transfers"
+
+    public _finalizeTransfer: CRUDDefinedRoute = this.defineRoute("PATCH", "/merchants/:merchantId/transfers/:id/finalize")
+    public _getTransfersPendingMerchants: CRUDDefinedRoute = this.defineRoute("GET", "/transfers_pending")
+    public _getMerchantPendingTransfers: CRUDDefinedRoute = this.defineRoute("GET", "/merchants/:merchantId/transfers_pending")
 
     public list (callback?: SDKCallbackFunction,
                  data?: CRUDPaginationParams,
@@ -54,6 +69,33 @@ export class Transfers extends CRUDResource {
                    token?: string): Promise<any> {
         const params: CRUDIdMerchantIdParam = { id, merchantId }
         return this._updateRoute(params, data, callback, { token, validationSchema : transferUpdateSchema })
+    }
+
+    public finalizeTransfer (id: string,
+                             callback?: SDKCallbackFunction,
+                             merchantId?: string,
+                             token?: string): Promise<any> {
+        const params: CRUDIdMerchantIdParam = { id, merchantId }
+        return this._finalizeTransfer(params, null, callback, { token })
+    }
+
+    public getTransfersPendingMerchants (merchantId: string,
+                                         callback?: SDKCallbackFunction,
+                                         data?: TransferPendingMerchantParams,
+                                         token?: string): Promise<any> {
+        const params: CRUDMerchantIdParam = { merchantId }
+        return this._getTransfersPendingMerchants(params, data, callback, { token })
+    }
+
+    public getMerchantPendingTransfers (merchantId: string,
+                                        callback?: SDKCallbackFunction,
+                                        data?: TransferPendingMerchantParams,
+                                        token?: string): Promise<any> {
+        const params: CRUDMerchantIdParam = { merchantId }
+        return this._getMerchantPendingTransfers(params,
+                                                 data,
+                                                 callback,
+                                                 { token, validationSchema : transferPendingMerchantsSchema })
     }
 
 }

@@ -1,8 +1,12 @@
 export declare const transferCreateSchema: {
-    processFrom: string;
-    processTo: string;
+    from: string;
+    to: string;
     metadata: string;
 };
 export declare const transferUpdateSchema: {
     status: string;
+};
+export declare const transferPendingMerchantsSchema: {
+    from: string;
+    to: string;
 };

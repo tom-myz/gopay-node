@@ -45,11 +45,28 @@ describe("Application Tokens", () => {
                 .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/app_tokens$/i)
                 .twice()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
+            const data = { testMode : true }
 
             return Promise.all([
-                applicationTokens.create("1").should.eventually.eql(okResponse),
-                applicationTokens.create("1", null, "1").should.eventually.eql(okResponse),
+                applicationTokens.create("1", data).should.eventually.eql(okResponse),
+                applicationTokens.create("1", data, null, "1").should.eventually.eql(okResponse),
             ])
+        })
+
+        it("should return validation error if data is invalid", () => {
+            const asserts = [
+                { testMode: "aa" },
+                { domains: "aa" }
+            ]
+
+            return Promise.all(asserts.map((a: any) => {
+                return applicationTokens.create("1", a).should.be.rejected
+                    .then((e: SDKError) => {
+                        expect(e.code).to.equal(VALIDATION_ERROR)
+                        expect(e.type).to.equal("request")
+                        expect(e.status).to.equal(0)
+                    })
+            }))
         })
     })
 

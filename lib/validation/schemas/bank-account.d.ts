@@ -2,6 +2,8 @@ export declare const bankAccountCreateSchema: {
     holderName: string;
     bankName: string;
     branchName: string;
+    bankAddress: string;
+    country: string;
     currency: string;
     accountNumber: string;
     routingNumber: string;
@@ -14,6 +16,7 @@ export declare const bankAccountUpdateSchema: {
     holderName: string;
     bankName: string;
     branchName: string;
+    bankAddress: string;
     currency: string;
     accountNumber: string;
     routingNumber: string;
