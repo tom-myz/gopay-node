@@ -12,7 +12,6 @@ node("master") {
         sh "node -v"
 
         try {
-          sh "npm i -g tslint mocha"
           sh "npm run clean"
           sh "npm prune"
           sh "npm install"
