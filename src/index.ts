@@ -10,6 +10,7 @@ import { ApplicationTokens } from "./resources/ApplicationTokens"
 import { TransactionTokens } from "./resources/TransactionTokens"
 import { Charges } from "./resources/Charges"
 import { Credentials } from "./resources/Credentials"
+import { Refunds } from "./resources/Refunds"
 
 export class PaymentsSDK {
 
@@ -27,6 +28,7 @@ export class PaymentsSDK {
     public applicationTokens: ApplicationTokens
     public transactionTokens: TransactionTokens
     public credentials: Credentials
+    public refunds: Refunds
 
     constructor (options?: RestAPIOptions) {
         this.api = new RestAPI(options)
@@ -43,6 +45,7 @@ export class PaymentsSDK {
         this.applicationTokens = new ApplicationTokens(this.api)
         this.transactionTokens = new TransactionTokens(this.api)
         this.credentials = new Credentials(this.api)
+        this.refunds = new Refunds(this.api)
     }
 }
 

@@ -10,6 +10,7 @@ import { ApplicationTokens } from "./resources/ApplicationTokens";
 import { TransactionTokens } from "./resources/TransactionTokens";
 import { Charges } from "./resources/Charges";
 import { Credentials } from "./resources/Credentials";
+import { Refunds } from "./resources/Refunds";
 export declare class PaymentsSDK {
     api: RestAPI;
     authorization: Authorization;
@@ -23,6 +24,7 @@ export declare class PaymentsSDK {
     applicationTokens: ApplicationTokens;
     transactionTokens: TransactionTokens;
     credentials: Credentials;
+    refunds: Refunds;
     constructor(options?: RestAPIOptions);
 }
 export default PaymentsSDK;
