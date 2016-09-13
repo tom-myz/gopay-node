@@ -71,19 +71,3 @@ export function errorFromResponse (status: number, body: ErrorResponseBody): SDK
         type   : "response"
     })
 }
-
-export function errorFromValidation (errors: any): SDKError {
-    interface ValidationError {
-        field: string
-        reason: string
-    }
-
-    return Object.assign({}, defaultSDKError, {
-        code   : Code.VALIDATION_ERROR,
-        errors : Object.keys(errors).reduce((r: Array<ValidationError>, field: string) => {
-            const codes: Array<string> = errors[field]
-            r.push({ field, reason : codes[0] })
-            return r
-        }, [])
-    })
-}

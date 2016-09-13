@@ -166,3 +166,9 @@ export class Merchants extends CRUDResource {
     }
 
 }
+
+//------------- Refactored
+
+export class Merchants extends CRUDResource {
+
+}

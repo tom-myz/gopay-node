@@ -1,11 +1,11 @@
 import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
-import { RestAPI } from "../../src/api/RestAPI"
-import { Refunds } from "../../src/resources/Refunds"
+import { RestAPI } from "../../src1/api/RestAPI"
+import { Refunds } from "../../src1/resources/Refunds"
 import { Scope } from "nock"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
-import { SDKError } from "../../src/errors/SDKError"
+import { VALIDATION_ERROR } from "../../src1/errors/ErrorsConstants"
+import { SDKError } from "../../src1/errors/SDKError"
 
 describe("Refunds", () => {
     let api: RestAPI

@@ -1,41 +1,20 @@
 import { SDKCallbackFunction } from "../api/RestAPI"
 import { WithAPI } from "../api/WithAPI"
 import { RestAPI } from "../api/RestAPI"
-import { DataValidator } from "../validation/validator"
 import { errorFromValidation, SDKError } from "../errors/SDKError"
-import { validationCodes } from "../validation/error-codes"
-import Validator = ValidatorJS.Validator
 
 export interface PathParams { [key: string]: (string | number) }
 
-export type CRUDMethod = "GET" | "POST" | "UPDATE" | "PATCH" | "DELETE"
+export type CRUDMethod = "GET" | "POST" | "PATCH" | "DELETE"
 
-export interface CRUDIdParam {
-    id: string
-}
-
-export interface CRUDMerchantIdParam {
-    merchantId?: string
-}
-
-export interface CRUDIdMerchantIdParam extends CRUDIdParam, CRUDMerchantIdParam {}
-
-export interface CRUDStoreIdParam extends CRUDMerchantIdParam {
-    storeId?: string
-}
-
-export interface CRUDIdStoreIdParam extends CRUDIdParam, CRUDStoreIdParam {}
-
-export interface CRUDTransferIdParam extends CRUDMerchantIdParam {
-    transferId?: string
-}
+export interface CRUDIdParam { id: string }
+export interface CRUDMerchantIdParam { merchantId: string }
+export interface CRUDStoreIdParam extends CRUDMerchantIdParam { storeId: string }
 
 export interface CRUDPaginationParams {
     page?: number
     pageSize?: number
 }
-
-export type CRUDDefinedRoute = (pathParams: any, data?: any, callback?: SDKCallbackFunction, options?: CRUDOptionalParams) => Promise<any>
 
 export interface CRUDOptionalParams {
     token?: string
@@ -44,13 +23,15 @@ export interface CRUDOptionalParams {
     [key: string]: any
 }
 
+export type CRUDDefinedRoute = (pathParams: any, data?: any, callback?: SDKCallbackFunction, options?: CRUDOptionalParams) => Promise<any>
+
 interface CRUDResourceStatic extends Function {
     routeBase: string
 }
 
-export abstract class CRUDResource extends WithAPI {
 
-    public validationRules: any
+
+export abstract class CRUDResource extends WithAPI {
 
     public _listRoute: CRUDDefinedRoute
     public _createRoute: CRUDDefinedRoute
@@ -90,27 +71,8 @@ export abstract class CRUDResource extends WithAPI {
                                      options?: CRUDOptionalParams): Promise<any> {
 
             const url: string = CRUDResource.compilePath(path, pathParams)
-            const schema: any = options.validationSchema || {}
 
-            let validatorData: any = {}
-
-            if (data instanceof FormData) {
-                for (let pair of (data as FormData).entries()) {
-                    validatorData[pair[0] as string] = pair[1]
-                }
-            } else {
-                validatorData = data
-            }
-
-            const validator: Validator<D> = DataValidator.create(validatorData, schema, validationCodes)
             const cb: SDKCallbackFunction = callback || ((err: SDKError, result: any) => null)
-
-            if (validator.fails()) {
-                const errors: any = validator.errors.all()
-                const err: SDKError = errorFromValidation(errors)
-                cb(err, null)
-                return Promise.reject(err)
-            }
 
             function getBody(): any {
                 if (data instanceof FormData) {

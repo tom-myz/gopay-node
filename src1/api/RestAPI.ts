@@ -1,23 +1,20 @@
-import * as fetch from "node-fetch"
-import { errorFromResponse, SDKError } from "../errors/SDKError"
-import { underscore, camelCase } from "../utils"
-import { CRUDOptionalParams } from "../resources/CRUDResource"
-import { Headers, Response, Request } from "node-fetch"
+import "isomorphic-fetch"
+import * as camelcase from "camelcase"
+import * as decamelize from "decamelize"
+import { DEFAULT_ENDPOINT, ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../constants"
+import { transformKeys } from "../utils/object"
 
-export const DEFAULT_ENDPOINT: string = "http://localhost:9000"
-export const DEFAULT_ENV_APP_ID: string = "GPAY_APP_ID"
-export const DEFAULT_ENV_SECRET: string = "GPAY_SECRET"
+export type HTTPMethod = "GET" | "POST" | "PATCH" | "DELETE"
 
 export interface RestAPIOptions {
     endpoint?: string
     appId?: string
     secret?: string
     camel?: boolean
+    paramValidation?: boolean
 }
 
-export type SDKCallbackFunction = (err: SDKError, result: any) => void
-
-export interface SendParams {
+export interface SendRequestParams {
     body?: any
     url: string
     method: string
@@ -25,21 +22,22 @@ export interface SendParams {
 
 export class RestAPI {
 
-    public endpoint: string
-    public appId: string
-    public secret: string
+    private endpoint: string
+    private appId: string
+    private secret: string
     private camel: boolean
     private token: string
 
-    constructor (options: RestAPIOptions) {
+
+    constructor (options: RestAPIOptions = {}) {
         this.endpoint = options.endpoint || DEFAULT_ENDPOINT
-        this.appId = options.appId || process.env[DEFAULT_ENV_APP_ID]
-        this.secret = options.secret || process.env[DEFAULT_ENV_SECRET]
+        this.appId = options.appId || process.env[ENV_KEY_APP_ID]
+        this.secret = options.secret || process.env[ENV_KEY_SECRET]
         this.camel = options.camel || false
     }
 
-    public static requestParams (params: Object): Object {
-        return underscore(params)
+    public static requestParams (params: any): any {
+        return transformKeys(params, decamelize)
     }
 
     public setToken(token: string): void {
@@ -50,7 +48,7 @@ export class RestAPI {
         return this.token
     }
 
-    public send (params: SendParams, callback: SDKCallbackFunction, options: CRUDOptionalParams = {}): Promise<any> {
+    public send (params: SendRequestParams, callback: any, options: any = {}): Promise<any> {
         const _token: string = (options || {}).token || this.token
         const headers: Headers = new Headers()
 
@@ -84,13 +82,15 @@ export class RestAPI {
                     ])
                 })
                 .then(([status, body]: [number, any]) => {
-                    const err: SDKError = errorFromResponse(status, body)
+                    //const err: any = errorFromResponse(status, body)
+                    const err: any = null
+
 
                     if (err !== null) {
                         throw err
                     }
 
-                    const result: any = this.camel ? camelCase(body) : body
+                    const result: any = this.camel ? transformKeys(body, camelcase) : body
                     callback(null, result)
                     resolve(result)
                 })
@@ -100,4 +100,6 @@ export class RestAPI {
                 })
         })
     }
+
+
 }
