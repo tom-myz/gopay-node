@@ -11,11 +11,6 @@ const plugins = [
         title : "JS SDK - DEV",
         cache : true
     }),
-    new webpack.ProvidePlugin({
-        "fetch"             : "exports?global.fetch!whatwg-fetch",
-        "URLSearchParams"   : "exports?global.URLSearchParams!url-search-params"
-
-    }),
     new webpack.SourceMapDevToolPlugin({
         test: /\.ts$/i
     })

@@ -5,22 +5,25 @@ export interface RestAPIOptions {
     appId?: string;
     secret?: string;
     camel?: boolean;
-    paramValidation?: boolean;
 }
-export interface SendRequestParams {
-    body?: any;
-    url: string;
-    method: string;
+export interface ErrorResponse {
+    status: string;
+    code: string;
+    errors: Array<{
+        [key: string]: string;
+    }>;
 }
+export declare type ResponseCallback<A> = (response: A) => void;
 export declare class RestAPI {
     private endpoint;
     private appId;
     private secret;
     private camel;
-    private token;
     constructor(options?: RestAPIOptions);
     static requestParams(params: any): any;
-    setToken(token: string): void;
-    getToken(): string;
-    send(params: SendRequestParams, callback: any, options?: any): Promise<any>;
+    static requestUrl(url: string, data: any, isQueryString: boolean): string;
+    static requestBody(data: any, isQueryString: boolean): any;
+    getBody(data: any, payload: boolean): any;
+    getHeaders(body?: any): Headers;
+    send<A>(method: HTTPMethod, url: string, data: any, callback: ResponseCallback<A>): Promise<A>;
 }

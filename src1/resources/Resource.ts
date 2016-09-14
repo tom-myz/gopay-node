@@ -1,6 +1,10 @@
-import { RestAPI, HTTPMethod } from "../api/RestAPI"
+import * as FormData from "form-data"
+import { RestAPI, HTTPMethod, ResponseCallback } from "../api/RestAPI"
+import { PathParameterError } from "../errors/PathParameterError"
+import { RequestParameterError } from "../errors/RequestParameterError"
+import { missingKeys } from "../utils/object"
 
-export type DefinedRoute = (pathParams: any, data?: any, callback?: any, options?: any) => Promise<any>
+export type DefinedRoute = (pathParams: any, data?: any, callback?: any) => Promise<any>
 
 export abstract class Resource {
 
@@ -21,43 +25,28 @@ export abstract class Resource {
         this.api = api
     }
 
-    public defineRoute (method: HTTPMethod, path: string, ): DefinedRoute {
+    public defineRoute (method: HTTPMethod, path: string, pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
         const api: RestAPI = this.api
 
-        return function route<P, D> (pathParams: P,
-                                     data?: D,
-                                     callback?: any,
-                                     options?: any): Promise<any> {
+        return function route<A, B, C> (params: A,
+                                        data?: B,
+                                        callback?: ResponseCallback<C>): Promise<C> {
 
-            const url: string = Resource.compilePath(path, pathParams)
+            const url: string = Resource.compilePath(path, params)
+            const missingPathParams: Array<string> = (url.match(/:([a-z]+)/ig) || []).map((m) => m.replace(":", ""))
 
-            const cb: any = callback || ((err: any, result: any): void => null)
-
-            function getBody(): any {
-                if (data instanceof FormData) {
-                    return data
-                } else if (typeof data === "object" && ["GET", "DELETE"].indexOf(method) === -1) {
-                    return JSON.stringify(data)
-                }
-                return null
+            if (missingPathParams.length > 0) {
+                Promise.reject(new PathParameterError(missingPathParams[0]))
             }
 
-            function getUrl(_url: string): string {
-                let queryString: string
-
-                if (["GET", "DELETE"].indexOf(method) !== -1) {
-                    queryString = Object.keys(data || {})
-                        .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
-                        .join("&")
+            if (!(!!data && data.constructor === FormData) && typeof data === "object") {
+                const missingParams: Array<string> = missingKeys(data, required)
+                if (missingParams.length > 0) {
+                    Promise.reject(new PathParameterError(missingParams[0]))
                 }
-                return queryString ? `${_url}?${queryString}` : _url
             }
-
-            return api.send(
-                { body : getBody(), method, url : getUrl(url) },
-                cb,
-                options
-            )
+            
+            return api.send(method, url, data, callback)
         }
     }
 
