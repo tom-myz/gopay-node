@@ -4,7 +4,7 @@ import { PathParameterError } from "../errors/PathParameterError"
 import { RequestParameterError } from "../errors/RequestParameterError"
 import { missingKeys } from "../utils/object"
 
-export type DefinedRoute = (pathParams: any, data?: any, callback?: any) => Promise<any>
+export type DefinedRoute = (data?: any, callback?: any, pathParams?: Array<string>, ...params: Array<string>) => Promise<any>
 
 export abstract class Resource {
 
@@ -25,14 +25,22 @@ export abstract class Resource {
         this.api = api
     }
 
-    public defineRoute (method: HTTPMethod, path: string, pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
+    public defineRoute (method: HTTPMethod, path: string, required: Array<string> = []): DefinedRoute {
         const api: RestAPI = this.api
 
-        return function route<A, B, C> (params: A,
-                                        data?: B,
-                                        callback?: ResponseCallback<C>): Promise<C> {
+        return function route<A, B> (data?: A,
+                                     callback?: ResponseCallback<B>,
+                                     pathParams: Array<string> = [],
+                                     ...params: Array<string>): Promise<B> {
 
-            const url: string = Resource.compilePath(path, params)
+            const _params: any = params.reduce((p: any, param: string, i: number) => {
+                if (pathParams[i]) {
+                    p[pathParams[i]] = params
+                }
+                return p
+            }, {})
+
+            const url: string = Resource.compilePath(path, _params)
             const missingPathParams: Array<string> = (url.match(/:([a-z]+)/ig) || []).map((m) => m.replace(":", ""))
 
             if (missingPathParams.length > 0) {

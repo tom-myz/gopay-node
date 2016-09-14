@@ -30,24 +30,24 @@ export abstract class CRUDResource extends Resource {
         this._routeBase = (this.constructor as CRUDResourceStatic).routeBase
     }
 
-    _listRoute (pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
-        return this.defineRoute("GET", this._routeBase, pathParams, required)
+    public _listRoute (required?: Array<string>): DefinedRoute {
+        return this.defineRoute("GET", this._routeBase, required)
     }
 
-    _createRoute (pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
-        return this.defineRoute("POST", this._routeBase, pathParams, required)
+    public _createRoute (required?: Array<string>): DefinedRoute {
+        return this.defineRoute("POST", this._routeBase, required)
     }
 
-    _getRoute (pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
-        return this.defineRoute("GET", `${this._routeBase}/:id`, pathParams, required)
+    public _getRoute (required?: Array<string>): DefinedRoute {
+        return this.defineRoute("GET", `${this._routeBase}/:id`, required)
     }
 
-    _updateRoute (pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
-        return this.defineRoute("PATCH", `${this._routeBase}/:id`, pathParams, required)
+    public _updateRoute (required?: Array<string>): DefinedRoute {
+        return this.defineRoute("PATCH", `${this._routeBase}/:id`, required)
     }
 
-    _deleteRoute (pathParams?: Array<string>, required?: Array<string>): DefinedRoute {
-        return this.defineRoute("DELETE", `${this._routeBase}/:id`, pathParams, required)
+    public _deleteRoute (required?: Array<string>): DefinedRoute {
+        return this.defineRoute("DELETE", `${this._routeBase}/:id`, required)
     }
 
 }

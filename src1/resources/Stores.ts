@@ -21,27 +21,24 @@ export class Stores extends CRUDResource {
 
     public static routeBase: string = "/stores"
 
-    public list<A> (data?: StoresListParams, callback?: ResponseCallback<ResponseMerchants>, _params?: A): Promise<ResponseMerchants> {
-        return this._listRoute()(_params, null, callback)
+    public list (data?: StoresListParams, callback?: ResponseCallback<ResponseMerchants>): Promise<ResponseMerchants> {
+        return this._listRoute()(null, callback)
     }
 
-    public create<A> (data: StoreCreateParams, callback?: ResponseCallback<ResponseMerchant>, _params?: A): Promise<ResponseMerchant> {
-        return this._createRoute(null, ["name"])(_params, data, callback)
+    public create (data: StoreCreateParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
+        return this._createRoute(["name"])(data, callback)
     }
     
-    public get<A> (id: string, callback?: ResponseCallback<ResponseMerchant>, _params?: A): Promise<ResponseMerchant> {
-        const params: CRUDIdParam & A = Object.assign({ id }, _params)
-        return this._getRoute(["id"])(params, null, callback)
+    public get (id: string, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
+        return this._getRoute()(null, callback, ["id"], id)
     }
 
-    public update<A> (id: string, data?: any, callback?: ResponseCallback<ResponseMerchant>, _params?: A): Promise<ResponseMerchant> {
-        const params: CRUDIdParam & A = Object.assign({ id }, _params)
-        return this._updateRoute(["id"])(params, data, callback)
+    public update (id: string, data?: any, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
+        return this._updateRoute()(data, callback, ["id"], id)
     }
 
-    public delete<A> (id: string, callback?: ResponseCallback<ErrorResponse>, _params?: A): Promise<ErrorResponse> {
-        const params: CRUDIdParam & A = Object.assign({ id }, _params)
-        return this._deleteRoute(["id"])(params, null, callback)
+    public delete (id: string, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this._deleteRoute()(null, callback, ["id"], id)
     }
 
 }

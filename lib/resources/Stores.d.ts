@@ -12,9 +12,9 @@ export declare type ResponseMerchant = StoreItem | ErrorResponse;
 export declare type ResponseMerchants = CRUDItemsResponse<StoreItem> | ErrorResponse;
 export declare class Stores extends CRUDResource {
     static routeBase: string;
-    list<A>(data?: StoresListParams, callback?: ResponseCallback<ResponseMerchants>, _params?: A): Promise<ResponseMerchants>;
-    create<A>(data: StoreCreateParams, callback?: ResponseCallback<ResponseMerchant>, _params?: A): Promise<ResponseMerchant>;
-    get<A>(id: string, callback?: ResponseCallback<ResponseMerchant>, _params?: A): Promise<ResponseMerchant>;
-    update<A>(id: string, data?: any, callback?: ResponseCallback<ResponseMerchant>, _params?: A): Promise<ResponseMerchant>;
-    delete<A>(id: string, callback?: ResponseCallback<ErrorResponse>, _params?: A): Promise<ErrorResponse>;
+    list(data?: StoresListParams, callback?: ResponseCallback<ResponseMerchants>): Promise<ResponseMerchants>;
+    create(data: StoreCreateParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant>;
+    get(id: string, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant>;
+    update(id: string, data?: any, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant>;
+    delete(id: string, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse>;
 }

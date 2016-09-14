@@ -20,9 +20,9 @@ export interface CRUDItemsResponse<A> {
 export declare abstract class CRUDResource extends Resource {
     _routeBase: string;
     constructor(api: RestAPI);
-    _listRoute(pathParams?: Array<string>, required?: Array<string>): DefinedRoute;
-    _createRoute(pathParams?: Array<string>, required?: Array<string>): DefinedRoute;
-    _getRoute(pathParams?: Array<string>, required?: Array<string>): DefinedRoute;
-    _updateRoute(pathParams?: Array<string>, required?: Array<string>): DefinedRoute;
-    _deleteRoute(pathParams?: Array<string>, required?: Array<string>): DefinedRoute;
+    _listRoute(required?: Array<string>): DefinedRoute;
+    _createRoute(required?: Array<string>): DefinedRoute;
+    _getRoute(required?: Array<string>): DefinedRoute;
+    _updateRoute(required?: Array<string>): DefinedRoute;
+    _deleteRoute(required?: Array<string>): DefinedRoute;
 }

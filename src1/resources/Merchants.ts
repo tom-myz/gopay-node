@@ -13,7 +13,7 @@ export class Merchants extends CRUDResource {
     public static routeBase: string = "/merchants"
     
     public me (callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
-        return this.defineRoute("GET", `${this._routeBase}/me`)(null, null, callback)
+        return this.defineRoute("GET", `${this._routeBase}/me`)(null, callback)
     }
 
 }
