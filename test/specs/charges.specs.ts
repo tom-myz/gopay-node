@@ -1,11 +1,10 @@
 import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
-import { RestAPI } from "../../src/api/RestAPI"
+import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { Charges } from "../../src/resources/Charges"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
-import { SDKError } from "../../src/errors/SDKError"
 
 describe("Charges", () => {
     let api: RestAPI
@@ -23,18 +22,15 @@ describe("Charges", () => {
         nock.cleanAll()
     })
 
-    context("route GET /merchants/:merchantId/stores/:storeId/charges", () => {
+    context("route GET /stores/:storeId/charges", () => {
         it("should return correct response", () => {
             const okResponse = { action : "list" }
             const okScope = scope
-                .get(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/charges$/i)
-                .twice()
+                .get(/\/stores\/[a-f-0-9\-]+\/charges$/i)
+                .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return Promise.all([
-                charges.list("1").should.eventually.eql(okResponse),
-                charges.list("1", null, null, "1").should.eventually.eql(okResponse),
-            ])
+            return charges.list("1").should.eventually.eql(okResponse)
         })
     })
 
@@ -45,46 +41,35 @@ describe("Charges", () => {
                 .post("/charges")
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = {
-                token : "token",
-                amount : 100.00,
-                currency : "USD"
-            }
+            const data: any = null
 
             return charges.create(data).should.eventually.eql(okResponse)
         })
 
-        it("should return validation error if data is invalid", () => {
+        xit("should return validation error if data is invalid", () => {
             const asserts = [
-                { token: "", amount: "", currency: "" },
-                { token: "token", amount: "", currency: "" },
-                { token: "token", amount: "a", currency: "a" }
+                {}
             ]
 
             return Promise.all(asserts.map((a: any) => {
                 return charges.create(a).should.be.rejected
-                    .then((e: SDKError) => {
-                        expect(e.code).to.equal(VALIDATION_ERROR)
-                        expect(e.type).to.equal("request")
-                        expect(e.status).to.equal(0)
-                    })
+                    .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
             }))
         })
     })
 
-    context("route GET /merchants/:merchantId/stores/:storeId/charges/:id", () => {
+    context("route GET /stores/:storeId/charges/:id", () => {
         it("should return correct response", () => {
             const okResponse = { action : "read" }
             const scopeScope = scope
-                .get(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/charges\/[a-f0-9\-]+$/i)
-                .twice()
+                .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+$/i)
+                .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return Promise.all([
-                charges.get("1", "1").should.eventually.eql(okResponse),
-                charges.get("1", "1", null, "1").should.eventually.eql(okResponse)
-            ])
+            return charges.get("1", "1").should.eventually.eql(okResponse)
         })
+
+        xit("should perform long polling until charge is processed")
     })
 
 })

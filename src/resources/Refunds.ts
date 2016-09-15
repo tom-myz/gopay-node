@@ -1,49 +1,47 @@
-import { CRUDResource, CRUDStoreIdParam, CRUDIdStoreIdParam, CRUDPaginationParams } from "./CRUDResource"
-import { SDKCallbackFunction } from "../api/RestAPI"
-import { refundCreateSchema } from "../validation/schemas/refund"
+import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export interface RefundCreateParams {}
+/* Request */
+export interface RefundsListParams extends CRUDPaginationParams, AuthParams {}
+export interface RefundCreateParams extends AuthParams {
 
-interface CRUDRefundParam extends CRUDStoreIdParam {
-    chargeId: string
 }
 
-interface CRUDIdRefundParam extends CRUDIdStoreIdParam {
-    chargeId: string
+/* Response */
+export interface RefundItem {
+    id: string
 }
+
+export type ResponseRefund = RefundItem
+export type ResponseRefunds = CRUDItemsResponse<RefundItem>
 
 export class Refunds extends CRUDResource {
 
-    public static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/charges/:chargeId/refunds"
+    public static routeBase: string = "/stores/:storeId/charges/:chargeId/refunds"
 
-    public list (chargeId: string,
-                 storeId: string,
-                 data?: CRUDPaginationParams,
-                 callback?: SDKCallbackFunction,
-                 merchantId?: string,
-                 token?: string): Promise<any> {
-        const params: CRUDRefundParam = { storeId, merchantId, chargeId }
-        return this._listRoute(params, data, callback, { token })
+    public list (storeId: string,
+                 chargeId: string,
+                 data?: RefundsListParams,
+                 callback?: ResponseCallback<ResponseRefunds>): Promise<ResponseRefunds> {
+
+        return this._listRoute()(data, callback, ["storeId", "chargeId"], storeId, chargeId)
     }
 
-    public create (chargeId: string,
-                   storeId: string,
+    public create (storeId: string,
+                   chargeId: string,
                    data: RefundCreateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDRefundParam = { storeId, merchantId, chargeId }
-        return this._createRoute(params, data, callback, { token, validationSchema : refundCreateSchema })
+                   callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+
+        return this._createRoute()(data, callback, ["storeId", "chargeId"], storeId, chargeId)
     }
 
-    public get (chargeId: string,
-                storeId: string,
+    public get (storeId: string,
+                chargeId: string,
                 id: string,
-                callback?: SDKCallbackFunction,
-                merchantId?: string,
-                token?: string): Promise<any> {
-        const params: CRUDIdRefundParam = { id, storeId, merchantId, chargeId }
-        return this._getRoute(params, null, callback, { token })
+                data?: AuthParams,
+                callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+
+        return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
     }
 
 }

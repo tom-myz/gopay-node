@@ -1,9 +1,8 @@
 import SDK from "../lib/index"
 
 const sdk = new SDK({
-    appId: "HmGXTDsoDa0PR9nwW4tj",
-    secret : "3ArFtX7EtySzUC50plJ8------",
-    camel : true 
+    appId: "nhxm6IbPqFuFbn11uJQ0",
+    secret : "3ArFtX7EtySzUC50plJ8------"
 })
 
 const paramsFormData: FormData = new FormData()
@@ -11,7 +10,9 @@ paramsFormData.append("email", "root_admin@univapay.com")
 paramsFormData.append("password", "changeme")
 
 //sdk.merchants.update("1", paramsFormData)
-sdk.stores.list("1")
+sdk.stores.get("11")
+    .then((res) => console.warn(res))
+    .catch((e) => console.warn(e))
 
 /*
 sdk.authorization.authorize(paramsFormData)

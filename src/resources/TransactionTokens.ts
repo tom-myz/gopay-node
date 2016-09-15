@@ -1,40 +1,37 @@
-import { CRUDResource, CRUDIdParam } from "./CRUDResource"
-import { SDKCallbackFunction } from "../api/RestAPI"
-import { ContactInfoParams } from "./common/ContactInfo"
-import { getTransactionTokenSchema } from "../validation/schemas/transaction-token"
+import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { CRUDResource } from "./CRUDResource"
 
-export interface TokenCardData {
-    cardholder: string
-    cardNumber: string
-    expMonth: number
-    expYear: number
-    cvv: string
-    address?: ContactInfoParams
+/* Request */
+export interface TransactionTokenCreateParams extends AuthParams {
+    name: string
 }
 
-export interface TransactionTokenCreateParams<A> {
-    type: string
-    data: A
+/* Response */
+export interface TransactionTokenItem {
+    id: string
 }
+
+export type ResponseTransactionToken = TransactionTokenItem
 
 export class TransactionTokens extends CRUDResource {
 
     public static routeBase: string = "/tokens"
 
-    public create (data: TransactionTokenCreateParams<any>,
-                   callback?: SDKCallbackFunction): Promise<any> {
-        const validationSchema: any = getTransactionTokenSchema(data.type)
-        return this._createRoute(null, data, callback, { validationSchema })
+    public create (data: TransactionTokenCreateParams,
+                   callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+
+        return this._createRoute()(data, callback)
     }
 
-    public get (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
-        const params: CRUDIdParam = { id }
-        return this._getRoute(params, null, callback, { token })
+    public get (id: string,
+                data?: AuthParams,
+                callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+
+        return this._getRoute()(data, callback, ["id"], id)
     }
 
-    public delete (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
-        const params: CRUDIdParam = { id }
-        return this._deleteRoute(params, null, callback, { token })
+    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this._deleteRoute()(data, callback, ["id"], id)
     }
 
 }

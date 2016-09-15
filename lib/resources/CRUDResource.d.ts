@@ -1,14 +1,5 @@
 import { RestAPI } from "../api/RestAPI";
 import { Resource, DefinedRoute } from "./Resource";
-export interface CRUDIdParam {
-    id?: string;
-}
-export interface CRUDMerchantIdParam {
-    merchantId?: string;
-}
-export interface CRUDStoreIdParam extends CRUDMerchantIdParam {
-    storeId?: string;
-}
 export interface CRUDPaginationParams {
     page?: number;
     pageSize?: number;

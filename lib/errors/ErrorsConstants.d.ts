@@ -1,0 +1,11 @@
+export declare const BAD_REQUEST: string;
+export declare const NOT_AUTHORIZED: string;
+export declare const FORBIDDEN: string;
+export declare const NOT_FOUND: string;
+export declare const NOT_ALLOWED: string;
+export declare const CONFLICTED: string;
+export declare const TOO_MANY_REQUESTS: string;
+export declare const INTERNAL_ERROR: string;
+export declare const SERVICE_UNAVAILABLE: string;
+export declare const VALIDATION_ERROR: string;
+export declare const UNKNOWN: string;

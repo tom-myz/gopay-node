@@ -1,118 +1,99 @@
 import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
-import { RestAPI } from "../../src/api/RestAPI"
+import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { WebHooks } from "../../src/resources/WebHooks"
 import { Scope } from "nock"
-import { SDKError } from "../../src/errors/SDKError"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
-describe("Webhooks", () => {
+describe("WebHooks", () => {
     let api: RestAPI
+    let webHooks: WebHooks
     let scope: Scope
-    let webhooks: WebHooks
     const testEndpoint = "http://localhost:80"
 
     beforeEach(() => {
-        api = new RestAPI({endpoint: testEndpoint, camel : true })
+        api = new RestAPI({endpoint: testEndpoint })
+        webHooks = new WebHooks(api)
         scope = nock(testEndpoint)
-        webhooks = new WebHooks(api)
     })
 
     afterEach(() => {
         nock.cleanAll()
     })
 
-    context("route GET /merchants/:merchantId/stores/:storeId/webhooks", () => {
+    context("route GET /stores/:storeId/webhooks", () => {
         it("should return correct response", () => {
             const okResponse = { action : "list" }
             const okScope = scope
-                .get(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/webhooks$/i)
-                .twice()
+                .get(/\/stores\/[a-f-0-9\-]+\/webhooks$/i)
+                .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return Promise.all([
-                webhooks.list("1").should.eventually.eql(okResponse),
-                webhooks.list("1", null, null, "1").should.eventually.eql(okResponse),
-            ])
+            return webHooks.list("1").should.eventually.eql(okResponse)
         })
     })
 
-    context("route POST /merchants/:merchantId/stores/:storeId/webhooks", () => {
+    context("route POST /stores/:storeId/webhooks", () => {
         it("should return correct response", () => {
             const okResponse = { action : "create" }
             const okScope = scope
-                .post(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/webhooks+$/i)
-                .twice()
+                .post(/\/stores\/[a-f-0-9\-]+\/webhooks$/i)
+                .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = { triggers : ["success"], url : "http://test.com" }
+            const data = {
+                name : "test"
+            }
 
-            return Promise.all([
-                webhooks.create("1", data).should.eventually.eql(okResponse),
-                webhooks.create("1", data, null, "1").should.eventually.eql(okResponse)
-            ])
+            return webHooks.create("1", data).should.eventually.eql(okResponse)
         })
 
-        it("should return validation error if data is invalid", () => {
+        xit("should return validation error if data is invalid", () => {
             const asserts = [
-                { triggers: "", url : "" },
-                { triggers: "aa", url : "aa" }
+                {}
             ]
 
             return Promise.all(asserts.map((a: any) => {
-                return webhooks.create("1", a).should.be.rejected
-                    .then((e: SDKError) => {
-                        expect(e.code).to.equal(VALIDATION_ERROR)
-                        expect(e.type).to.equal("request")
-                        expect(e.status).to.equal(0)
-                    })
+                return webHooks.create("1", a).should.be.rejected
+                    .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
             }))
         })
     })
 
-    context("route PATCH /merchants/:merchantId/stores/:storeId/webhooks/:id", () => {
+    context("route GET /stores/:storeId/webhooks/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "read" }
+            const scopeScope = scope
+                .get(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+            return webHooks.get("1", "1").should.eventually.eql(okResponse)
+        })
+    })
+
+    context("route PATCH /stores/:storeId/webhooks/:id", () => {
         it("should return correct response", () => {
             const okResponse = { action : "update" }
             const okScope = scope
-                .patch(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/webhooks\/[a-f0-9\-]+$/i)
-                .twice()
+                .patch(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
+                .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
-            const data = { triggers : ["success"], url : "http://test.com" }
+            const data = { }
 
-            return Promise.all([
-                webhooks.update("1", "1", data).should.eventually.eql(okResponse),
-                webhooks.update("1", "1", data, null, "1").should.eventually.eql(okResponse)
-            ])
-        })
-
-        it("should return validation error if data is invalid", () => {
-            const asserts = [
-                { triggers: "aa", url : "aa" }
-            ]
-
-            return Promise.all(asserts.map((a: any) => {
-                return webhooks.update("1", "1", a).should.be.rejected
-                    .then((e: SDKError) => {
-                        expect(e.code).to.equal(VALIDATION_ERROR)
-                        expect(e.type).to.equal("request")
-                        expect(e.status).to.equal(0)
-                    })
-            }))
+            return webHooks.update("1", "1", data).should.eventually.eql(okResponse)
         })
     })
 
-    context("route DELETE /merchants/:merchantId/stores/:storeId/webhooks/:id", () => {
+    context("route DELETE /stores/:storeId/webhooks/:id", () => {
         it("should return correct response", () => {
-            const okResponse = { action : "delete" }
-            const okScope = scope
-                .delete(/(merchants\/[a-z0-9\-]+\/)?stores\/[a-z0-9\-]+\/webhooks\/[a-z0-9\-]+$/i)
-                .twice()
+            const okResponse = { action : "read" }
+            const scopeScope = scope
+                .delete(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
+                .once()
                 .reply(204, okResponse, { "Content-Type" : "application/json" })
 
-            return Promise.all([
-                webhooks.delete("1", "1").should.eventually.eql(okResponse),
-                webhooks.delete("1", "1", null, "1").should.eventually.eql(okResponse)
-            ])
+            return webHooks.delete("1", "1").should.eventually.eql(okResponse)
         })
     })
 

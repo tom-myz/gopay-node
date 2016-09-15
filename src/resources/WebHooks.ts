@@ -1,62 +1,63 @@
-import { CRUDResource, CRUDStoreIdParam, CRUDIdStoreIdParam, CRUDPaginationParams } from "./CRUDResource"
-import { SDKCallbackFunction } from "../api/RestAPI"
-import { webHookCreateSchema, webHookUpdateSchema } from "../validation/schemas/webhook"
+import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export interface WebHookCommonParams {
+/* Request */
+export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
+export interface WebHookCreateParams extends AuthParams {
+
+}
+export interface WebHookUpdateParams extends AuthParams {
+
 }
 
-export interface WebHookCreateParams extends WebHookCommonParams {}
-export interface WebHookUpdateParams extends WebHookCommonParams {}
+/* Response */
+export interface WebHookItem {
+    id: string
+}
 
+export type ResponseWebHook = WebHookItem
+export type ResponseWebHooks = CRUDItemsResponse<WebHookItem>
 
 export class WebHooks extends CRUDResource {
 
-    public static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/webhooks"
+    public static routeBase: string = "/stores/:storeId/webhooks"
 
     public list (storeId: string,
-                 data?: CRUDPaginationParams,
-                 callback?: SDKCallbackFunction,
-                 merchantId?: string,
-                 token?: string): Promise<any> {
-        const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._listRoute(params, data, callback, { token })
+                 data?: WebHooksListParams,
+                 callback?: ResponseCallback<ResponseWebHooks>): Promise<ResponseWebHooks> {
+
+        return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
     public create (storeId: string,
                    data: WebHookCreateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._createRoute(params, data, callback, { token, validationSchema : webHookCreateSchema })
+                   callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
+
+        return this._createRoute(["name"])(data, callback, ["storeId"], storeId)
     }
 
     public get (storeId: string,
                 id: string,
-                callback?: SDKCallbackFunction,
-                merchantId?: string,
-                token?: string): Promise<any> {
-        const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
-        return this._getRoute(params, null, callback, { token })
+                data?: AuthParams,
+                callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
+
+        return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
     public update (storeId: string,
                    id: string,
                    data?: WebHookUpdateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
-        return this._updateRoute(params, data, callback, { token, validationSchema : webHookUpdateSchema })
+                   callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
+
+        return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
     public delete (storeId: string,
                    id: string,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
-        return this._deleteRoute(params, null, callback, { token })
+                   data?: AuthParams,
+                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+
+        return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
 }

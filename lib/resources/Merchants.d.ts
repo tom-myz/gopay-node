@@ -1,10 +1,9 @@
-import { ResponseCallback, ErrorResponse } from "../api/RestAPI";
-import { CRUDResource } from "./CRUDResource";
+import { ResponseCallback, AuthParams } from "../api/RestAPI";
+import { Resource } from "./Resource";
 export interface MerchantItem {
     id: string;
 }
-export declare type ResponseMerchant = MerchantItem | ErrorResponse;
-export declare class Merchants extends CRUDResource {
-    static routeBase: string;
-    me(callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant>;
+export declare type ResponseMerchant = MerchantItem;
+export declare class Merchants extends Resource {
+    me(data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant>;
 }

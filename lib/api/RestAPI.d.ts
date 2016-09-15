@@ -4,7 +4,6 @@ export interface RestAPIOptions {
     endpoint?: string;
     appId?: string;
     secret?: string;
-    camel?: boolean;
 }
 export interface ErrorResponse {
     status: string;
@@ -13,17 +12,22 @@ export interface ErrorResponse {
         [key: string]: string;
     }>;
 }
-export declare type ResponseCallback<A> = (response: A) => void;
+export declare type ResponseCallback<A> = (response: A | ErrorResponse) => void;
+export interface AuthParams {
+    appId?: string;
+    secret?: string;
+}
 export declare class RestAPI {
-    private endpoint;
-    private appId;
-    private secret;
-    private camel;
+    appId: string;
+    secret: string;
+    endpoint: string;
     constructor(options?: RestAPIOptions);
     static requestParams(params: any): any;
     static requestUrl(url: string, data: any, isQueryString: boolean): string;
-    static requestBody(data: any, isQueryString: boolean): any;
+    static handleSuccess<A>(response: A, resolve: Function, callback?: ResponseCallback<A>): void;
+    static handleError<A>(error: Error, reject: Function, callback?: ResponseCallback<A>): void;
     getBody(data: any, payload: boolean): any;
-    getHeaders(body?: any): Headers;
-    send<A>(method: HTTPMethod, url: string, data: any, callback: ResponseCallback<A>): Promise<A>;
+    getHeaders(data?: any, body?: any): Headers;
+    send<A>(method: HTTPMethod, url: string, data?: any, callback?: ResponseCallback<A>): Promise<A>;
+    longPolling<A>(promise: () => Promise<A>, condition: (response: A) => boolean, callback: ResponseCallback<A>, interval?: number, timeout?: number): Promise<A>;
 }

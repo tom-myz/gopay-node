@@ -1,51 +1,44 @@
-import {
-    CRUDResource,
-    CRUDStoreIdParam,
-    CRUDIdStoreIdParam,
-    CRUDPaginationParams
-} from "./CRUDResource"
-import { SDKCallbackFunction, RestAPI } from "../api/RestAPI"
-import { chargeCreateSchema } from "../validation/schemas/charge"
+import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export interface ChargeCreateParams {
-    token: string
-    amount: number
-    currency: string
-    metadata?: Object
+/* Request */
+export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
+export interface ChargeCreateParams extends AuthParams {
+    name: string
 }
+
+/* Response */
+export interface ChargeItem {
+    id: string
+    status: string
+}
+
+export type ResponseCharge = ChargeItem
+export type ResponseCharges = CRUDItemsResponse<ChargeItem>
 
 export class Charges extends CRUDResource {
 
-    public static routeBase: string = "/(merchants/:merchantId/)stores/:storeId/charges"
+    public static routeBase: string = "/stores/:storeId/charges"
 
-    constructor (api: RestAPI) {
-        super(api)
-        this._createRoute = this.defineRoute("POST", "/charges")
+    public list (storeId: string, data?: ChargesListParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+        return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
-    public list (storeId: string,
-                 callback?: SDKCallbackFunction,
-                 data?: CRUDPaginationParams,
-                 merchantId?: string,
-                 token?: string): Promise<any> {
-        const params: CRUDStoreIdParam = { storeId, merchantId }
-        return this._listRoute(params, data, callback, { token })
+    public create (data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+        return this.defineRoute("POST", "/charges")(data, callback)
     }
 
-    public create (data: ChargeCreateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        return this._createRoute(null, data, callback, { token, validationSchema : chargeCreateSchema })
+    public get (storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+        return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public get (storeId: string,
-                id: string,
-                callback?: SDKCallbackFunction,
-                merchantId?: string,
-                token?: string): Promise<any> {
-        const params: CRUDIdStoreIdParam = { id, storeId, merchantId }
-        return this._getRoute(params, null, callback, { token })
+    public poll (storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+        const promise: () => Promise<ResponseCharge> = () => this._getRoute()(data, null, ["storeId", "id"], storeId, id)
+        return this.api.longPolling(
+            promise,
+            (response: ResponseCharge) => response.status !== "pending",
+            callback
+        )
     }
 
 }
