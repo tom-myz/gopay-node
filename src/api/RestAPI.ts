@@ -68,7 +68,7 @@ export class RestAPI {
 
         return new Promise((resolve: Function, reject: Function) => {
             const request: Request = new Request(`${this.endpoint}${params.url}`, {
-                body    : params.body,
+                body    : params.body instanceof FormData ? underscore(params.body) : params.body,
                 headers,
                 method  : params.method,
                 mode    : "cors"

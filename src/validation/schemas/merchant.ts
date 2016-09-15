@@ -57,3 +57,7 @@ export const merchantTransactionHistory: any = {
     from : "string",
     to   : "string"
 }
+
+export const merchantBanSchema: any = {
+    reason : "required"
+}

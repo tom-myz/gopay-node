@@ -18,7 +18,8 @@ import {
     merchantCreateVerificationSchema,
     merchantUpdateVerificationSchema,
     merchantCreateVerifySchema,
-    merchantTransactionHistory
+    merchantTransactionHistory,
+    merchantBanSchema
 } from "../validation/schemas/merchant"
 
 export interface MerchantCommonParams {
@@ -72,10 +73,15 @@ export interface MerchantTransactionHistory {
     to?: string
 }
 
+export interface MerchantBanParams {
+    reason: string
+}
+
 export class Merchants extends CRUDResource {
 
     public static routeBase: string = "/merchants"
     public static routeVerification: string = "/merchants/:merchantId/verification"
+    public static routeBan: string = "/merchants/:merchantId/ban"
 
     public _getVerification: CRUDDefinedRoute = this.defineRoute("GET", Merchants.routeVerification)
     public _createVerification: CRUDDefinedRoute = this.defineRoute("POST", Merchants.routeVerification)
@@ -87,6 +93,9 @@ export class Merchants extends CRUDResource {
     public _resetPassword: CRUDDefinedRoute = this.defineRoute("POST", "/merchants/password/:token")
 
     public _getTransactionHistory: CRUDDefinedRoute = this.defineRoute("GET", "/merchants/:id/(stores/:storeId/)transaction_history")
+
+    public _ban: CRUDDefinedRoute = this.defineRoute("POST", Merchants.routeBan)
+    public _unban: CRUDDefinedRoute = this.defineRoute("DELETE", Merchants.routeBan)
 
     public list (callback?: SDKCallbackFunction, data?: CRUDPaginationParams, token?: string): Promise<any> {
         return this._listRoute(null, data, callback, { token })
@@ -163,6 +172,16 @@ export class Merchants extends CRUDResource {
                                   token?: string): Promise<any> {
         const params: CRUDIdStoreIdParam = { id, storeId }
         return this._getTransactionHistory(params, data, callback, { token, validationSchema : merchantTransactionHistory })
+    }
+
+    public ban (id: string, data: MerchantBanParams, callback?: SDKCallbackFunction, token?: string): Promise<any> {
+        const params: CRUDIdParam = { id }
+        return this._ban(params, data, callback, { token, validationSchema : merchantBanSchema })
+    }
+
+    public unban (id: string, callback?: SDKCallbackFunction, token?: string): Promise<any> {
+        const params: CRUDIdParam = { id }
+        return this._unban(params, null, callback, { token })
     }
 
 }
