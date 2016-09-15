@@ -5,6 +5,7 @@ import { DataValidator } from "../validation/validator"
 import { errorFromValidation, SDKError } from "../errors/SDKError"
 import { validationCodes } from "../validation/error-codes"
 import Validator = ValidatorJS.Validator
+import { underscore } from "../utils"
 
 export interface PathParams { [key: string]: (string | number) }
 
@@ -116,7 +117,7 @@ export abstract class CRUDResource extends WithAPI {
                 if (data instanceof FormData) {
                     return data
                 } else if (typeof data === "object" && ["GET", "DELETE"].indexOf(method) === -1) {
-                    return JSON.stringify(data)
+                    return JSON.stringify(underscore(data))
                 }
                 return null
             }
