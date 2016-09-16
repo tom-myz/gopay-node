@@ -20,7 +20,7 @@ export class Charges extends CRUDResource {
 
     public static routeBase: string = "/stores/:storeId/charges"
 
-    public list (storeId: string, data?: ChargesListParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    public list (storeId: string, data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
