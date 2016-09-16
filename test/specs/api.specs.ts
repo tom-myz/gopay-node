@@ -71,9 +71,11 @@ describe("RestAPI", () => {
     it("should send request with authorization header", function () {
         this.timeout(200)
         const asserts = [
-            [{}, null],
-            [{ appId : "id" }, "ApplicationToken id|"],
-            [{ appId : "id", secret : "secret" }, "ApplicationToken id|secret"]
+            [{}, null, null],
+            [{ appId : "id" }, null, "ApplicationToken id|"],
+            [{ appId : "id", secret : "secret" }, null, "ApplicationToken id|secret"],
+            [{ appId : "id", secret : "secret" }, { appId : "id1" }, "ApplicationToken id1|secret"],
+            [{ appId : "id", secret : "secret" }, { secret : "secret1" }, "ApplicationToken id|secret1"],
         ]
         let mock: Scope
 
@@ -87,15 +89,15 @@ describe("RestAPI", () => {
                 .once()
                 .reply(200, { ok : true }, Object.assign(
                     { "Content-Type" : "application/json" },
-                    a[1] ? { "Authorization" : a[1] } : null
+                    a[2] ? { "Authorization" : a[2] } : null
                 ))
 
-            return api.send("GET", "/header").should.eventually.be.fulfilled
+            return api.send("GET", "/header", a[1]).should.eventually.be.fulfilled
                 .then((r: any) => {
-                    if (!a[1]) {
+                    if (!a[2]) {
                         expect((spy.getCall(i).args[0].headers as Headers).has("Authorization")).to.be.false
                     } else {
-                        expect((spy.getCall(i).args[0].headers as Headers).get("Authorization")).to.equal(a[1])
+                        expect((spy.getCall(i).args[0].headers as Headers).get("Authorization")).to.equal(a[2])
                     }
                     expect(r).to.eql({ ok : true })
                 })

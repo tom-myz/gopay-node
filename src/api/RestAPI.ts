@@ -28,6 +28,10 @@ export interface AuthParams {
     secret?: string
 }
 
+export interface RestAPIStatic extends Function {
+    getData(data: any): Array<string>
+}
+
 export class RestAPI {
 
     public appId: string
@@ -46,10 +50,11 @@ export class RestAPI {
 
     public static requestUrl(url: string, data: any, isQueryString: boolean): string {
         let queryString: string
+        const [_, _data]: Array<string> = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
 
         if (isQueryString) {
-            queryString = Object.keys(data || {})
-                .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
+            queryString = Object.keys(_data || {})
+                .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((_data as any)[k])}`)
                 .join("&")
         }
         return queryString ? `${url}?${queryString}` : url
@@ -70,13 +75,17 @@ export class RestAPI {
         reject(err)
     }
 
+    public static getData (data: any): Array<string> {
+        return partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
+    }
+
     public getBody (data: any, payload: boolean): any {
-        const [_, _data]: Array<any> = partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
+        const [_, _data]: Array<any> = RestAPI.getData(data)
         return !payload ? JSON.stringify(_data) : null
     }
 
     public getHeaders (data?: any, body?: any): Headers {
-        const [{appId, secret}, _]: Array<any> = partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
+        const [{appId, secret}, _]: Array<any> = RestAPI.getData(data)
         const headers: Headers = new Headers()
 
         headers.append("Accept", "application/json")
