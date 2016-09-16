@@ -9,6 +9,7 @@ import { CheckoutInfo } from "./resources/CheckoutInfo"
 import { Merchants } from "./resources/Merchants"
 import { Refunds } from "./resources/Refunds"
 import { Stores } from "./resources/Stores"
+import { Subscriptions } from "./resources/Subscriptions"
 import { TransactionsHistory } from "./resources/TransactionsHistory"
 import { TransactionTokens } from "./resources/TransactionTokens"
 import { Transfers } from "./resources/Transfers"
@@ -24,6 +25,7 @@ export default class SDK extends PaymentsSDK {
     public merchants: Merchants
     public refunds: Refunds
     public stores: Stores
+    public subscriptions: Subscriptions
     public transactionsHistory: TransactionsHistory
     public transactionTokens: TransactionTokens
     public transfers: Transfers
@@ -40,6 +42,7 @@ export default class SDK extends PaymentsSDK {
         this.merchants = new Merchants(this.api)
         this.refunds = new Refunds(this.api)
         this.stores = new Stores(this.api)
+        this.subscriptions = new Subscriptions(this.api)
         this.transactionsHistory = new TransactionsHistory(this.api)
         this.transactionTokens = new TransactionTokens(this.api)
         this.transfers = new Transfers(this.api)
