@@ -4,21 +4,31 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 /* Request */
 export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
 export interface WebHookCreateParams extends AuthParams {
-
+    triggers: Array<string>
+    url: string
 }
 export interface WebHookUpdateParams extends AuthParams {
-
+    triggers?: Array<string>
+    url?: string
 }
 
 /* Response */
 export interface WebHookItem {
     id: string
+    storeId: string
+    triggers: Array<string>
+    url: string
+    active: boolean
+    createdOn: number
+    updatedOn: number
 }
 
 export type ResponseWebHook = WebHookItem
 export type ResponseWebHooks = CRUDItemsResponse<WebHookItem>
 
 export class WebHooks extends CRUDResource {
+
+    public static requiredParams: Array<string> = ["triggers", "url"]
 
     public static routeBase: string = "/stores/:storeId/webhooks"
 
@@ -33,7 +43,7 @@ export class WebHooks extends CRUDResource {
                    data: WebHookCreateParams,
                    callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
 
-        return this._createRoute(["name"])(data, callback, ["storeId"], storeId)
+        return this._createRoute(WebHooks.requiredParams)(data, callback, ["storeId"], storeId)
     }
 
     public get (storeId: string,

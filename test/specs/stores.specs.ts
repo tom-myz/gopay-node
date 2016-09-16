@@ -50,7 +50,7 @@ describe("Stores", () => {
 
         it("should return validation error if data is invalid", () => {
             const asserts = [
-                { name: "" }
+                {}
             ]
 
             return Promise.all(asserts.map((a: any) => {

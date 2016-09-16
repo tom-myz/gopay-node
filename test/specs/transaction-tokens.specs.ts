@@ -30,12 +30,19 @@ describe("Transaction Tokens", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
 
-            const data: any = null
+            const data = {
+                paymentType: "test",
+                subscription: true,
+                email: "test",
+                amount: 1,
+                currency: "test",
+                data: {} as any
+            }
 
             return tokens.create(data).should.eventually.eql(okResponse)
         })
 
-        xit("should return validation error if data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
                 {}
             ]

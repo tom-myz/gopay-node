@@ -1,24 +1,37 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { ConfigurationParams, ConfigurationItem } from "./common/Configuration"
 
 /* Request */
-export interface StoresListParams extends CRUDPaginationParams, AuthParams {}
+export interface StoresListParams extends CRUDPaginationParams, AuthParams {
+    search?: string
+}
 export interface StoreCreateParams extends AuthParams {
     name: string
+    configuration?: ConfigurationParams
 }
 export interface StoreUpdateParams extends AuthParams {
-    name: string
+    name?: string
+    configuration?: ConfigurationParams
 }
 
 /* Response */
 export interface StoreItem {
     id: string
+    merchantId: string
+    name: string
+    active: boolean
+    createdOn: number
+    updatedOn: number
+    configuration: ConfigurationItem
 }
 
 export type ResponseStore = StoreItem
 export type ResponseStores = CRUDItemsResponse<StoreItem>
 
 export class Stores extends CRUDResource {
+
+    public static requiredParams: Array<string> = ["name"]
 
     public static routeBase: string = "/stores"
 
@@ -27,7 +40,7 @@ export class Stores extends CRUDResource {
     }
 
     public create (data: StoreCreateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
-        return this._createRoute(["name"])(data, callback)
+        return this._createRoute(Stores.requiredParams)(data, callback)
     }
 
     public get (id: string, data?: AuthParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {

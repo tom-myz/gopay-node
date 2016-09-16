@@ -1,11 +1,17 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { Resource } from "./Resource"
 
-/* Request */
-
 /* Response */
 export interface CheckoutInfoItem {
-    id: string
+    testMode: boolean
+    subscriptions: boolean
+    name: string
+    paymentTypes: Array<string>
+    logoImage?: string
+    theme: {
+        dark: boolean
+        color: Array<string>
+    }
 }
 
 export type ResponseCheckoutInfo = CheckoutInfoItem

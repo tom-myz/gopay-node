@@ -41,12 +41,16 @@ describe("Charges", () => {
                 .post("/charges")
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data: any = null
+            const data = {
+                token    : "test",
+                amount   : 1,
+                currency : "usd"
+            }
 
             return charges.create(data).should.eventually.eql(okResponse)
         })
 
-        xit("should return validation error if data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
                 {}
             ]

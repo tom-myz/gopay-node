@@ -4,21 +4,59 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 /* Request */
 export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {}
 export interface BankAccountCreateParams extends AuthParams {
-
+    accountNumber: string
+    country: string
+    currency: string
+    holderName: string
+    bankName: string
+    branchName?: string
+    bankAddress?: string
+    routingNumber?: string
+    swiftCode?: string
+    ifscCode?: string
+    routingCode?: string
 }
 export interface BankAccountUpdateParams extends AuthParams {
-
+    isPrimary?: boolean
+    accountNumber?: string
+    holderName?: string
+    bankAddress?: string
+    currency?: string
+    bankName: string
+    branchName?: string
+    routingNumber?: string
+    swiftCode?: string
+    ifscCode?: string
+    routingCode?: string
 }
 
 /* Response */
 export interface BankAccountItem {
     id: string
+    holderName: string
+    bankName: string
+    branchName?: string
+    country: string
+    bankAddress?: string
+    currency: string
+    routingNumber?: string
+    swiftCode?: string
+    ifscCode?: string
+    routingCode?: string
+    lastFour: string
+    active: boolean
+    status: string
+    createdOn: number
+    updatedOn: number
+    primaryAccount: boolean
 }
 
 export type ResponseBankAccount = BankAccountItem
 export type ResponseBankAccounts = CRUDItemsResponse<BankAccountItem>
 
 export class BankAccounts extends CRUDResource {
+
+    public static requiredParams: Array<string> = ["accountNumber", "country", "currency", "holderName", "bankName"]
 
     public static routeBase: string = "/bank_accounts"
 
@@ -27,7 +65,7 @@ export class BankAccounts extends CRUDResource {
     }
 
     public create (data: BankAccountCreateParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {
-        return this._createRoute([])(data, callback)
+        return this._createRoute(BankAccounts.requiredParams)(data, callback)
     }
 
     public get (id: string, data?: AuthParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {

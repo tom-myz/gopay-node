@@ -6,7 +6,7 @@ import { Subscriptions } from "../../src/resources/Subscriptions"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
-describe("Charges", () => {
+describe("Subscriptions", () => {
     let api: RestAPI
     let subscriptions: Subscriptions
     let scope: Scope
@@ -41,12 +41,17 @@ describe("Charges", () => {
                 .post("/subscriptions")
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data: any = null
+            const data = {
+                token    : "test",
+                amount   : 1,
+                currency : "usd",
+                period   : "test"
+            }
 
             return subscriptions.create(data).should.eventually.eql(okResponse)
         })
 
-        xit("should return validation error if data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
                 {}
             ]

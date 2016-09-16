@@ -2,11 +2,21 @@ import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
 /* Request */
-export interface TransactionsHistoryListParams extends CRUDPaginationParams, AuthParams {}
+export interface TransactionsHistoryListParams extends CRUDPaginationParams, AuthParams {
+    from?: number | string
+    to?: number | string
+}
 
 /* Response */
 export interface TransactionsHistoryItem {
-    id: string
+    resourceId: string
+    merchantId: string
+    storeId: string
+    chargeId?: string
+    amount: number
+    currency: string
+    transactionType: string
+    createdOn: number
 }
 
 export type ResponseTransactionsHistories = CRUDItemsResponse<TransactionsHistoryItem>

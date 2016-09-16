@@ -42,13 +42,14 @@ describe("WebHooks", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data = {
-                name : "test"
+                triggers: ["test"],
+                url: "test"
             }
 
             return webHooks.create("1", data).should.eventually.eql(okResponse)
         })
 
-        xit("should return validation error if data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
                 {}
             ]
@@ -79,7 +80,10 @@ describe("WebHooks", () => {
                 .patch(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
-            const data = { }
+            const data = {
+                triggers: ["test"],
+                url: "test"
+            }
 
             return webHooks.update("1", "1", data).should.eventually.eql(okResponse)
         })

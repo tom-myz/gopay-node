@@ -6,7 +6,7 @@ import { Verification } from "../../src/resources/Verification"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
-describe("Stores", () => {
+describe("Verification", () => {
     let api: RestAPI
     let verification: Verification
     let scope: Scope
@@ -42,12 +42,18 @@ describe("Stores", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
 
-            const data: any = null
+            const data = {
+                homepageUrl: "test",
+                companyDescription: "test",
+                companyContactInfo: {},
+                businessType: "test",
+                systemManagerName: "test"
+            }
 
             return verification.create(data).should.eventually.eql(okResponse)
         })
 
-        xit("should return validation error if data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
                 {}
             ]

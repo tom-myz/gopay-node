@@ -6,7 +6,7 @@ import { BankAccounts } from "../../src/resources/BankAccounts"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
-describe("Stores", () => {
+describe("Bank Accounts", () => {
     let api: RestAPI
     let accounts: BankAccounts
     let scope: Scope
@@ -41,12 +41,18 @@ describe("Stores", () => {
                 .post("/bank_accounts")
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data: any = null
+            const data = {
+                accountNumber : "test",
+                country       : "test",
+                currency      : "test",
+                holderName    : "test",
+                bankName      : "test"
+            }
 
             return accounts.create(data).should.eventually.eql(okResponse)
         })
 
-        xit("should return validation error if data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
                 {}
             ]
