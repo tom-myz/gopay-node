@@ -9,7 +9,6 @@ export interface TransactionsHistoryItem {
     id: string
 }
 
-export type ResponseTransactionsHistory = TransactionsHistoryItem
 export type ResponseTransactionsHistories = CRUDItemsResponse<TransactionsHistoryItem>
 
 export class TransactionsHistory extends CRUDResource {
