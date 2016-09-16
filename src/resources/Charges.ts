@@ -3,9 +3,7 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
-export interface ChargeCreateParams extends AuthParams {
-    name: string
-}
+export interface ChargeCreateParams extends AuthParams {}
 
 /* Response */
 export interface ChargeItem {
