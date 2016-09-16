@@ -9,5 +9,12 @@ export interface ConfigurationItem {
 }
 
 export interface ConfigurationParams {
+    debitEnabled?: boolean
+    prepaidEnabled?: boolean
+    paymentTypes?: Array<string>
+}
 
+export interface ConfigurationCreateParams extends ConfigurationParams {}
+export interface ConfigurationUpdateParams extends ConfigurationParams {
+    logoUrl?: string
 }

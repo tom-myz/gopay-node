@@ -1,6 +1,6 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { ConfigurationParams, ConfigurationItem } from "./common/Configuration"
+import { ConfigurationCreateParams, ConfigurationUpdateParams, ConfigurationItem } from "./common/Configuration"
 
 /* Request */
 export interface StoresListParams extends CRUDPaginationParams, AuthParams {
@@ -8,11 +8,11 @@ export interface StoresListParams extends CRUDPaginationParams, AuthParams {
 }
 export interface StoreCreateParams extends AuthParams {
     name: string
-    configuration?: ConfigurationParams
+    configuration?: ConfigurationCreateParams
 }
 export interface StoreUpdateParams extends AuthParams {
     name?: string
-    configuration?: ConfigurationParams
+    configuration?: ConfigurationUpdateParams
 }
 
 /* Response */
