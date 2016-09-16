@@ -50,11 +50,10 @@ export class RestAPI {
 
     public static requestUrl(url: string, data: any, isQueryString: boolean): string {
         let queryString: string
-        const [_, _data]: Array<string> = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
 
         if (isQueryString) {
-            queryString = Object.keys(_data || {})
-                .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((_data as any)[k])}`)
+            queryString = Object.keys(data || {})
+                .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
                 .join("&")
         }
         return queryString ? `${url}?${queryString}` : url
@@ -101,9 +100,10 @@ export class RestAPI {
         const payload: boolean = ["GET", "DELETE"].indexOf(method) !== -1
         const body: any = this.getBody(data, payload)
         const headers: Headers = this.getHeaders(data, body)
+        const [_, _data]: Array<string> = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
 
         return new Promise((resolve: Function, reject: Function) => {
-            const request: Request = new Request(`${this.endpoint}${RestAPI.requestUrl(url, data, payload)}`, {
+            const request: Request = new Request(`${this.endpoint}${RestAPI.requestUrl(url, _data, payload)}`, {
                 body,
                 headers,
                 method,
