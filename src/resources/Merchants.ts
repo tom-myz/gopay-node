@@ -1,5 +1,5 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { Resource } from "./Resource"
+import { CRUDResource } from "./CRUDResource"
 
 /* Request */
 
@@ -10,7 +10,7 @@ export interface MerchantItem {
 
 export type ResponseMerchant = MerchantItem
 
-export class Merchants extends Resource {
+export class Merchants extends CRUDResource {
 
     public me (data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
         return this.defineRoute("GET", "/me")(data, callback)
