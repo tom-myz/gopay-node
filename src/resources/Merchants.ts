@@ -81,7 +81,7 @@ export class Merchants extends CRUDResource {
 
     public static routeBase: string = "/merchants"
     public static routeVerification: string = "/merchants/:merchantId/verification"
-    public static routeBan: string = "/merchants/:merchantId/ban"
+    public static routeBan: string = "/merchants/:id/ban"
 
     public _getVerification: CRUDDefinedRoute = this.defineRoute("GET", Merchants.routeVerification)
     public _createVerification: CRUDDefinedRoute = this.defineRoute("POST", Merchants.routeVerification)
