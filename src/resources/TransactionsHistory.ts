@@ -5,6 +5,8 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 export interface TransactionsHistoryListParams extends CRUDPaginationParams, AuthParams {
     from?: number | string
     to?: number | string
+    status?: string
+    type?: string
 }
 
 /* Response */
