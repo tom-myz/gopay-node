@@ -4,6 +4,15 @@ export interface TransfersListParams extends CRUDPaginationParams, AuthParams {
 }
 export interface TransferItem {
     id: string;
+    bankAccountId: string;
+    amount: number;
+    currency: string;
+    status: string;
+    errorCode?: string;
+    errorText?: string;
+    metadata?: any;
+    createdOn: number;
+    updatedOn: number;
 }
 export declare type ResponseTransfer = TransferItem;
 export declare type ResponseTransfers = CRUDItemsResponse<TransferItem>;

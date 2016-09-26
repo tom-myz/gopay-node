@@ -17,6 +17,9 @@ export interface AuthParams {
     appId?: string;
     secret?: string;
 }
+export interface RestAPIStatic extends Function {
+    getData(data: any): Array<string>;
+}
 export declare class RestAPI {
     appId: string;
     secret: string;
@@ -26,6 +29,7 @@ export declare class RestAPI {
     static requestUrl(url: string, data: any, isQueryString: boolean): string;
     static handleSuccess<A>(response: A, resolve: Function, callback?: ResponseCallback<A>): void;
     static handleError<A>(error: Error, reject: Function, callback?: ResponseCallback<A>): void;
+    static getData(data: any): Array<string>;
     getBody(data: any, payload: boolean): any;
     getHeaders(data?: any, body?: any): Headers;
     send<A>(method: HTTPMethod, url: string, data?: any, callback?: ResponseCallback<A>): Promise<A>;

@@ -7,6 +7,7 @@ import { CheckoutInfo } from "./resources/CheckoutInfo";
 import { Merchants } from "./resources/Merchants";
 import { Refunds } from "./resources/Refunds";
 import { Stores } from "./resources/Stores";
+import { Subscriptions } from "./resources/Subscriptions";
 import { TransactionsHistory } from "./resources/TransactionsHistory";
 import { TransactionTokens } from "./resources/TransactionTokens";
 import { Transfers } from "./resources/Transfers";
@@ -20,6 +21,7 @@ export default class SDK extends PaymentsSDK {
     merchants: Merchants;
     refunds: Refunds;
     stores: Stores;
+    subscriptions: Subscriptions;
     transactionsHistory: TransactionsHistory;
     transactionTokens: TransactionTokens;
     transfers: Transfers;

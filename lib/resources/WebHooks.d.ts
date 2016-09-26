@@ -3,15 +3,26 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {
 }
 export interface WebHookCreateParams extends AuthParams {
+    triggers: Array<string>;
+    url: string;
 }
 export interface WebHookUpdateParams extends AuthParams {
+    triggers?: Array<string>;
+    url?: string;
 }
 export interface WebHookItem {
     id: string;
+    storeId: string;
+    triggers: Array<string>;
+    url: string;
+    active: boolean;
+    createdOn: number;
+    updatedOn: number;
 }
 export declare type ResponseWebHook = WebHookItem;
 export declare type ResponseWebHooks = CRUDItemsResponse<WebHookItem>;
 export declare class WebHooks extends CRUDResource {
+    static requiredParams: Array<string>;
     static routeBase: string;
     list(storeId: string, data?: WebHooksListParams, callback?: ResponseCallback<ResponseWebHooks>): Promise<ResponseWebHooks>;
     create(storeId: string, data: WebHookCreateParams, callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook>;
