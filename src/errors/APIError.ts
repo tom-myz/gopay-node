@@ -1,4 +1,6 @@
-export class APIError extends Error {
+import * as ExtendableError from "es6-error"
+
+export class APIError extends ExtendableError {
 
     public status: number
     public response: any

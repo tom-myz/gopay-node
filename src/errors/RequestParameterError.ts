@@ -1,4 +1,6 @@
-export class RequestParameterError extends Error {
+import * as ExtendableError from "es6-error"
+
+export class RequestParameterError extends ExtendableError {
 
     public parameter: string
 

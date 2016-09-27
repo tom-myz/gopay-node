@@ -80,7 +80,7 @@ export class RestAPI {
 
     public getBody (data: any, payload: boolean): any {
         const [_, _data]: Array<any> = RestAPI.getData(data)
-        return !payload ? JSON.stringify(_data) : null
+        return !payload ? JSON.stringify(RestAPI.requestParams(_data)) : null
     }
 
     public getHeaders (data?: any, body?: any): Headers {
@@ -103,12 +103,15 @@ export class RestAPI {
         const [_, _data]: Array<string> = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
 
         return new Promise((resolve: Function, reject: Function) => {
-            const request: Request = new Request(`${this.endpoint}${RestAPI.requestUrl(url, _data, payload)}`, {
-                body,
-                headers,
-                method,
-                mode : "cors"
-            })
+            const request: Request = new Request(
+                `${this.endpoint}${RestAPI.requestUrl(url, RestAPI.requestParams(_data), payload)}`,
+                {
+                    body,
+                    headers,
+                    method,
+                    mode : "cors"
+                }
+            )
 
             fetch(request)
                 .then(checkStatus)
