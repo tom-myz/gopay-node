@@ -1,1 +1,0 @@
-{"version":3,"sources":["authorization.js"],"names":["exports","authorizeSchema","email","password"],"mappings":"AAAA;;AACAA,QAAQC,eAAR,GAA0B;AACtBC,WAAO,gBADe;AAEtBC,cAAU;AAFY,CAA1B","file":"authorization.js","sourcesContent":["\"use strict\";\nexports.authorizeSchema = {\n    email: \"required|email\",\n    password: \"required|min:8|max:32\"\n};\n"]}

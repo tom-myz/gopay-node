@@ -1,5 +1,15 @@
 {
   "presets": [
-    ["es2015", { "modules" : false, "loose" : true }]
+    ["es2015", { "loose" : true }]
+  ],
+  "plugins": [
+    ["transform-builtin-extend", {
+      "globals": ["Error"],
+      "approximate": true
+    }],
+    ["transform-runtime", {
+      "polyfill": false,
+      "regenerator": true
+    }]
   ]
 }

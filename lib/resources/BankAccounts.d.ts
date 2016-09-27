@@ -1,32 +1,61 @@
-import { CRUDResource, CRUDPaginationParams } from "./CRUDResource";
-import { SDKCallbackFunction } from "../api/RestAPI";
-export interface BankAccountCommonParams {
-    holderName?: string;
-    bankName?: string;
+import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI";
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
+export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {
+}
+export interface BankAccountCreateParams extends AuthParams {
+    accountNumber: string;
+    country: string;
+    currency: string;
+    holderName: string;
+    bankName: string;
     branchName?: string;
-    country?: string;
     bankAddress?: string;
-    currency?: string;
-    accountNumber?: string;
     routingNumber?: string;
     swiftCode?: string;
     ifscCode?: string;
     routingCode?: string;
+}
+export interface BankAccountUpdateParams extends AuthParams {
     isPrimary?: boolean;
-}
-export interface BankAccountCreateParams extends BankAccountCommonParams {
-    accountNumber: string;
+    accountNumber?: string;
+    holderName?: string;
+    bankAddress?: string;
+    currency?: string;
     bankName: string;
-    currency: string;
+    branchName?: string;
+    routingNumber?: string;
+    swiftCode?: string;
+    ifscCode?: string;
+    routingCode?: string;
+}
+export interface BankAccountItem {
+    id: string;
     holderName: string;
+    bankName: string;
+    branchName?: string;
+    country: string;
+    bankAddress?: string;
+    currency: string;
+    routingNumber?: string;
+    swiftCode?: string;
+    ifscCode?: string;
+    routingCode?: string;
+    lastFour: string;
+    active: boolean;
+    status: string;
+    createdOn: number;
+    updatedOn: number;
+    primaryAccount: boolean;
 }
-export interface BankAccountUpdateParams extends BankAccountCommonParams {
-}
+export declare type ResponseBankAccount = BankAccountItem;
+export declare type ResponseBankAccounts = CRUDItemsResponse<BankAccountItem>;
 export declare class BankAccounts extends CRUDResource {
+    static requiredParams: Array<string>;
     static routeBase: string;
-    list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, token?: string): Promise<any>;
-    create(data: BankAccountCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    get(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    update(id: string, data?: BankAccountUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    delete(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
+    list(data?: BankAccountsListParams, callback?: ResponseCallback<ResponseBankAccounts>): Promise<ResponseBankAccounts>;
+    create(data: BankAccountCreateParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount>;
+    get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount>;
+    update(id: string, data?: BankAccountUpdateParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount>;
+    delete(id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse>;
+    getPrimary(data?: AuthParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount>;
 }
