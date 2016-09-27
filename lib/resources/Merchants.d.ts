@@ -14,6 +14,9 @@ export interface MerchantItem {
     configuration: ConfigurationItem;
 }
 export declare type ResponseMerchant = MerchantItem;
+export interface MerchantBanParams {
+    reason: string;
+}
 export declare class Merchants extends CRUDResource {
     me(data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant>;
 }
