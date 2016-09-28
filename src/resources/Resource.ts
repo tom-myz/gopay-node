@@ -1,4 +1,4 @@
-import { RestAPI, HTTPMethod, ResponseCallback } from "../api/RestAPI"
+import { RestAPI, HTTPMethod, ResponseCallback, ErrorResponse } from "../api/RestAPI"
 import { PathParameterError } from "../errors/PathParameterError"
 import { RequestParameterError } from "../errors/RequestParameterError"
 import { fromError } from "../errors/parser"
@@ -44,14 +44,22 @@ export abstract class Resource {
             const missingPathParams: Array<string> = (url.match(/:([a-z]+)/ig) || [])
                 .map((m: string) => m.replace(":", ""))
             const missingParams: Array<string> = missingKeys(data, required)
-
+            let err: ErrorResponse
 
             if (missingPathParams.length > 0) {
-                return Promise.reject(fromError(new PathParameterError(missingPathParams[0])))
+                err = fromError(new PathParameterError(missingPathParams[0]))
+                if (typeof callback === "function") {
+                    callback(err)
+                }
+                return Promise.reject(err)
             }
 
             if (missingParams.length > 0) {
-                return Promise.reject(fromError(new RequestParameterError(missingParams[0])))
+                err = fromError(new RequestParameterError(missingParams[0]))
+                if (typeof callback === "function") {
+                    callback(err)
+                }
+                return Promise.reject(err)
             }
 
             return api.send(method, url, data, callback)
