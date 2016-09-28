@@ -29,7 +29,7 @@ export function missingKeys (obj: any, keys: Array<string> = []): Array<string> 
     const missing: Array<string> = []
 
     for (let key of keys) {
-        if (objKeys.indexOf(key) === -1 || !obj[key]) {
+        if (objKeys.indexOf(key) === -1 || obj[key] === undefined) {
             missing.push(key)
         }
     }
