@@ -9,7 +9,7 @@ export interface CRUDPaginationParams {
 
 /* Response */
 export interface CRUDItemsResponse<A> {
-    items: A
+    items: Array<A>
     total: number
 }
 
