@@ -5,7 +5,7 @@ export interface CRUDPaginationParams {
     pageSize?: number;
 }
 export interface CRUDItemsResponse<A> {
-    items: A;
+    items: Array<A>;
     total: number;
 }
 export declare abstract class CRUDResource extends Resource {
