@@ -39,11 +39,11 @@ module.exports = {
     },
 
     resolve : {
-        extensions : ["", ".js", ".ts", ".tsx"]
+        extensions : [".js", ".ts", ".tsx"]
     },
 
     module : {
-        loaders : [
+        rules : [
             { test : /\.tsx?$/, exclude: /node_modules/, loaders : ["babel", "awesome-typescript", "source-map"] },
         ]
     }
