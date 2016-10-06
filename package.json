@@ -1,6 +1,6 @@
 {
   "name": "gyron-payments-js-sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -56,12 +56,9 @@
     "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-babel-node/register test/**/*.specs.ts",
     "build": "tsc && babel lib -d lib -s --input-source-map inline",
     "start": "webpack-dashboard -p 3004 -- webpack-dev-server --config webpack.config.js",
-
-
     "preversion": "npm test",
     "version": "npm run build && git add -A lib",
     "postversion": "git push && git push --tags && rm -rf lib",
-
     "prepublish": "npm run build"
   }
 }
