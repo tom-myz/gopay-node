@@ -1,10 +1,10 @@
 {
-  "name": "@gyro-n/payments-node",
+  "name": "gyron-payments-node",
   "version": "0.0.1",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:ubicast/gyron-payments-js-sdk.git"
+    "url": "git@github.com:gyro-n/payments-node.git"
   },
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

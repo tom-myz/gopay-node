@@ -29,7 +29,12 @@ node("master") {
         }
 
         if (env.BRANCH_NAME == "master") {
-            echo "Deploy to production"
+            echo "Deploy to NPM"
+
+            def version = node -e "console.log(require('./package.json').version);"
+            git tag "v${version}"
+            git push origin --tags
+            npm publish
         }
         slackSend channel: "#dev-notifications", color: "good", message: "!giphy|deployed"
 
