@@ -1,5 +1,5 @@
 {
-  "name": "gyron-payments-js-sdk",
+  "name": "@gyro-n/payments-node",
   "version": "0.0.1",
   "license": "MIT",
   "repository": {
@@ -58,7 +58,7 @@
     "start": "webpack-dashboard -p 3004 -- webpack-dev-server --config webpack.config.js",
     "preversion": "npm test",
     "version": "npm run build && git add -A lib",
-    "postversion": "git push && git push --tags && rm -rf lib",
+    "postversion": "git push origin --tags && rm -rf lib",
     "prepublish": "npm run build"
   }
 }
