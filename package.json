@@ -57,8 +57,6 @@
     "build": "tsc && babel lib -d lib -s --input-source-map inline",
     "start": "webpack-dashboard -p 3004 -- webpack-dev-server --config webpack.config.js",
     "preversion": "npm test",
-    "version": "npm run build && git add -A lib",
-    "postversion": "git push origin --tags && rm -rf lib",
     "prepublish": "npm run build"
   }
 }
