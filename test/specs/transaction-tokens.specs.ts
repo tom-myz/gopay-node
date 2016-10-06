@@ -1,13 +1,12 @@
 import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
-import { RestAPI } from "../../src/api/RestAPI"
+import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { TransactionTokens } from "../../src/resources/TransactionTokens"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
-import { SDKError } from "../../src/errors/SDKError"
 
-describe("Transaction tokens", () => {
+describe("Transaction Tokens", () => {
     let api: RestAPI
     let tokens: TransactionTokens
     let scope: Scope
@@ -24,50 +23,42 @@ describe("Transaction tokens", () => {
     })
 
     context("route POST /tokens", () => {
-        it("should return correct response for card", () => {
+        it("should return correct response", () => {
             const okResponse = { action : "create" }
             const okScope = scope
                 .post("/tokens")
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
+
             const data = {
-                type : "card",
-                data : {
-                    cardholder : "Joe Doe",
-                    cardNumber : "1234567890123456",
-                    expMonth   : 12,
-                    expYear    : 2020,
-                    cvv        : "123"
-                }
+                paymentType: "test",
+                subscription: true,
+                email: "test",
+                amount: 1,
+                currency: "test",
+                data: {} as any
             }
 
             return tokens.create(data).should.eventually.eql(okResponse)
         })
 
-        it("should return validation error if card data is invalid", () => {
+        it("should return validation error if data is invalid", () => {
             const asserts = [
-                { type : "", data: "" },
-                { type : "card", data : { cardholder : "", cardNumber : "", expMonth : "", expYear : "", cvv : "" } },
-                { type : "card", data : { cardholder : "a", cardNumber : "a", expMonth : "a", expYear : "a", cvv : "a" } },
-                { type : "card", data : { cardholder : "a", cardNumber : "1", expMonth : 1, expYear : 1, cvv : "12" } }
+                {}
             ]
 
             return Promise.all(asserts.map((a: any) => {
                 return tokens.create(a).should.be.rejected
-                    .then((e: SDKError) => {
-                        expect(e.code).to.equal(VALIDATION_ERROR)
-                        expect(e.type).to.equal("request")
-                        expect(e.status).to.equal(0)
-                    })
+                    .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
             }))
         })
     })
 
     context("route GET /tokens/:id", () => {
         it("should return correct response", () => {
-            const okResponse = { action : "read" }
-            const scopeScope = scope
-                .get(/tokens\/[a-f-0-9\-]+$/i)
+            const okResponse = { action : "update" }
+            const okScope = scope
+                .get(/\/tokens\/[a-f0-9]+$/i)
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
@@ -78,10 +69,10 @@ describe("Transaction tokens", () => {
     context("route DELETE /tokens/:id", () => {
         it("should return correct response", () => {
             const okResponse = { action : "delete" }
-            const scopeScope = scope
-                .delete(/tokens\/[a-f-0-9\-]+$/i)
+            const okScope = scope
+                .delete(/\/tokens\/[a-f0-9]+$/i)
                 .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+                .reply(204, okResponse, { "Content-Type" : "application/json" })
 
             return tokens.delete("1").should.eventually.eql(okResponse)
         })

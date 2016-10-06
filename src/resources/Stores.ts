@@ -1,63 +1,58 @@
-import { CRUDResource, CRUDMerchantIdParam, CRUDIdMerchantIdParam, CRUDPaginationParams } from "./CRUDResource"
-import { SDKCallbackFunction } from "../api/RestAPI"
-import { ConfigurationParams } from "./common/Configuration"
-import { storeCreateSchema, storeUpdateSchema } from "../validation/schemas/store"
+import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { ConfigurationCreateParams, ConfigurationUpdateParams, ConfigurationItem } from "./common/Configuration"
 
-export interface StoreCommonParams {
-    name?: string
-    configuration?: ConfigurationParams
+/* Request */
+export interface StoresListParams extends CRUDPaginationParams, AuthParams {
+    search?: string
 }
-
-export interface StoreCreateParams extends StoreCommonParams {
+export interface StoreCreateParams extends AuthParams {
     name: string
+    configuration?: ConfigurationCreateParams
+}
+export interface StoreUpdateParams extends AuthParams {
+    name?: string
+    configuration?: ConfigurationUpdateParams
 }
 
-export interface StoreUpdateParams extends StoreCommonParams {}
+/* Response */
+export interface StoreItem {
+    id: string
+    merchantId: string
+    name: string
+    active: boolean
+    createdOn: number
+    updatedOn: number
+    configuration: ConfigurationItem
+}
 
+export type ResponseStore = StoreItem
+export type ResponseStores = CRUDItemsResponse<StoreItem>
 
 export class Stores extends CRUDResource {
 
-    public static routeBase: string = "/(merchants/:merchantId/)stores"
+    public static requiredParams: Array<string> = ["name"]
 
-    public list (callback?: SDKCallbackFunction,
-                 data?: CRUDPaginationParams,
-                 merchantId?: string,
-                 token?: string): Promise<any> {
-        const params: CRUDMerchantIdParam = { merchantId }
-        return this._listRoute(params, data, callback, { token })
+    public static routeBase: string = "/stores"
+
+    public list (data?: StoresListParams, callback?: ResponseCallback<ResponseStores>): Promise<ResponseStores> {
+        return this._listRoute()(data, callback)
     }
 
-    public create (data: StoreCreateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDMerchantIdParam = { merchantId }
-        return this._createRoute(params, data, callback, { token, validationSchema : storeCreateSchema })
+    public create (data: StoreCreateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+        return this._createRoute(Stores.requiredParams)(data, callback)
     }
 
-    public get (id: string,
-                callback?: SDKCallbackFunction,
-                merchantId?: string,
-                token?: string): Promise<any> {
-        const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._getRoute(params, null, callback, { token })
+    public get (id: string, data?: AuthParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+        return this._getRoute()(data, callback, ["id"], id)
     }
 
-    public update (id: string,
-                   data?: StoreUpdateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._updateRoute(params, data, callback, { token, validationSchema : storeUpdateSchema })
+    public update (id: string, data?: StoreUpdateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+        return this._updateRoute()(data, callback, ["id"], id)
     }
 
-    public delete (id: string,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._deleteRoute(params, null, callback, { token })
+    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this._deleteRoute()(data, callback, ["id"], id)
     }
 
 }

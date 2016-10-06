@@ -1,1 +1,0 @@
-{"version":3,"sources":["WithAPI.js"],"names":["WithAPI","api","exports"],"mappings":"AAAA;;;;IACMA,O,GACF,iBAAYC,GAAZ,EAAiB;AAAA;;AACb,SAAKA,GAAL,GAAWA,GAAX;AACH,C;;AAELC,QAAQF,OAAR,GAAkBA,OAAlB","file":"WithAPI.js","sourcesContent":["\"use strict\";\nclass WithAPI {\n    constructor(api) {\n        this.api = api;\n    }\n}\nexports.WithAPI = WithAPI;\n"]}

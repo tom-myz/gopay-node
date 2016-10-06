@@ -1,1 +1,0 @@
-{"version":3,"sources":["ledger.js"],"names":["exports","ledgerUpdateSchema","status","note"],"mappings":"AAAA;;AACAA,QAAQC,kBAAR,GAA6B;AACzBC,YAAQ,QADiB;AAEzBC,UAAM;AAFmB,CAA7B","file":"ledger.js","sourcesContent":["\"use strict\";\nexports.ledgerUpdateSchema = {\n    status: \"string\",\n    note: \"string\"\n};\n"]}

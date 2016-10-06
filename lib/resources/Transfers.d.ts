@@ -1,33 +1,23 @@
-import { CRUDResource, CRUDPaginationParams, CRUDDefinedRoute } from "./CRUDResource";
-import { SDKCallbackFunction } from "../api/RestAPI";
-export interface TransferCommonParams {
-    bankAccountId?: string;
-    amount?: number;
-    currency?: string;
-    status?: string;
-    daysPrior?: number;
-    metadata?: Object;
+import { ResponseCallback, AuthParams } from "../api/RestAPI";
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
+export interface TransfersListParams extends CRUDPaginationParams, AuthParams {
 }
-export interface TransferCreateParams extends TransferCommonParams {
-    from?: string;
-    to: string;
+export interface TransferItem {
+    id: string;
+    bankAccountId: string;
+    amount: number;
+    currency: string;
+    status: string;
+    errorCode?: string;
+    errorText?: string;
+    metadata?: any;
+    createdOn: number;
+    updatedOn: number;
 }
-export interface TransferUpdateParams extends TransferCommonParams {
-}
-export interface TransferPendingMerchantParams {
-    from?: string;
-    to: string;
-}
+export declare type ResponseTransfer = TransferItem;
+export declare type ResponseTransfers = CRUDItemsResponse<TransferItem>;
 export declare class Transfers extends CRUDResource {
     static routeBase: string;
-    _finalizeTransfer: CRUDDefinedRoute;
-    _getTransfersPendingMerchants: CRUDDefinedRoute;
-    _getMerchantPendingTransfers: CRUDDefinedRoute;
-    list(callback?: SDKCallbackFunction, data?: CRUDPaginationParams, merchantId?: string, token?: string): Promise<any>;
-    create(data: TransferCreateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    get(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    update(id: string, data?: TransferUpdateParams, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    finalizeTransfer(id: string, callback?: SDKCallbackFunction, merchantId?: string, token?: string): Promise<any>;
-    getTransfersPendingMerchants(merchantId: string, callback?: SDKCallbackFunction, data?: TransferPendingMerchantParams, token?: string): Promise<any>;
-    getMerchantPendingTransfers(merchantId: string, callback?: SDKCallbackFunction, data?: TransferPendingMerchantParams, token?: string): Promise<any>;
+    list(data?: TransfersListParams, callback?: ResponseCallback<ResponseTransfers>): Promise<ResponseTransfers>;
+    get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransfer>): Promise<ResponseTransfer>;
 }

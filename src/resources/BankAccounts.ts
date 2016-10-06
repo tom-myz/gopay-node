@@ -1,75 +1,89 @@
-import { CRUDResource, CRUDMerchantIdParam, CRUDIdMerchantIdParam, CRUDPaginationParams } from "./CRUDResource"
-import { SDKCallbackFunction } from "../api/RestAPI"
-import { bankAccountCreateSchema, bankAccountUpdateSchema } from "../validation/schemas/bank-account"
+import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export interface BankAccountCommonParams {
-    holderName?: string
-    bankName?: string
+/* Request */
+export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {}
+export interface BankAccountCreateParams extends AuthParams {
+    accountNumber: string
+    country: string
+    currency: string
+    holderName: string
+    bankName: string
     branchName?: string
-    country?: string
     bankAddress?: string
-    currency?: string
-    accountNumber?: string
     routingNumber?: string
     swiftCode?: string
     ifscCode?: string
     routingCode?: string
+}
+export interface BankAccountUpdateParams extends AuthParams {
     isPrimary?: boolean
-}
-
-export interface BankAccountCreateParams extends BankAccountCommonParams {
-    accountNumber: string
+    accountNumber?: string
+    holderName?: string
+    bankAddress?: string
+    currency?: string
     bankName: string
-    currency: string
-    holderName: string
+    branchName?: string
+    routingNumber?: string
+    swiftCode?: string
+    ifscCode?: string
+    routingCode?: string
 }
 
-export interface BankAccountUpdateParams extends BankAccountCommonParams {}
+/* Response */
+export interface BankAccountItem {
+    id: string
+    holderName: string
+    bankName: string
+    branchName?: string
+    country: string
+    bankAddress?: string
+    currency: string
+    routingNumber?: string
+    swiftCode?: string
+    ifscCode?: string
+    routingCode?: string
+    lastFour: string
+    active: boolean
+    status: string
+    createdOn: number
+    updatedOn: number
+    primaryAccount: boolean
+}
 
+export type ResponseBankAccount = BankAccountItem
+export type ResponseBankAccounts = CRUDItemsResponse<BankAccountItem>
 
 export class BankAccounts extends CRUDResource {
 
-    public static routeBase: string = "/(merchants/:merchantId/)bank_accounts"
+    public static requiredParams: Array<string> = ["accountNumber", "country", "currency", "holderName", "bankName"]
 
-    public list (callback?: SDKCallbackFunction,
-                 data?: CRUDPaginationParams,
-                 merchantId?: string,
-                 token?: string): Promise<any> {
-        const params: CRUDMerchantIdParam = { merchantId }
-        return this._listRoute(params, data, callback, { token })
+    public static routeBase: string = "/bank_accounts"
+
+    public list (data?: BankAccountsListParams, callback?: ResponseCallback<ResponseBankAccounts>): Promise<ResponseBankAccounts> {
+        return this._listRoute()(data, callback)
     }
 
-    public create (data: BankAccountCreateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDMerchantIdParam = { merchantId }
-        return this._createRoute(params, data, callback, { token, validationSchema : bankAccountCreateSchema })
+    public create (data: BankAccountCreateParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {
+        return this._createRoute(BankAccounts.requiredParams)(data, callback)
     }
 
-    public get (id: string,
-                callback?: SDKCallbackFunction,
-                merchantId?: string,
-                token?: string): Promise<any> {
-        const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._getRoute(params, null, callback, { token })
+    public get (id: string, data?: AuthParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {
+        return this._getRoute()(data, callback, ["id"], id)
     }
 
     public update (id: string,
                    data?: BankAccountUpdateParams,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._updateRoute(params, data, callback, { token, validationSchema : bankAccountUpdateSchema })
+                   callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {
+        return this._updateRoute()(data, callback, ["id"], id)
     }
 
-    public delete (id: string,
-                   callback?: SDKCallbackFunction,
-                   merchantId?: string,
-                   token?: string): Promise<any> {
-        const params: CRUDIdMerchantIdParam = { id, merchantId }
-        return this._deleteRoute(params, null, callback, { token })
+    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this._deleteRoute()(data, callback, ["id"], id)
+    }
+
+    public getPrimary (data?: AuthParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {
+        return this.defineRoute("GET", `${this._routeBase}/primary`)(data, callback)
     }
 
 }

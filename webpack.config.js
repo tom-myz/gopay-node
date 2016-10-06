@@ -11,11 +11,6 @@ const plugins = [
         title : "JS SDK - DEV",
         cache : true
     }),
-    new webpack.ProvidePlugin({
-        "fetch"             : "exports?global.fetch!whatwg-fetch",
-        "URLSearchParams"   : "exports?global.URLSearchParams!url-search-params"
-
-    }),
     new webpack.SourceMapDevToolPlugin({
         test: /\.ts$/i
     })
@@ -44,11 +39,11 @@ module.exports = {
     },
 
     resolve : {
-        extensions : ["", ".js", ".ts", ".tsx"]
+        extensions : [".js", ".ts", ".tsx"]
     },
 
     module : {
-        loaders : [
+        rules : [
             { test : /\.tsx?$/, exclude: /node_modules/, loaders : ["babel", "awesome-typescript", "source-map"] },
         ]
     }

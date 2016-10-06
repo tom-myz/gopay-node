@@ -1,22 +1,18 @@
-import SDK from "../src/index"
-/*
-import { PMerchant } from "../src/resources/merchants/Merchant"
-import { PStore } from "../src/resources/stores/Store"
-import { PTransactionToken } from "../src/resources/charges/TransactionToken"
-import { PCharge } from "../src/resources/charges/Charge"
-import { CommonError } from "../src/errors/CommonError"
-*/
+import SDK from "../lib/index"
 
-const sdk = new SDK({ camel : true })
+const sdk = new SDK({
+    appId: "nhxm6IbPqFuFbn11uJQ0",
+    secret : "3ArFtX7EtySzUC50plJ8------"
+})
 
-
-sdk.merchants.list(null, { page : 1 })
-    .catch((e: any) => console.error(e))
-
-const params: any = { email: "root_admin@univapay.com", password: "changeme1" }
 const paramsFormData: FormData = new FormData()
 paramsFormData.append("email", "root_admin@univapay.com")
 paramsFormData.append("password", "changeme")
+
+//sdk.merchants.update("1", paramsFormData)
+sdk.stores.get("11")
+    .then((res) => console.warn(res))
+    .catch((e) => console.warn(e))
 
 /*
 sdk.authorization.authorize(paramsFormData)
