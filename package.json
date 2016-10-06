@@ -1,5 +1,5 @@
 {
-  "name": "gyron-payments-node",
+  "name": "gpay-node",
   "version": "0.0.1",
   "license": "MIT",
   "repository": {
@@ -45,7 +45,7 @@
   "dependencies": {
     "camelcase": "^3.0.0",
     "decamelize": "^1.2.0",
-    "es6-error": "^3.2.0",
+    "es6-error": "^4.0.0",
     "isomorphic-fetch": "^2.2.1",
     "node-fetch": "^1.6.3",
     "process": "^0.11.9"
