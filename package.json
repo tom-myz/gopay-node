@@ -57,6 +57,7 @@
     "build": "tsc && babel lib -d lib -s --input-source-map inline",
     "start": "webpack-dashboard -p 3004 -- webpack-dev-server --config webpack.config.js",
     "preversion": "npm test",
+    "postversion": "git add package.json && git commit -m \"Bump version to `node -e \"console.log(require('./package.json').version);\"`\"",
     "prepublish": "npm run build"
   }
 }
