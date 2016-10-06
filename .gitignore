@@ -1,6 +1,7 @@
 node_modules/
 /typings
 /lib
+/dev
 src/**/*.js
 src/**/*.js.map
 
