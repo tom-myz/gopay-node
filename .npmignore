@@ -1,0 +1,7 @@
+Jenkinsfile
+src
+test
+tsconfig.json
+tslint.json
+typings.json
+webpack.config.js
