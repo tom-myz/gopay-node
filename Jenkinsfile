@@ -29,7 +29,7 @@ node("master") {
 
         if (env.BRANCH_NAME == "master") {
             echo "Deploy to NPM"
-            sh "./scripts/deploy.sh -e npm"
+            sh "./scripts/deploy.sh"
             slackSend channel: "#dev-notifications", color: "good", message: "Deploy succeeded: Published to NPM"
         }
 
