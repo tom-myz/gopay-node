@@ -7,36 +7,31 @@ node("master") {
         slackSend channel: "#dev-notifications", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
 
     stage "Test"
-        env.NODE_ENV = "test"
-        print "Running tests in environment: ${env.NODE_ENV}"
-        sh "node -v"
+        withEnv(['NODE_ENV=test']) {
+            print "Running tests in environment: ${env.NODE_ENV}"
+            sh "node -v"
 
-        try {
-          sh "npm run clean"
-          sh "npm prune"
-          sh "npm install"
-          sh "./node_modules/typings/dist/bin.js install"
-          sh "npm test"
-          slackSend channel: "#dev-notifications", color: "good", message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
-        } catch (error) {
-          slackSend channel: "#dev-notifications", color: "danger", message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
-          throw error
+            try {
+              sh "npm run clean"
+              sh "npm prune"
+              sh "npm install"
+              sh "./node_modules/typings/dist/bin.js install"
+              sh "npm test"
+              slackSend channel: "#dev-notifications", color: "good", message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
+            } catch (error) {
+              slackSend channel: "#dev-notifications", color: "danger", message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
+              throw error
+            }
         }
 
     stage "Deploy"
-        if (env.BRANCH_NAME == "develop") {
-            echo "Deploy to staging"
-        }
+        sh "npm run build"
 
         if (env.BRANCH_NAME == "master") {
             echo "Deploy to NPM"
-
-            def version = node -e "console.log(require('./package.json').version);"
-            git tag "v${version}"
-            git push origin --tags
-            npm publish
+            sh "./scripts/deploy.sh -e npm"
+            slackSend channel: "#dev-notifications", color: "good", message: "Deploy succeeded: Published to NPM"
         }
-        slackSend channel: "#dev-notifications", color: "good", message: "!giphy|deployed"
 
     stage "Cleanup"
         echo "Cleaning up build"
