@@ -54,15 +54,15 @@ describe("Transaction Tokens", () => {
         })
     })
 
-    context("route GET /tokens/:id", () => {
+    context("route GET /stores/:storeId/tokens/:id", () => {
         it("should return correct response", () => {
-            const okResponse = { action : "update" }
+            const okResponse = { action : "get" }
             const okScope = scope
-                .get(/\/tokens\/[a-f0-9]+$/i)
+                .get(/\/stores\/[a-f-0-9\-]+\/tokens\/[a-f0-9]+$/i)
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return tokens.get("1").should.eventually.eql(okResponse)
+            return tokens.get("1", "1").should.eventually.eql(okResponse)
         })
     })
 
