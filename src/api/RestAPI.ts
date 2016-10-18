@@ -1,7 +1,14 @@
 import "isomorphic-fetch"
 import * as process from "process"
 import * as decamelize from "decamelize"
-import { DEFAULT_ENDPOINT, ENV_KEY_APP_ID, ENV_KEY_SECRET, POLLING_TIMEOUT, POLLING_INTERVAL } from "../constants"
+import {
+    DEFAULT_ENDPOINT,
+    ENV_KEY_ENDPOINT,
+    ENV_KEY_APP_ID,
+    ENV_KEY_SECRET,
+    POLLING_TIMEOUT,
+    POLLING_INTERVAL
+} from "../constants"
 import { transformKeys, partitionKeys } from "../utils/object"
 import { checkStatus, parseJSON } from "../utils/fetch"
 import { TimeoutError } from "../errors/TimeoutError"
@@ -39,7 +46,7 @@ export class RestAPI {
     public endpoint: string
 
     constructor (options: RestAPIOptions = {}) {
-        this.endpoint = options.endpoint || DEFAULT_ENDPOINT
+        this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT
         this.appId = options.appId || process.env[ENV_KEY_APP_ID]
         this.secret = options.secret || process.env[ENV_KEY_SECRET]
     }
@@ -67,6 +74,7 @@ export class RestAPI {
     }
 
     public static handleError<A> (error: Error, reject: Function, callback?: ResponseCallback<A>): void {
+        console.warn(error)
         const err: ErrorResponse = fromError(error)
         if (typeof callback === "function") {
             callback(err)
@@ -123,7 +131,7 @@ export class RestAPI {
 
     public longPolling<A> (promise: () => Promise<A>,
                            condition: (response: A) => boolean,
-                           callback: ResponseCallback<A>,
+                           callback?: ResponseCallback<A>,
                            interval: number = POLLING_INTERVAL,
                            timeout: number = POLLING_TIMEOUT): Promise<A> {
 

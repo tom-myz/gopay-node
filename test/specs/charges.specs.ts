@@ -1,25 +1,33 @@
 import "../utils"
 import { expect } from "chai"
+import * as sinon from "sinon"
 import nock = require("nock")
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { Charges } from "../../src/resources/Charges"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
+import { POLLING_INTERVAL } from "../../src/constants"
 
 describe("Charges", () => {
     let api: RestAPI
     let charges: Charges
     let scope: Scope
     const testEndpoint = "http://localhost:80"
+    let sandbox: Sinon.SinonSandbox
 
     beforeEach(() => {
         api = new RestAPI({endpoint: testEndpoint })
         charges = new Charges(api)
         scope = nock(testEndpoint)
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"],
+            useFakeTimers: true
+        })
     })
 
     afterEach(() => {
         nock.cleanAll()
+        sandbox.restore()
     })
 
     context("route GET /stores/:storeId/charges", () => {
@@ -73,7 +81,20 @@ describe("Charges", () => {
             return charges.get("1", "1").should.eventually.eql(okResponse)
         })
 
-        xit("should perform long polling until charge is processed")
+        it("should perform long polling until charge is processed", () => {
+            const spy = sandbox.spy(global, "fetch")
+            const scopeScope = scope
+                .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, () => ({ status : "success" }), { "Content-Type" : "application/json" })
+
+            const result = charges.poll("1", "1").should.eventually.eql({ status : "success" })
+                .then(() => expect(spy).to.have.been.calledOnce)
+
+            sandbox.clock.tick(POLLING_INTERVAL)
+
+            return result
+        })
     })
 
 })
