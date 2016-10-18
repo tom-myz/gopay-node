@@ -66,15 +66,15 @@ describe("Transaction Tokens", () => {
         })
     })
 
-    context("route DELETE /tokens/:id", () => {
+    context("route DELETE /stores/:storeId/tokens/:id", () => {
         it("should return correct response", () => {
             const okResponse = { action : "delete" }
             const okScope = scope
-                .delete(/\/tokens\/[a-f0-9]+$/i)
+                .delete(/\/stores\/[a-f-0-9\-]+\/tokens\/[a-f0-9]+$/i)
                 .once()
                 .reply(204, okResponse, { "Content-Type" : "application/json" })
 
-            return tokens.delete("1").should.eventually.eql(okResponse)
+            return tokens.delete("1", "1").should.eventually.eql(okResponse)
         })
     })
 

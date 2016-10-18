@@ -78,8 +78,11 @@ export class TransactionTokens extends CRUDResource {
         return this.defineRoute("GET", "/stores/:storeId/tokens/:id")(data, callback, ["id", "storeId"], id, storeId)
     }
 
-    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
-        return this._deleteRoute()(data, callback, ["id"], id)
+    public delete (storeId: string,
+                   id: string,
+                   data?: AuthParams,
+                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this.defineRoute("DELETE", "/stores/:storeId/tokens/:id")(data, callback, ["id", "storeId"], id, storeId)
     }
 
 }
