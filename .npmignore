@@ -1,6 +1,7 @@
 Jenkinsfile
 src
 test
+scripts
 tsconfig.json
 tslint.json
 typings.json

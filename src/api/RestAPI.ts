@@ -74,6 +74,7 @@ export class RestAPI {
     }
 
     public static handleError<A> (error: Error, reject: Function, callback?: ResponseCallback<A>): void {
+        console.warn(error)
         const err: ErrorResponse = fromError(error)
         if (typeof callback === "function") {
             callback(err)
@@ -130,7 +131,7 @@ export class RestAPI {
 
     public longPolling<A> (promise: () => Promise<A>,
                            condition: (response: A) => boolean,
-                           callback: ResponseCallback<A>,
+                           callback?: ResponseCallback<A>,
                            interval: number = POLLING_INTERVAL,
                            timeout: number = POLLING_TIMEOUT): Promise<A> {
 

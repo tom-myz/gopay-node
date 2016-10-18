@@ -68,19 +68,21 @@ export class TransactionTokens extends CRUDResource {
 
     public create (data: TransactionTokenCreateParams,
                    callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
-
         return this._createRoute(TransactionTokens.requiredParams)(data, callback)
     }
 
-    public get (id: string,
+    public get (storeId: string,
+                id: string,
                 data?: AuthParams,
                 callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
-
-        return this._getRoute()(data, callback, ["id"], id)
+        return this.defineRoute("GET", "/stores/:storeId/tokens/:id")(data, callback, ["id", "storeId"], id, storeId)
     }
 
-    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
-        return this._deleteRoute()(data, callback, ["id"], id)
+    public delete (storeId: string,
+                   id: string,
+                   data?: AuthParams,
+                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this.defineRoute("DELETE", "/stores/:storeId/tokens/:id")(data, callback, ["id", "storeId"], id, storeId)
     }
 
 }

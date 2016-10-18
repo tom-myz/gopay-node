@@ -12,6 +12,7 @@ describe("RestAPI", () => {
     let mockError: Scope
     const testEndpoint = "http://localhost:80"
     let scope: Scope
+    let sandbox: Sinon.SinonSandbox
 
     before(() => {
         const REPEATS = 100
@@ -25,9 +26,15 @@ describe("RestAPI", () => {
             .get("/error")
             .times(REPEATS)
             .reply(400, {}, { "Content-Type" : "application/json" })
+
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"],
+            //useFakeTimers : true
+        })
     })
 
     after(() => {
+        sandbox.restore()
         nock.cleanAll()
     })
 
@@ -79,7 +86,7 @@ describe("RestAPI", () => {
         ]
         let mock: Scope
 
-        const spy = sinon.spy(global, "fetch")
+        const spy = sandbox.spy(global, "fetch")
 
         return Promise.all(asserts.map((a: any, i: number) => {
             const api: RestAPI = new RestAPI(Object.assign({}, { endpoint : testEndpoint }, a[0]))
@@ -149,5 +156,23 @@ describe("RestAPI", () => {
 
         return api.send("GET", "/camel").should.eventually.be.fulfilled
             .then((r: any) => expect(r).to.eql({ fooBar : true }))
+    })
+
+    it("should do long polling until condition is met", () => {
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+        let repeats = 3
+
+        const promise: () => Promise<boolean> = () => new Promise((resolve: Function) => resolve(--repeats === 0))
+        const spy = sandbox.spy(promise)
+
+        const result = api.longPolling(
+            spy,
+            (result: boolean) => result === true,
+            null,
+            10
+        )
+
+        return expect(result).to.eventually.be.true
+            .then(() => expect(spy).to.have.been.calledThrice)
     })
 })
