@@ -2,7 +2,7 @@ import "../utils"
 import { expect } from "chai"
 import nock = require("nock")
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { Subscriptions } from "../../src/resources/Subscriptions"
+import { Subscriptions, SubscriptionCreateParams } from "../../src/resources/Subscriptions"
 import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
@@ -41,11 +41,11 @@ describe("Subscriptions", () => {
                 .post("/subscriptions")
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = {
+            const data: SubscriptionCreateParams = {
                 token    : "test",
                 amount   : 1,
                 currency : "usd",
-                period   : "test"
+                period   : "monthly"
             }
 
             return subscriptions.create(data).should.eventually.eql(okResponse)

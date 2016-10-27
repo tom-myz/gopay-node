@@ -1,5 +1,8 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { Metadata } from "./common/Metadata"
+
+export type SubscriptionPeriod = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "biannually" | "annually"
 
 /* Request */
 export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParams {}
@@ -7,8 +10,8 @@ export interface SubscriptionCreateParams extends AuthParams {
     token: string
     amount: number
     currency: string
-    period: string
-    metadata?: any
+    period: SubscriptionPeriod
+    metadata?: Metadata
 }
 
 /* Response */
@@ -17,10 +20,11 @@ export interface SubscriptionItem {
     storeId: string
     amount: number
     currency: string
-    period: string
+    amountFormatted: number
+    period: SubscriptionPeriod
     status: string
     active: boolean
-    metadata?: any
+    metadata?: Metadata
     testMode: boolean
     createdOn: number
     updatedOn: number

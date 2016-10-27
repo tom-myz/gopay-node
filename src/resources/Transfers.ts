@@ -1,5 +1,6 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { Metadata } from "./common/Metadata"
 
 /* Request */
 export interface TransfersListParams extends CRUDPaginationParams, AuthParams {}
@@ -10,10 +11,12 @@ export interface TransferItem {
     bankAccountId: string
     amount: number
     currency: string
+    amountFormatted: number
     status: string
     errorCode?: string
     errorText?: string
-    metadata?: any
+    metadata?: Metadata
+    startedBy: string
     createdOn: number
     updatedOn: number
 }
