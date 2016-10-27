@@ -1,6 +1,7 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
+import { Metadata } from "./common/Metadata"
 
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
@@ -8,7 +9,7 @@ export interface ChargeCreateParams extends AuthParams {
     token: string
     amount: number
     currency: string
-    metadata?: any
+    metadata?: Metadata
 }
 
 /* Response */
@@ -19,11 +20,13 @@ export interface ChargeItem {
     subscriptionId?: string
     requestedAmount: number
     requestedCurrency: string
+    requestedAmountFormatted: number
     chargedAmount: number
     chargedCurrency: string
+    chargedAmountFormatted: number
     status: string
     error?: PaymentError
-    metadata?: any
+    metadata?: Metadata
     testMode: boolean
     createdOn: number
     updatedOn: number

@@ -1,6 +1,7 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
+import { Metadata } from "./common/Metadata"
 
 /* Request */
 export interface RefundsListParams extends CRUDPaginationParams, AuthParams {}
@@ -9,7 +10,7 @@ export interface RefundCreateParams extends AuthParams {
     currency: string
     reason?: string
     message?: string
-    metadata?: any
+    metadata?: Metadata
 }
 
 /* Response */
@@ -20,10 +21,11 @@ export interface RefundItem {
     status: string
     amount: number
     currency: string
+    amountFormatted: number
     reason?: string
     message?: string
     error?: PaymentError
-    metadata?: any
+    metadata?: Metadata
     testMode: boolean
     createdOn: number
     updatedOn: number
