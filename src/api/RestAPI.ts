@@ -74,7 +74,6 @@ export class RestAPI {
     }
 
     public static handleError<A> (error: Error, reject: Function, callback?: ResponseCallback<A>): void {
-        console.warn(error)
         const err: ErrorResponse = fromError(error)
         if (typeof callback === "function") {
             callback(err)
@@ -82,7 +81,7 @@ export class RestAPI {
         reject(err)
     }
 
-    public static getData (data: any): Array<string> {
+    public static getData (data: any): Array<any> {
         return partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
     }
 
