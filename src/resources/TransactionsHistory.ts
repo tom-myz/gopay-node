@@ -17,7 +17,9 @@ export interface TransactionsHistoryItem {
     chargeId?: string
     amount: number
     currency: string
+    amountFormatted: number
     transactionType: string
+    status: string
     createdOn: number
 }
 
