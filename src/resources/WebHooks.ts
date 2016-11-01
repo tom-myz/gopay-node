@@ -1,8 +1,11 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
 
 /* Request */
-export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
+export type WebHooksSortBy = "createdOn"
+
+export interface WebHooksListParams extends CRUDPaginationParams, CRUDSortingParams<WebHooksSortBy>, AuthParams {}
+
 export interface WebHookCreateParams extends AuthParams {
     triggers: Array<string>
     url: string

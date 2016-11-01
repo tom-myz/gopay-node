@@ -1,12 +1,23 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { ChargeStatus } from "./Charges"
+import { RefundStatus } from "./Refunds"
+
+export type TransactionsHistoryType = "charge" | "refund"
+
+export type TransactionsHistoryStatus = ChargeStatus | RefundStatus
 
 /* Request */
-export interface TransactionsHistoryListParams extends CRUDPaginationParams, AuthParams {
+export type TransactionHistorySortBy = "createdOn"
+
+export interface TransactionsHistoryListParams extends CRUDPaginationParams,
+                                                       CRUDSortingParams<TransactionHistorySortBy>,
+                                                       AuthParams {
     from?: number | string
     to?: number | string
-    status?: string
-    type?: string
+    status?: TransactionsHistoryStatus
+    type?: TransactionsHistoryType
+    search?: string
 }
 
 /* Response */
@@ -18,8 +29,8 @@ export interface TransactionsHistoryItem {
     amount: number
     currency: string
     amountFormatted: number
-    transactionType: string
-    status: string
+    transactionType: TransactionsHistoryType
+    status: TransactionsHistoryStatus
     createdOn: number
 }
 
