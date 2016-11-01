@@ -1,9 +1,10 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { Resource } from "./Resource"
+import { ProcessingMode } from "./common/ProcessingMode"
 
 /* Response */
 export interface CheckoutInfoItem {
-    testMode: boolean
+    mode: ProcessingMode
     subscriptions: boolean
     name: string
     paymentTypes: Array<string>

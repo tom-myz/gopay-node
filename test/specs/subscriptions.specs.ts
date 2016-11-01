@@ -75,4 +75,28 @@ describe("Subscriptions", () => {
         })
     })
 
+    context("route DELETE /stores/:storeId/subscriptions/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "delete" }
+            const scopeScope = scope
+                .delete(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+            return subscriptions.delete("1", "1").should.eventually.eql(okResponse)
+        })
+    })
+
+    context("route GET /stores/:storeId/subscriptions/:id/charges", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "list" }
+            const scopeScope = scope
+                .get(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+\/charges$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+
+            return subscriptions.charges("1", "1").should.eventually.eql(okResponse)
+        })
+    })
+
 })
