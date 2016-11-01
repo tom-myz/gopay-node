@@ -1,8 +1,12 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
 
 /* Request */
-export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {}
+export type BankAccountsSortBy = "createdOn"
+
+export interface BankAccountsListParams extends CRUDPaginationParams, CRUDSortingParams<BankAccountsSortBy>, AuthParams {
+    primary?: boolean
+}
 export interface BankAccountCreateParams extends AuthParams {
     accountNumber: string
     country: string

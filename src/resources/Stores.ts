@@ -1,9 +1,11 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
 import { ConfigurationCreateParams, ConfigurationUpdateParams, ConfigurationItem } from "./common/Configuration"
 
 /* Request */
-export interface StoresListParams extends CRUDPaginationParams, AuthParams {
+export type StoresSortBy = "name"
+
+export interface StoresListParams extends CRUDPaginationParams, CRUDSortingParams<StoresSortBy>, AuthParams {
     search?: string
 }
 export interface StoreCreateParams extends AuthParams {

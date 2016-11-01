@@ -29,7 +29,7 @@ describe("Transaction History", () => {
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return history.get().should.eventually.eql(okResponse)
+            return history.list().should.eventually.eql(okResponse)
         })
     })
 
@@ -41,7 +41,7 @@ describe("Transaction History", () => {
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return history.get("1").should.eventually.eql(okResponse)
+            return history.list("1").should.eventually.eql(okResponse)
         })
     })
 

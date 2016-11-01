@@ -7,6 +7,11 @@ export interface CRUDPaginationParams {
     pageSize?: number
 }
 
+export interface CRUDSortingParams<A> {
+    sortBy?: A
+    sortOrder?: "asc" | "desc"
+}
+
 /* Response */
 export interface CRUDItemsResponse<A> {
     items: Array<A>

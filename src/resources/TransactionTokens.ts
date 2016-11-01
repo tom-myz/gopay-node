@@ -1,5 +1,6 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
+import { ProcessingMode } from "./common/ProcessingMode"
 
 /* Request */
 
@@ -51,7 +52,7 @@ export interface TransactionTokenItem {
     storeId: string
     token: string
     active: boolean
-    testMode: boolean
+    mode: ProcessingMode
     subscription: boolean
     createdOn: number
     lastUsedOn: number
