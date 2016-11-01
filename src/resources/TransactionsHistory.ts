@@ -29,7 +29,7 @@ export interface TransactionsHistoryItem {
     amount: number
     currency: string
     amountFormatted: number
-    transactionType: TransactionsHistoryType
+    type: TransactionsHistoryType
     status: TransactionsHistoryStatus
     createdOn: number
 }
@@ -40,9 +40,9 @@ export class TransactionsHistory extends CRUDResource {
 
     public static routeBase: string = "(/stores/:storeId)/transaction_history"
 
-    public get (storeId?: string,
-                data?: TransactionsHistoryListParams,
-                callback?: ResponseCallback<ResponseTransactionsHistories>): Promise<ResponseTransactionsHistories> {
+    public list (storeId?: string,
+                 data?: TransactionsHistoryListParams,
+                 callback?: ResponseCallback<ResponseTransactionsHistories>): Promise<ResponseTransactionsHistories> {
 
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }

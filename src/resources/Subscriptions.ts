@@ -12,8 +12,6 @@ export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelle
 export type SubscriptionsSortBy = "createdOn"
 
 export interface SubscriptionsListParams extends CRUDPaginationParams, CRUDSortingParams<SubscriptionsSortBy>, AuthParams {
-    merchantId?: string
-    storeId?: string
     search?: string
     status?: SubscriptionStatus
     mode?: ProcessingMode
