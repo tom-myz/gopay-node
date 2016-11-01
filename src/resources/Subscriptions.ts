@@ -1,6 +1,7 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, AuthParams, ErrorResponse } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
+import { ResponseCharges, ChargesListParams } from "./Charges"
 
 export type SubscriptionPeriod = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "biannually" | "annually"
 
@@ -58,6 +59,24 @@ export class Subscriptions extends CRUDResource {
                 callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
+    }
+
+    public delete (storeId: string,
+                   id: string,
+                   data?: AuthParams,
+                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+
+        return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
+    }
+
+    public charges (storeId: string,
+                    id: string,
+                    data?: ChargesListParams,
+                    callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
+
+        return this.defineRoute("GET", `${Subscriptions.routeBase}/:id/charges`)(
+            data, callback, ["storeId", "id"], storeId, id
+        )
     }
 
 }
