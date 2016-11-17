@@ -23,6 +23,7 @@ export interface RestAPIOptions {
 }
 
 export interface ErrorResponse {
+    httpCode?: number
     status: string
     code: string
     errors: Array<{[key: string]: string}>

@@ -28,8 +28,7 @@ describe("RestAPI", () => {
             .reply(400, {}, { "Content-Type" : "application/json" })
 
         sandbox = sinon.sandbox.create({
-            properties: ["spy", "clock"],
-            //useFakeTimers : true
+            properties: ["spy", "clock"]
         })
     })
 
@@ -125,7 +124,7 @@ describe("RestAPI", () => {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
         const spy = sinon.spy()
-        const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error" }
+        const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error", httpCode : 400 }
 
         return api.send("GET", "/error", null, spy).should.eventually.be.rejected
             .then((e) => {
