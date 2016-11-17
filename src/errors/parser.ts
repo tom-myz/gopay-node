@@ -33,7 +33,9 @@ export function fromError (error: Error): ErrorResponse {
             errors : [{[error.parameter]: "required"}]
         }
     } else if (error instanceof APIError) {
-        errorResponse = error.response ? error.response : { code : getCodeByStatus(error.status), httpCode : error.status }
+        errorResponse = Object.assign(
+            {}, error.response ? error.response : { code : getCodeByStatus(error.status) }, { httpCode : error.status }
+        )
     }
 
     return Object.assign({
