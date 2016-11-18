@@ -26,11 +26,14 @@ describe("Subscriptions", () => {
         it("should return correct response", () => {
             const okResponse = { action : "list" }
             const okScope = scope
-                .get(/\/stores\/[a-f-0-9\-]+\/subscriptions$/i)
-                .once()
+                .get(/(\/stores\/[a-f-0-9\-]+)?\/subscriptions$/i)
+                .twice()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return subscriptions.list("1").should.eventually.eql(okResponse)
+            return Promise.all([
+                subscriptions.list().should.eventually.eql(okResponse),
+                subscriptions.list(null, null, "1").should.eventually.eql(okResponse)
+            ])
         })
     })
 

@@ -50,11 +50,11 @@ export class Subscriptions extends CRUDResource {
 
     public static routeBase: string = "/stores/:storeId/subscriptions"
 
-    public list (storeId: string,
-                 data?: SubscriptionsListParams,
-                 callback?: ResponseCallback<ResponseSubscriptions>): Promise<ResponseSubscriptions> {
+    public list (data?: SubscriptionsListParams,
+                 callback?: ResponseCallback<ResponseSubscriptions>,
+                 storeId?: string): Promise<ResponseSubscriptions> {
 
-        return this._listRoute()(data, callback, ["storeId"], storeId)
+        return this.defineRoute("GET", "(/stores/:storeId)/subscriptions")(data, callback, ["storeId"], storeId)
     }
 
     public create (data: SubscriptionCreateParams,
