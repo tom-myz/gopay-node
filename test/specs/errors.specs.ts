@@ -18,9 +18,10 @@ describe("Errors", () => {
             const error: Error = new APIError(status, response)
 
             expect(fromError(error)).to.eql({
-                code   : "INTERNAL_SERVER_ERROR",
-                errors : [],
-                status : "error"
+                code     : "INTERNAL_SERVER_ERROR",
+                errors   : [],
+                httpCode : 400,
+                status   : "error"
             })
         })
     })
