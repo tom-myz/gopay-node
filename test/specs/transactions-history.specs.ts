@@ -41,7 +41,7 @@ describe("Transaction History", () => {
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return history.list("1").should.eventually.eql(okResponse)
+            return history.list(null, null, "1").should.eventually.eql(okResponse)
         })
     })
 

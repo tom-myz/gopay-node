@@ -40,9 +40,9 @@ export class TransactionsHistory extends CRUDResource {
 
     public static routeBase: string = "(/stores/:storeId)/transaction_history"
 
-    public list (storeId?: string,
-                 data?: TransactionsHistoryListParams,
-                 callback?: ResponseCallback<ResponseTransactionsHistories>): Promise<ResponseTransactionsHistories> {
+    public list (data?: TransactionsHistoryListParams,
+                 callback?: ResponseCallback<ResponseTransactionsHistories>,
+                 storeId?: string): Promise<ResponseTransactionsHistories> {
 
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
