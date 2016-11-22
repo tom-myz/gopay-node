@@ -10,11 +10,10 @@ export interface ConfigurationItem {
 
 export interface ConfigurationParams {
     debitEnabled?: boolean
+    logoUrl?: string
     prepaidEnabled?: boolean
     paymentTypes?: Array<string>
 }
 
 export interface ConfigurationCreateParams extends ConfigurationParams {}
-export interface ConfigurationUpdateParams extends ConfigurationParams {
-    logoUrl?: string
-}
+export interface ConfigurationUpdateParams extends ConfigurationParams {}
