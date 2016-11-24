@@ -1,3 +1,5 @@
+"use strict"
+
 import "isomorphic-fetch"
 import * as process from "process"
 import * as decamelize from "decamelize"

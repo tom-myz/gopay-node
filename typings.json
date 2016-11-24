@@ -1,6 +1,5 @@
 {
   "globalDependencies": {
-    "camelcase": "registry:dt/camelcase#0.0.0+20160316155526",
     "chai": "registry:dt/chai#3.4.0+20160601211834",
     "chai-as-promised": "registry:dt/chai-as-promised#0.0.0+20160423070304",
     "decamelize": "registry:dt/decamelize#0.0.0+20160316155526",
