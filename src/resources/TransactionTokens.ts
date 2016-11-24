@@ -56,6 +56,7 @@ export interface TransactionTokenItem {
     subscription: boolean
     createdOn: number
     lastUsedOn: number
+    paymentType: string
     data: TransactionTokenCardDataItem |TransactionTokenQRScanDataItem
 }
 
