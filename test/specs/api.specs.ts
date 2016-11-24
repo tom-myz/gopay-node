@@ -1,9 +1,11 @@
+"use strict"
+
 import "../utils"
 import { expect } from "chai"
 import sinon = require("sinon")
 import nock = require("nock")
-import { DEFAULT_ENDPOINT, ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
-import { RestAPI, RestAPIOptions, ErrorResponse } from "../../src/api/RestAPI"
+import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
+import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { BAD_REQUEST } from "../../src/errors/ErrorsConstants"
 import { Scope } from "nock"
 
@@ -148,7 +150,7 @@ describe("RestAPI", () => {
     it("should return response with camel case properties names", function () {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-        const mock = nock(testEndpoint)
+        nock(testEndpoint)
             .get("/camel")
             .once()
             .reply(200, { "foo_bar" : true }, { "Content-Type" : "application/json" })

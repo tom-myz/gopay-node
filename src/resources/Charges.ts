@@ -36,6 +36,7 @@ export interface ChargeItem {
     mode: ProcessingMode
     createdOn: number
     updatedOn: number
+    transactionTokenId?: string
 }
 
 export type ResponseCharge = ChargeItem
