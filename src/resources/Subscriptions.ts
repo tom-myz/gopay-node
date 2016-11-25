@@ -34,11 +34,9 @@ export interface SubscriptionItem {
     amountFormatted: number
     period: SubscriptionPeriod
     status: SubscriptionStatus
-    active: boolean
     metadata?: Metadata
     mode: ProcessingMode
     createdOn: number
-    updatedOn: number
 }
 
 export type ResponseSubscription = SubscriptionItem

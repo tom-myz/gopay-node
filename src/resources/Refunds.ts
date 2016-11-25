@@ -35,7 +35,6 @@ export interface RefundItem {
     metadata?: Metadata
     mode: ProcessingMode
     createdOn: number
-    updatedOn: number
 }
 
 export type ResponseRefund = RefundItem

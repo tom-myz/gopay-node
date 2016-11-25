@@ -22,9 +22,7 @@ export interface StoreItem {
     id: string
     merchantId: string
     name: string
-    active: boolean
     createdOn: number
-    updatedOn: number
     configuration: ConfigurationItem
 }
 

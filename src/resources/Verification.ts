@@ -33,7 +33,6 @@ export interface VerificationItem {
     systemManagerNumber?: string
     systemManagerEmail?: string
     createdOn: number
-    updatedOn: number
 }
 
 export type ResponseVerification = VerificationItem

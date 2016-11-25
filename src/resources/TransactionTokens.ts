@@ -51,7 +51,6 @@ export interface TransactionTokenQRScanDataItem {}
 export interface TransactionTokenItem {
     storeId: string
     token: string
-    active: boolean
     mode: ProcessingMode
     subscription: boolean
     createdOn: number
