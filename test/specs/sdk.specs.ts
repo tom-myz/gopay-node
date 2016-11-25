@@ -11,7 +11,6 @@ import { Merchants } from "../../src/resources/Merchants"
 import { Refunds } from "../../src/resources/Refunds"
 import { Stores } from "../../src/resources/Stores"
 import { Subscriptions } from "../../src/resources/Subscriptions"
-import { TransactionsHistory } from "../../src/resources/TransactionsHistory"
 import { TransactionTokens } from "../../src/resources/TransactionTokens"
 import { Transfers } from "../../src/resources/Transfers"
 import { Verification } from "../../src/resources/Verification"
@@ -31,7 +30,6 @@ describe("SDK", () => {
         expect(sdk).to.have.property("refunds").that.is.an.instanceOf(Refunds).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("stores").that.is.an.instanceOf(Stores).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("subscriptions").that.is.an.instanceOf(Subscriptions).and.has.property("api", sdk.api)
-        expect(sdk).to.have.property("transactionsHistory").that.is.an.instanceOf(TransactionsHistory).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("transactionTokens").that.is.an.instanceOf(TransactionTokens).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("transfers").that.is.an.instanceOf(Transfers).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("verification").that.is.an.instanceOf(Verification).and.has.property("api", sdk.api)

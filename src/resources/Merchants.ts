@@ -10,11 +10,9 @@ export interface MerchantItem {
     verificationDataId?: string
     name: string
     email: string
-    active: boolean
     roles: Array<string>
     verified: boolean
     createdOn: number
-    updatedOn: number
     configuration: ConfigurationItem
 }
 

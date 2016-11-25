@@ -26,7 +26,6 @@ export interface TransferItem {
     metadata?: Metadata
     startedBy: string
     createdOn: number
-    updatedOn: number
 }
 
 export type ResponseTransfer = TransferItem
