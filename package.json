@@ -1,6 +1,6 @@
 {
   "name": "gpay-node",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "html-webpack-template": "^5.4.1",
     "jsdom": "~9.8.3",
     "jsdom-global": "~2.1.0",
-    "mocha": "~3.1.2",
+    "mocha": "~3.2.0",
     "nock": "~9.0.2",
     "path": "~0.12.7",
     "sinon": "~1.17.6",

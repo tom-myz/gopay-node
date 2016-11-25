@@ -21,9 +21,7 @@ export interface WebHookItem {
     storeId: string
     triggers: Array<string>
     url: string
-    active: boolean
     createdOn: number
-    updatedOn: number
 }
 
 export type ResponseWebHook = WebHookItem

@@ -35,7 +35,6 @@ export interface ChargeItem {
     metadata?: Metadata
     mode: ProcessingMode
     createdOn: number
-    updatedOn: number
     transactionTokenId?: string
 }
 

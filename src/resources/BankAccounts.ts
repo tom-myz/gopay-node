@@ -48,11 +48,10 @@ export interface BankAccountItem {
     ifscCode?: string
     routingCode?: string
     lastFour: string
-    active: boolean
     status: string
     createdOn: number
-    updatedOn: number
     primaryAccount: boolean
+    bankAccountNumber: string
 }
 
 export type ResponseBankAccount = BankAccountItem
