@@ -21,7 +21,7 @@ export interface BankAccountCreateParams extends AuthParams {
     routingCode?: string
 }
 export interface BankAccountUpdateParams extends AuthParams {
-    isPrimary?: boolean
+    primary?: boolean
     accountNumber?: string
     holderName?: string
     bankAddress?: string
@@ -50,8 +50,8 @@ export interface BankAccountItem {
     lastFour: string
     status: string
     createdOn: number
-    primaryAccount: boolean
-    bankAccountNumber: string
+    primary: boolean
+    accountNumber: string
 }
 
 export type ResponseBankAccount = BankAccountItem
