@@ -16,6 +16,7 @@ export interface TransfersListParams extends CRUDPaginationParams, CRUDSortingPa
 /* Response */
 export interface TransferItem {
     id: string
+    merchantId: string
     bankAccountId: string
     amount: number
     currency: string
@@ -26,6 +27,8 @@ export interface TransferItem {
     metadata?: Metadata
     startedBy: string
     createdOn: number
+    form: number
+    to: number
 }
 
 export type ResponseTransfer = TransferItem
