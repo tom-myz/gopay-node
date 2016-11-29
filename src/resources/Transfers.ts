@@ -27,7 +27,7 @@ export interface TransferItem {
     metadata?: Metadata
     startedBy: string
     createdOn: number
-    form: number
+    from: number
     to: number
 }
 
