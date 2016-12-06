@@ -48,7 +48,7 @@ export interface TransactionTokenCardDataItem {
 export interface TransactionTokenQRScanDataItem {}
 
 export interface TransactionTokenItem {
-    transactionTokenId: string
+    id: string
     storeId: string
     mode: ProcessingMode
     subscription: boolean
