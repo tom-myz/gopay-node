@@ -12,7 +12,7 @@ export type ChargesSortBy = "createdOn"
 export interface ChargesListParams extends CRUDPaginationParams, CRUDSortingParams<ChargesSortBy>, AuthParams {}
 
 export interface ChargeCreateParams extends AuthParams {
-    token: string
+    transactionTokenId: string
     amount: number
     currency: string
     metadata?: Metadata
@@ -43,7 +43,7 @@ export type ResponseCharges = CRUDItemsResponse<ChargeItem>
 
 export class Charges extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["token", "amount", "currency"]
+    public static requiredParams: Array<string> = ["transactionTokenId", "amount", "currency"]
 
     public static routeBase: string = "/stores/:storeId/charges"
 
