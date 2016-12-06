@@ -30,11 +30,7 @@ describe("Ledgers", () => {
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return Promise.all([
-                ledgers.list().should.eventually.eql(okResponse),
-                ledgers.list(null, null, "1").should.eventually.eql(okResponse)
-            ])
-
+            return ledgers.list("1").should.eventually.eql(okResponse)
         })
     })
 
