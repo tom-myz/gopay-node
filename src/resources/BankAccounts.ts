@@ -7,6 +7,7 @@ export type BankAccountsSortBy = "createdOn"
 export interface BankAccountsListParams extends CRUDPaginationParams, CRUDSortingParams<BankAccountsSortBy>, AuthParams {
     primary?: boolean
 }
+
 export interface BankAccountCreateParams extends AuthParams {
     accountNumber: string
     country: string

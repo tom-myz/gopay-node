@@ -13,7 +13,7 @@ export interface CheckoutColors {
     secondaryBackground: string
     mainColor: string
     mainText: string
-    primaryText:string
+    primaryText: string
     secondaryText: string
 }
 
