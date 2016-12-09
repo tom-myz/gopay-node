@@ -1,18 +1,5 @@
 {
   "globalDependencies": {
-    "chai": "registry:dt/chai#3.4.0+20160601211834",
-    "chai-as-promised": "registry:dt/chai-as-promised#0.0.0+20160423070304",
-    "decamelize": "registry:dt/decamelize#0.0.0+20160316155526",
-    "es6-error": "registry:dt/es6-error#4.0.0+20161025103844",
-    "form-data": "registry:dt/form-data#0.0.0+20160724024111",
-    "isomorphic-fetch": "registry:dt/isomorphic-fetch#0.0.0+20160830175641",
-    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
-    "node": "registry:dt/node#6.0.0+20160831021119",
-    "promises-a-plus": "registry:dt/promises-a-plus#0.0.0+20160317120654",
-    "sinon": "registry:dt/sinon#1.16.0+20160517064723",
-    "sinon-chai": "registry:dt/sinon-chai#2.7.0+20160317120654"
-  },
-  "dependencies": {
-    "nock": "registry:npm/nock#0.7.0+20160723033700"
+    "es6-error": "registry:dt/es6-error#4.0.0+20161025103844"
   }
 }
