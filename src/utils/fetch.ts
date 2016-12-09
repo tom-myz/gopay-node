@@ -1,4 +1,4 @@
-import * as camelcase from "camel-case"
+import camelcase = require("camel-case")
 import { APIError } from "../errors/APIError"
 import { transformKeys } from "./object"
 

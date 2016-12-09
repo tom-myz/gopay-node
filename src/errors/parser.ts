@@ -41,14 +41,16 @@ export function fromError (error: Error): ErrorResponse {
             }]
         }
     } else if (error instanceof APIError) {
-        errorResponse = Object.assign(
-            {}, error.response ? error.response : { code : getCodeByStatus(error.status) }, { httpCode : error.status }
-        )
+        errorResponse = {
+            code     : error.response ? error.response.code : getCodeByStatus(error.status),
+            httpCode : error.status
+        }
     }
 
-    return Object.assign({
+    return {
         code     : Code.UNKNOWN,
         errors   : [],
-        status   : "error"
-    }, errorResponse)
+        status   : "error",
+        ...errorResponse
+    }
 }
