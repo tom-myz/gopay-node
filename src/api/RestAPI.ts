@@ -126,7 +126,7 @@ export class RestAPI {
             fetch(request)
                 .then(checkStatus)
                 .then(parseJSON)
-                .then((response: A) => RestAPI.handleSuccess(response, resolve, callback))
+                .then((response: A & IResponse) => RestAPI.handleSuccess(response, resolve, callback))
                 .catch((error: Error) => RestAPI.handleError(error, reject, callback))
         })
     }

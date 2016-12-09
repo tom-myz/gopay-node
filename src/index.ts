@@ -2,7 +2,6 @@ import { RestAPIOptions } from "./api/RestAPI"
 import { PaymentsSDK } from "./PaymentsSDK"
 
 // Resources
-import { Balance } from "./resources/Balance"
 import { BankAccounts } from "./resources/BankAccounts"
 import { Charges } from "./resources/Charges"
 import { CheckoutInfo } from "./resources/CheckoutInfo"
@@ -18,7 +17,6 @@ import { WebHooks } from "./resources/WebHooks"
 
 export default class SDK extends PaymentsSDK {
 
-    public balance: Balance
     public bankAccounts: BankAccounts
     public charges: Charges
     public checkoutInfo: CheckoutInfo
@@ -35,7 +33,6 @@ export default class SDK extends PaymentsSDK {
     constructor (options?: RestAPIOptions) {
         super(options)
 
-        this.balance = new Balance(this.api)
         this.bankAccounts = new BankAccounts(this.api)
         this.charges = new Charges(this.api)
         this.checkoutInfo = new CheckoutInfo(this.api)
