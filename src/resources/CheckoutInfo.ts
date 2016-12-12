@@ -25,7 +25,7 @@ export interface CheckoutInfoItem {
     logoImage?: string
     theme: {
         dark: boolean
-        color: CheckoutColors
+        colors: CheckoutColors
     }
 }
 
