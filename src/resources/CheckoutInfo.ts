@@ -15,6 +15,7 @@ export interface CheckoutColors {
     mainText: string
     primaryText: string
     secondaryText: string
+    baseText: string
 }
 
 export interface CheckoutInfoItem {
