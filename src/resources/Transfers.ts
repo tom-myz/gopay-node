@@ -2,7 +2,7 @@ import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 
-export type TransferStatus = "pending" | "in_transfer" | "paid" | "cancelled" | "failed"
+export type TransferStatus = "created" | "approved" | "cancelled" | "processing" | "paid" | "failed"
 
 /* Request */
 export type TransfersSortBy = "createdOn"
