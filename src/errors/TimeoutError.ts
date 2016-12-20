@@ -1,4 +1,6 @@
-export class TimeoutError extends Error {
+import * as ExtendableError from "es6-error"
+
+export class TimeoutError extends ExtendableError {
 
     public timeout: number
 
