@@ -1,4 +1,4 @@
-import * as ExtendableError from "es6-error"
+import ExtendableError from "es6-error"
 
 export class PathParameterError extends ExtendableError {
 
