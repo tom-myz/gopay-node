@@ -2,19 +2,21 @@
 
 import "../utils"
 import { expect } from "chai"
-import sinon = require("sinon")
-import nock = require("nock")
+import * as sinon from "sinon"
+import { SinonSandbox } from "sinon"
+import * as nock from "nock"
+import { Scope } from "nock"
 import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { BAD_REQUEST } from "../../src/errors/ErrorsConstants"
-import { Scope } from "nock"
+
 
 describe("RestAPI", () => {
     let mockOk: Scope
     let mockError: Scope
     const testEndpoint = "http://localhost:80"
     let scope: Scope
-    let sandbox: Sinon.SinonSandbox
+    let sandbox: SinonSandbox
 
     before(() => {
         const REPEATS = 100

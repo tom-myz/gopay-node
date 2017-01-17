@@ -1,9 +1,9 @@
 import "../utils"
 import { expect } from "chai"
-import nock = require("nock")
+import * as nock from "nock"
+import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { Subscriptions, SubscriptionCreateParams } from "../../src/resources/Subscriptions"
-import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 describe("Subscriptions", () => {

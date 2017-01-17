@@ -3,7 +3,6 @@ import { expect } from "chai"
 import SDK from "../../src/index"
 import { RestAPI } from "../../src/api/RestAPI"
 
-import { Balance } from "../../src/resources/Balance"
 import { BankAccounts } from "../../src/resources/BankAccounts"
 import { Charges } from "../../src/resources/Charges"
 import { CheckoutInfo } from "../../src/resources/CheckoutInfo"
@@ -22,7 +21,6 @@ describe("SDK", () => {
 
         expect(sdk).to.have.property("api").that.is.an.instanceOf(RestAPI)
 
-        expect(sdk).to.have.property("balance").that.is.an.instanceOf(Balance).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("bankAccounts").that.is.an.instanceOf(BankAccounts).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("charges").that.is.an.instanceOf(Charges).and.has.property("api", sdk.api)
         expect(sdk).to.have.property("checkoutInfo").that.is.an.instanceOf(CheckoutInfo).and.has.property("api", sdk.api)
