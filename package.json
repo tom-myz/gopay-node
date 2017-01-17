@@ -45,7 +45,6 @@
     "webpack-dev-server": "^2.1.0-beta.0"
   },
   "dependencies": {
-    "@types/camel-case": "1.2.1",
     "@types/chai": "^3.4.34",
     "@types/chai-as-promised": "0.0.29",
     "@types/decamelize": "0.0.30",
@@ -68,7 +67,7 @@
     "linter": "./node_modules/tslint/bin/tslint src/**/*.ts",
     "clean": "npm prune && rm -rf node_modules typings lib",
     "test": "npm run linter",
-    "mocha": "./node_modules/mocha/bin/mocha --require jsdom-global/register --require babel-polyfill --require ts-babel-node/register --compilers ts:ts-babel-node/register test/**/*.specs.ts",
+    "mocha": "./node_modules/mocha/bin/mocha --require jsdom-global/register --require ts-babel-node/register test/**/*.specs.ts",
     "build": "rm -rf lib && tsc && babel lib -d lib -s --input-source-map inline",
     "start": "webpack-dashboard -p 3004 -- webpack-dev-server --config webpack.config.js",
     "preversion": "npm test",

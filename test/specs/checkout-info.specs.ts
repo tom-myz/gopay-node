@@ -1,9 +1,9 @@
 import "../utils"
 import { expect } from "chai"
-import nock = require("nock")
+import * as nock from "nock"
+import { Scope } from "nock"
 import { RestAPI } from "../../src/api/RestAPI"
 import { CheckoutInfo } from "../../src/resources/CheckoutInfo"
-import { Scope } from "nock"
 
 describe("Checkout Info", () => {
     let api: RestAPI
