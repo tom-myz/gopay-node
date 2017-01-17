@@ -1,12 +1,11 @@
-import ExtendableError from "es6-error"
+import { GenericError } from "./GenericError"
 
-export class TimeoutError extends ExtendableError {
+export class TimeoutError extends GenericError {
 
     public timeout: number
 
     constructor (timeout: number) {
-        super(`GPay: Timeout efter ${timeout}ms.`)
-
+        super()
         this.timeout = timeout
     }
 

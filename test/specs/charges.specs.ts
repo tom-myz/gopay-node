@@ -51,9 +51,9 @@ describe("Charges", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data = {
-                token    : "test",
-                amount   : 1,
-                currency : "usd"
+                transactionTokenId : "test",
+                amount             : 1,
+                currency           : "usd"
             }
 
             return charges.create(data).should.eventually.eql(okResponse)

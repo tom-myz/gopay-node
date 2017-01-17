@@ -1,3 +1,4 @@
+import { GenericError } from "./GenericError"
 import { ErrorResponse } from "../api/RestAPI"
 import { APIError } from "./APIError"
 import { PathParameterError } from "./PathParameterError"
@@ -24,7 +25,7 @@ function getCodeByStatus (status: number): string {
     return Code.UNKNOWN
 }
 
-export function fromError (error: Error): ErrorResponse {
+export function fromError (error: GenericError): ErrorResponse {
     let errorResponse: any
 
     if (error instanceof PathParameterError) {

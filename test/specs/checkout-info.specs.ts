@@ -23,13 +23,13 @@ describe("Checkout Info", () => {
 
     context("route GET /checkout_info", () => {
         it("should return correct response", () => {
-            const okResponse = { action : "list" }
+            const okResponse = { action : "get" }
             const okScope = scope
-                .get("/checkout_info")
+                .get(/\/checkout_info/i)
                 .once()
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return info.get().should.eventually.eql(okResponse)
+            return info.get({ origin : "http://test.com" }).should.eventually.eql(okResponse)
         })
     })
 
