@@ -1,0 +1,5 @@
+--require jsdom-global/register
+--require ts-node/register
+--require babel-core/register
+--watch-extensions ts
+test/**/*.specs.ts

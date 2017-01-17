@@ -1,11 +1,11 @@
-import ExtendableError from "es6-error"
+import { GenericError } from "./GenericError"
 
-export class PathParameterError extends ExtendableError {
+export class PathParameterError extends GenericError {
 
     public parameter: string
 
     constructor (parameter: string) {
-        super(`GPay: Required url parameter '${parameter}' is not defined.`)
+        super()
         this.parameter = parameter
     }
 
