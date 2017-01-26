@@ -3,7 +3,7 @@ export interface ConfigurationItem {
     prepaidEnabled?: boolean
     paymentTypes: Array<string>
     percentFee?: number
-    waitPeriod?: number
+    waitPeriod?: string
     transferPeriod?: string
     logoUrl?: string
 }

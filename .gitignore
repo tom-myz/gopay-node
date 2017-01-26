@@ -13,4 +13,3 @@ test/**/*.js.map
 *.iml
 .idea
 *.orig
-yarn.lock
