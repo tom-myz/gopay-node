@@ -1,40 +1,73 @@
 node("master") {
-
-    stage "Checkout"
-        checkout scm
-
-    stage "Build"
-        slackSend channel: "#dev-notifications", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
-
-    stage "Test"
-        withEnv(['NODE_ENV=test']) {
-            print "Running tests in environment: ${env.NODE_ENV}"
-            sh "node -v"
-
+    ansiColor('xterm') {
+        stage 'Checkout'
+            slackSend channel: "#dev-notifications", message: stageMessage('Build', 'started', env.BRANCH_NAME, env.BUILD_NUMBER)
             try {
-              sh "npm run clean"
-              sh "npm prune"
-              sh "npm install"
-              sh "./node_modules/typings/dist/bin.js install"
-              sh "npm test"
-              slackSend channel: "#dev-notifications", color: "good", message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
+                sh "npm run clean"
+                sh "npm prune"
+                sh "yarn"
+                checkout scm
             } catch (error) {
-              slackSend channel: "#dev-notifications", color: "danger", message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BRANCH_NAME}"
-              throw error
+                 slackSend channel: "#dev-notifications", color: "danger", message: stageMessage('Checkout', 'failed', env.BRANCH_NAME, env.BUILD_NUMBER)
+                 throw error
             }
-        }
 
-    stage "Deploy"
-        sh "npm run build"
+        stage 'Build'
+            try {
+                sh "npm run build"
+            } catch (error) {
+                 slackSend channel: "#dev-notifications", color: "danger", message: stageMessage('Build', 'failed', env.BRANCH_NAME, env.BUILD_NUMBER)
+                 throw error
+            }
 
-        if (env.BRANCH_NAME == "master") {
-            echo "Deploy to NPM"
-            sh "./scripts/deploy.sh"
-            slackSend channel: "#dev-notifications", color: "good", message: "Deploy succeeded: Published to NPM"
-        }
+        stage 'Test'
+            withEnv(['NODE_ENV=test']) {
+                print "Running tests in environment: ${env.NODE_ENV}"
+                sh "node -v"
 
-    stage "Cleanup"
-        echo "Cleaning up build"
-        sh "npm run clean"
+                try {
+                  sh "npm test"
+                } catch (error) {
+                  slackSend channel: "#dev-notifications", color: "danger", message: stageMessage('Test', 'failed', env.BRANCH_NAME, env.BUILD_NUMBER)
+                  throw error
+                }
+            }
 
+        stage "Deploy"
+            try {
+                if (env.BRANCH_NAME == "master") {
+                    echo "Deploying"
+                    sh "./scripts/deploy.sh"
+                    slackSend channel: "#dev-notifications", color: "good", message: stageMessage('Deploy', 'succeed', env.BRANCH_NAME, env.BUILD_NUMBER)
+                }
+            } catch (error) {
+                slackSend channel: "#dev-notifications", color: "danger", message: stageMessage('Deploy', 'failed', env.BRANCH_NAME, env.BUILD_NUMBER)
+                throw error
+            }
+
+
+        stage "Cleanup"
+            echo "Cleaning up build"
+            sh "npm run clean"
+            slackSend channel: "#dev-notifications", message: stageMessage('Build', 'finished', env.BRANCH_NAME, env.BUILD_NUMBER)
+
+    }
+
+}
+
+// For some reason, Jenkins is requiring us to double URL encode.
+String doubleUrlEncode(s) {
+    URLEncoder.encode(URLEncoder.encode(s, 'UTF-8'), 'UTF-8')
+}
+
+String githubUrl(branch) {
+    "https://github.com/ubicast/gyron-payments-api/tree/${branch}"
+}
+
+String jenkinsConsoleUrl(branch, buildNumber) {
+    "https://jenkins.gyro-n.money/job/gyron/job/gyron-payments-api/job/${doubleUrlEncode(branch)}/${buildNumber}/console"
+}
+
+String stageMessage(stage, verb, branch, buildNumber) {
+    "Build <${jenkinsConsoleUrl(branch, buildNumber)}|[#${buildNumber}]> for <${githubUrl(branch)}|[gopay-node:${branch}]>:\nStage `${stage}` has ${verb}"
 }
