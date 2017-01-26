@@ -1,3 +1,6 @@
+def projectName = "gopay-node"
+def githubProject = "gyro-n/${projectName}"
+
 node("master") {
     ansiColor('xterm') {
         stage 'Checkout'
@@ -61,13 +64,13 @@ String doubleUrlEncode(s) {
 }
 
 String githubUrl(branch) {
-    "https://github.com/ubicast/gyron-payments-api/tree/${branch}"
+    "https://github.com/${githubProject}/tree/${branch}"
 }
 
 String jenkinsConsoleUrl(branch, buildNumber) {
-    "https://jenkins.gyro-n.money/job/gyron/job/gyron-payments-api/job/${doubleUrlEncode(branch)}/${buildNumber}/console"
+    "https://jenkins.gyro-n.money/blue/organizations/jenkins/&{doubleUrlEncode(githubProject)}/detail/${branch}/${buildNumber}/pipeline"
 }
 
 String stageMessage(stage, verb, branch, buildNumber) {
-    "Build <${jenkinsConsoleUrl(branch, buildNumber)}|[#${buildNumber}]> for <${githubUrl(branch)}|[gopay-node:${branch}]>:\nStage `${stage}` has ${verb}"
+    "Build <${jenkinsConsoleUrl(branch, buildNumber)}|#${buildNumber}> for <${githubUrl(branch)}|[${projectName}:${branch}]>:\nStage `${stage}` has ${verb}"
 }
