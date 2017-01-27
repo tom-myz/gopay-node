@@ -46,16 +46,6 @@ export type PromiseCreator<A> = () => Promise<A>
 
 export class RestAPI {
 
-    public appId: string
-    public secret: string
-    public endpoint: string
-
-    constructor (options: RestAPIOptions = {}) {
-        this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT
-        this.appId = options.appId || process.env[ENV_KEY_APP_ID]
-        this.secret = options.secret || process.env[ENV_KEY_SECRET]
-    }
-
     public static requestParams (params: any): any {
         return transformKeys(params, decamelize)
     }
@@ -88,6 +78,16 @@ export class RestAPI {
 
     public static getData (data: any): Array<any> {
         return partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
+    }
+
+    public appId: string
+    public secret: string
+    public endpoint: string
+
+    constructor (options: RestAPIOptions = {}) {
+        this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT
+        this.appId = options.appId || process.env[ENV_KEY_APP_ID]
+        this.secret = options.secret || process.env[ENV_KEY_SECRET]
     }
 
     public getBody (data: any, payload: boolean): any {

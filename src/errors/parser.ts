@@ -1,5 +1,5 @@
-import { GenericError } from "./GenericError"
 import { ErrorResponse } from "../api/RestAPI"
+import { GenericError } from "./GenericError"
 import { APIError } from "./APIError"
 import { PathParameterError } from "./PathParameterError"
 import { RequestParameterError } from "./RequestParameterError"

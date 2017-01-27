@@ -1,6 +1,6 @@
 {
   "name": "gopay-node",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -12,6 +12,7 @@
     "lib/"
   ],
   "devDependencies": {
+    "ava": "^0.17.0",
     "chai": "~3.5.0",
     "chai-as-promised": "~6.0.0",
     "jsdom": "~9.9.1",
@@ -21,6 +22,7 @@
     "path": "~0.12.7",
     "sinon": "~1.17.7",
     "sinon-chai": "~2.8.0",
+    "tap-nyan": "^1.1.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.4.1",
     "typescript": "^2.1.5",
@@ -40,6 +42,7 @@
     "@types/sinon-chai": "^2.7.27",
     "camel-case": "^3.0.0",
     "decamelize": "^1.2.0",
+    "es6-error": "^4.0.1",
     "isomorphic-fetch": "^2.2.1",
     "node-fetch": "^1.6.3",
     "process": "^0.11.9"
@@ -47,10 +50,17 @@
   "scripts": {
     "linter": "./node_modules/tslint/bin/tslint src/**/*.ts",
     "clean": "npm prune && rm -rf node_modules typings lib",
-    "test": "npm run linter && npm run mocha",
+    "test": "npm run linter && npm run ava",
+    "ava": "tsc -p tsconfig.tests.json && ava | tap-nyan",
     "mocha": "./node_modules/mocha/bin/mocha --opts mocha.opts",
     "build": "rm -rf lib && tsc",
     "preversion": "npm test",
     "postversion": "git add package.json && git commit -m \"Bump version to `node -e \"console.log(require('./package.json').version);\"`\""
+  },
+  "ava": {
+    "files": [
+      "test/**/api.specs.js"
+    ],
+    "tap": true
   }
 }

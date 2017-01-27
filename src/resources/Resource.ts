@@ -8,12 +8,6 @@ export type DefinedRoute = (data?: any, callback?: any, pathParams?: Array<strin
 
 export abstract class Resource {
 
-    public api: RestAPI
-
-    constructor (api: RestAPI) {
-        this.api = api
-    }
-
     public static compilePath (path: string, pathParams: any): string {
         return path
             .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
@@ -23,6 +17,12 @@ export abstract class Resource {
                 return part.indexOf(":") === -1 ? part.replace(/\(|\)/g, "") : ""
             })
             .replace(/:(\w+)/ig, (s: string, p: string) => (pathParams as any)[p] || s)
+    }
+
+    public api: RestAPI
+
+    constructor (api: RestAPI) {
+        this.api = api
     }
 
     public defineRoute (method: HTTPMethod, path: string, required: Array<string> = []): DefinedRoute {

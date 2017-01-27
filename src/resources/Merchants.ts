@@ -5,6 +5,11 @@ import { ConfigurationItem } from "./common/Configuration"
 /* Request */
 
 /* Response */
+export interface MerchantConfigurationItem extends ConfigurationItem {
+    waitPeriod?: string
+    transferPeriod?: string
+}
+
 export interface MerchantItem {
     id: string
     verificationDataId?: string
@@ -13,7 +18,7 @@ export interface MerchantItem {
     roles: Array<string>
     verified: boolean
     createdOn: number
-    configuration: ConfigurationItem
+    configuration: MerchantConfigurationItem
 }
 
 export type ResponseMerchant = MerchantItem

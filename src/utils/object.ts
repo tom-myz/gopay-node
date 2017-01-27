@@ -1,4 +1,4 @@
-export interface Transformer { (...args: any[]): string }
+export interface Transformer { (...args: Array<any>): string }
 
 export function transformKeys (obj: any, transformer: Transformer): any {
     return Object.keys(obj || {}).reduce((r: any, k: string) => {
