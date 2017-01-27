@@ -14,7 +14,7 @@ export interface ConfigurationItem {
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
     percentFee?: number
-    waitPeriod?: number
+    waitPeriod?: string
     transferPeriod?: string
     logoUrl?: string
 }
