@@ -2,12 +2,13 @@ import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ConfigurationItem } from "./common/Configuration"
 
+export type TransferPeriod = "weekly" | "biweekly" | "monthly"
 /* Request */
 
 /* Response */
 export interface MerchantConfigurationItem extends ConfigurationItem {
     waitPeriod?: string
-    transferPeriod?: string
+    transferPeriod?: TransferPeriod
 }
 
 export interface MerchantItem {
