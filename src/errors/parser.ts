@@ -28,8 +28,6 @@ function getCodeByStatus (status: number): string {
 export function fromError (error: GenericError): ErrorResponse {
     let errorResponse: any
 
-    console.warn(error)
-
     if (error instanceof PathParameterError) {
         errorResponse = {
             code : Code.REQUEST_ERROR,
