@@ -1,29 +1,28 @@
+import { CardBrand } from "./CardBrand"
+
 export interface PaymentTypeConfiguration {
     enabled?: boolean
 }
 
 export interface CardConfigurationItem extends PaymentTypeConfiguration {
-    debitEnabled?: boolean
-    prepaidEnabled?: boolean
+    debitEnabled: boolean
+    prepaidEnabled: boolean
+    forbiddenCardBrands: Array<CardBrand>
 }
 
-export interface QRScanConfigurationItem extends PaymentTypeConfiguration {
-}
+export type QRScanConfigurationItem = PaymentTypeConfiguration
 
 export interface ConfigurationItem {
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
-    percentFee?: number
-    waitPeriod?: string
-    transferPeriod?: string
     logoUrl?: string
 }
 
 export interface ConfigurationParams {
     logoUrl?: string
-    cardConfiguration?: CardConfigurationItem
-    qrScanConfiguration?: QRScanConfigurationItem
+    cardConfiguration?: Partial<CardConfigurationItem>
+    qrScanConfiguration?: Partial<QRScanConfigurationItem>
 }
 
-export interface ConfigurationCreateParams extends ConfigurationParams {}
-export interface ConfigurationUpdateParams extends ConfigurationParams {}
+export type ConfigurationCreateParams = ConfigurationParams
+export type ConfigurationUpdateParams = ConfigurationParams
