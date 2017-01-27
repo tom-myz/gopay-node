@@ -1,18 +1,28 @@
-export interface ConfigurationItem {
+export interface PaymentTypeConfiguration {
+    enabled?: boolean
+}
+
+export interface CardConfigurationItem extends PaymentTypeConfiguration {
     debitEnabled?: boolean
     prepaidEnabled?: boolean
-    paymentTypes: Array<string>
+}
+
+export interface QRScanConfigurationItem extends PaymentTypeConfiguration {
+}
+
+export interface ConfigurationItem {
+    cardConfiguration: CardConfigurationItem
+    qrScanConfiguration: QRScanConfigurationItem
     percentFee?: number
-    waitPeriod?: string
+    waitPeriod?: number
     transferPeriod?: string
     logoUrl?: string
 }
 
 export interface ConfigurationParams {
-    debitEnabled?: boolean
     logoUrl?: string
-    prepaidEnabled?: boolean
-    paymentTypes?: Array<string>
+    cardConfiguration?: CardConfigurationItem
+    qrScanConfiguration?: QRScanConfigurationItem
 }
 
 export interface ConfigurationCreateParams extends ConfigurationParams {}
