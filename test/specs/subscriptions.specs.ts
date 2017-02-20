@@ -3,7 +3,7 @@ import { expect } from "chai"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { Subscriptions, SubscriptionCreateParams } from "../../src/resources/Subscriptions"
+import { Subscriptions, SubscriptionCreateParams, SubscriptionUpdateParams } from "../../src/resources/Subscriptions"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 describe("Subscriptions", () => {
@@ -45,10 +45,10 @@ describe("Subscriptions", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data: SubscriptionCreateParams = {
-                token    : "test",
-                amount   : 1,
-                currency : "usd",
-                period   : "monthly"
+                transactionTokenId : "test",
+                amount             : 1,
+                currency           : "usd",
+                period             : "monthly"
             }
 
             return subscriptions.create(data).should.eventually.eql(okResponse)
@@ -61,6 +61,33 @@ describe("Subscriptions", () => {
 
             return Promise.all(asserts.map((a: any) => {
                 return subscriptions.create(a).should.be.rejected
+                    .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
+            }))
+        })
+    })
+
+    context("route PATCH /subscriptions/:id", () => {
+        it("should return correct response", () => {
+            const okResponse = { action : "update" }
+            const okScope = scope
+                .patch(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
+                .once()
+                .reply(200, okResponse, { "Content-Type" : "application/json" })
+            const data: SubscriptionUpdateParams = {
+                transactionTokenId : "test",
+                amount             : 10
+            }
+
+            return subscriptions.update("1", "1", data).should.eventually.eql(okResponse)
+        })
+
+        it("should return validation error if data is invalid", () => {
+            const asserts = [
+                {}
+            ]
+
+            return Promise.all(asserts.map((a: any) => {
+                return subscriptions.update("1", "1", a).should.be.rejected
                     .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
             }))
         })

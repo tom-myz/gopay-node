@@ -1,6 +1,8 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
 
+export type BankAccountStatus = "new" | "unable_to_verify" | "verified" | "errored"
+
 /* Request */
 export type BankAccountsSortBy = "createdOn"
 
@@ -49,7 +51,7 @@ export interface BankAccountItem {
     ifscCode?: string
     routingCode?: string
     lastFour: string
-    status: string
+    status: BankAccountStatus
     createdOn: number
     primary: boolean
     accountNumber: string

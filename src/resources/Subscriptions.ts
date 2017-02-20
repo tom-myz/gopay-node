@@ -18,10 +18,16 @@ export interface SubscriptionsListParams extends CRUDPaginationParams, CRUDSorti
 }
 
 export interface SubscriptionCreateParams extends AuthParams {
-    token: string
+    transactionTokenId: string
     amount: number
     currency: string
     period: SubscriptionPeriod
+    metadata?: Metadata
+}
+
+export interface SubscriptionUpdateParams extends AuthParams {
+    transactionTokenId?: string
+    amount?: number
     metadata?: Metadata
 }
 
@@ -44,7 +50,7 @@ export type ResponseSubscriptions = CRUDItemsResponse<SubscriptionItem>
 
 export class Subscriptions extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["token", "amount", "currency", "period"]
+    public static requiredParams: Array<string> = ["transactionTokenId", "amount", "currency", "period"]
 
     public static routeBase: string = "/stores/:storeId/subscriptions"
 
@@ -67,6 +73,14 @@ export class Subscriptions extends CRUDResource {
                 callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
+    }
+
+    public update (storeId: string,
+                   id: string,
+                   data?: SubscriptionUpdateParams,
+                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+
+        return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
     public delete (storeId: string,

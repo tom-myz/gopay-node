@@ -21,6 +21,7 @@ export interface ChargeCreateParams extends AuthParams {
 /* Response */
 export interface ChargeItem {
     id: string
+    merchantId: string
     storeId: string
     ledgerId?: string
     subscriptionId?: string
