@@ -8,10 +8,11 @@ import * as nock from "nock"
 import { Scope } from "nock"
 import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { BAD_REQUEST } from "../../src/errors/ErrorsConstants"
+import { BAD_REQUEST, VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let mockOk: Scope
 let mockError: Scope
+let mockValidationError: Scope
 const testEndpoint = "http://localhost:80"
 let scope: Scope
 let sandbox: SinonSandbox
@@ -28,6 +29,14 @@ test.before(() => {
         .get("/error")
         .times(REPEATS)
         .reply(400, {}, { "Content-Type" : "application/json" })
+
+    mockValidationError = scope
+        .get("/validation-error")
+        .times(REPEATS)
+        .reply(400,
+            {status : "error", code : VALIDATION_ERROR, errors : [{field : "currency", reason : "UNSUPPORTED_CURRENCY"}]},
+            { "Content-Type" : "application/json" }
+        )
 
     sandbox = sinon.sandbox.create({
         properties: ["spy", "clock"]
@@ -79,6 +88,23 @@ test("should return error response", async (t: AssertContext) => {
     const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error", httpCode : 400 }
     const e = await t.throws(api.send("GET", "/error", null, spy))
 
+    t.deepEqual(e, error)
+    t.true(spy.calledOnce)
+    t.true(spy.calledWith(error))
+})
+
+test("should return validation error response", async (t: AssertContext) => {
+    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+    const spy = sinon.spy()
+    const error: ErrorResponse = {
+        httpCode : 400,
+        status : "error",
+        code : VALIDATION_ERROR,
+        errors : [
+            {field : "currency", reason : "UNSUPPORTED_CURRENCY"}
+        ]
+    }
+    const e = await t.throws(api.send("GET", "/validation-error", null, spy))
     t.deepEqual(e, error)
     t.true(spy.calledOnce)
     t.true(spy.calledWith(error))

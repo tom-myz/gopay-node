@@ -44,7 +44,8 @@ export function fromError (error: GenericError): ErrorResponse {
     } else if (error instanceof APIError) {
         errorResponse = {
             code     : error.response ? error.response.code : getCodeByStatus(error.status),
-            httpCode : error.status
+            httpCode : error.status,
+            errors   : error.response ? error.response.errors || [] : []
         }
     }
 
