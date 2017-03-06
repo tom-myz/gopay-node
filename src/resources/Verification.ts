@@ -1,6 +1,7 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ContactInfo } from "./common/ContactInfo"
+import { PhoneNumber } from "./common/PhoneNumber"
 
 /* Request */
 export interface VerificationCreateParams extends AuthParams {
@@ -18,7 +19,7 @@ export interface VerificationUpdateParams extends AuthParams {
     companyContactInfo?: ContactInfo
     businessType?: string
     systemManagerName?: string
-    systemManagerNumber?: string
+    systemManagerNumber?: string | PhoneNumber
     systemManagerEmail?: string
 }
 
