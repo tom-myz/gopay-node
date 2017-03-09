@@ -44,20 +44,18 @@ node('slave') {
 
     stage("Dependencies") {
       withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_AUTH_TOKEN')]) {
-
-      }
-
-      yarnEnv.inside {
-	    echo "$WORKSPACE"
-	    sh_with_home "cd ~/; pwd"
-	    writeFile file:"~/.npmrc", text: """//registry.npmjs.org/:_authToken=${env.NPM_AUTH_TOKEN}
+        yarnEnv.inside {
+	      echo "$WORKSPACE"
+	      sh_with_home "cd ~/; pwd"
+	      writeFile file:"~/.npmrc", text: """//registry.npmjs.org/:_authToken=${env.NPM_AUTH_TOKEN}
 scope=gyro-n
 @gyro-n:registry=https://registry.npmjs.org/
 sign-git-tag=true
 """
-	sh_with_home "ls -la"
-	sh_with_home "cat ~/.npmrc"
-	sh_with_home "yarn"
+	      sh_with_home "ls -la"
+	      sh_with_home "cat ~/.npmrc"
+	      sh_with_home "yarn"
+        }
       }
     }
 
@@ -107,8 +105,7 @@ sign-git-tag=true
 	        }
 	        sh loginInfo
 	        toolsEnv.inside {
-	          sh "aws s3 sync build s3://gopay-merchant-console/staging/blue"
-	          sh "cloudfront-util create_invalidation --domain blue-merchant-console.gyro-n.money"
+	          sh "aws s3 sync build s3://${githubProject}/staging/blue"
 	        }
 	        slackSend channel: "#dev-notifications", color: "danger", message: stageMessage('Deploy', 'succeeded', env.BRANCH_NAME, env.BUILD_NUMBER)
 	      } catch (error) {
