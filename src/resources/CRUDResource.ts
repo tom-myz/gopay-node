@@ -1,21 +1,23 @@
 import { RestAPI } from "../api/RestAPI"
 import { Resource, DefinedRoute } from "./Resource"
 
+export type CursorDirection = "asc" | "desc"
+
 /* Request */
 export interface CRUDPaginationParams {
-    page?: number
-    pageSize?: number
+    limit?: number
+    cursor?: string
+    cursorDirection?: CursorDirection
 }
 
 export interface CRUDSortingParams<A> {
     sortBy?: A
-    sortOrder?: "asc" | "desc"
 }
 
 /* Response */
 export interface CRUDItemsResponse<A> {
     items: Array<A>
-    total: number
+    hasMore: boolean
 }
 
 interface CRUDResourceStatic extends Function {
