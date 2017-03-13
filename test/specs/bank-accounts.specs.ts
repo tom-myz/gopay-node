@@ -1,116 +1,113 @@
 import "../utils"
-import { expect } from "chai"
+import { test, AssertContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { BankAccounts } from "../../src/resources/BankAccounts"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
-describe("Bank Accounts", () => {
-    let api: RestAPI
-    let accounts: BankAccounts
-    let scope: Scope
-    const testEndpoint = "http://localhost:80"
+let api: RestAPI
+let accounts: BankAccounts
+let scope: Scope
+const testEndpoint = "http://localhost:80"
 
-    beforeEach(() => {
-        api = new RestAPI({endpoint: testEndpoint })
-        accounts = new BankAccounts(api)
-        scope = nock(testEndpoint)
-    })
+test.before(() => {
+    api = new RestAPI({endpoint: testEndpoint })
+    accounts = new BankAccounts(api)
+    scope = nock(testEndpoint)
+})
 
-    afterEach(() => {
-        nock.cleanAll()
-    })
+test.always.after(() => {
+    nock.cleanAll()
+})
 
-    context("route GET /bank_accounts", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "list" }
-            const okScope = scope
-                .get("/bank_accounts")
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+test("route GET /bank_accounts # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "list" }
+    const okScope = scope
+        .get("/bank_accounts")
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return accounts.list().should.eventually.eql(okResponse)
-        })
-    })
+    const r: any = await t.notThrows(accounts.list())
 
-    context("route POST /bank_accounts", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "create" }
-            const okScope = scope
-                .post("/bank_accounts")
-                .once()
-                .reply(201, okResponse, { "Content-Type" : "application/json" })
-            const data = {
-                accountNumber : "test",
-                country       : "test",
-                currency      : "test",
-                holderName    : "test",
-                bankName      : "test"
-            }
+    t.deepEqual(r, okResponse)
+})
 
-            return accounts.create(data).should.eventually.eql(okResponse)
-        })
+test("route POST /bank_accounts # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "create" }
+    const okScope = scope
+        .post("/bank_accounts")
+        .once()
+        .reply(201, okResponse, { "Content-Type" : "application/json" })
+    const data = {
+        accountNumber : "test",
+        country       : "test",
+        currency      : "test",
+        holderName    : "test",
+        bankName      : "test"
+    }
 
-        it("should return validation error if data is invalid", () => {
-            const asserts = [
-                {}
-            ]
+    const r: any = await t.notThrows(accounts.create(data))
 
-            return Promise.all(asserts.map((a: any) => {
-                return accounts.create(a).should.be.rejected
-                    .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
-            }))
-        })
-    })
+    t.deepEqual(r, okResponse)
+})
 
-    context("route GET /bank_accounts/:id", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "read" }
-            const scopeScope = scope
-                .get(/\/bank_accounts\/[a-f-0-9\-]+$/i)
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+test("route POST /bank_accounts # should return validation error if data is invalid", (t: AssertContext) => {
+    const asserts = [
+        {}
+    ]
 
-            return accounts.get("1").should.eventually.eql(okResponse)
-        })
-    })
+    return Promise.all(asserts.map(async (a: any) => {
+        const e: ErrorResponse = await t.throws(accounts.create(a))
+        t.deepEqual(e.code, VALIDATION_ERROR)
+    }))
+})
 
-    context("route GET /bank_accounts/primary", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "read" }
-            const scopeScope = scope
-                .get("/bank_accounts/primary")
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+test("route GET /bank_accounts/:id # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "read" }
+    const scopeScope = scope
+        .get(/\/bank_accounts\/[a-f-0-9\-]+$/i)
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return accounts.getPrimary().should.eventually.eql(okResponse)
-        })
-    })
+    const r: any = await t.notThrows(accounts.get("1"))
 
-    context("route PATCH /bank_accounts/:id", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "update" }
-            const okScope = scope
-                .patch(/\/bank_accounts\/[a-f-0-9\-]+$/i)
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
-            const data: any = null
+    t.deepEqual(r, okResponse)
+})
 
-            return accounts.update("1", data).should.eventually.eql(okResponse)
-        })
-    })
+test("route GET /bank_accounts/primary # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "read" }
+    const scopeScope = scope
+        .get("/bank_accounts/primary")
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    context("route DELETE /bank_accounts/:id", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "read" }
-            const scopeScope = scope
-                .delete(/\/bank_accounts\/[a-f-0-9\-]+$/i)
-                .once()
-                .reply(204, okResponse, { "Content-Type" : "application/json" })
+    const r: any = await t.notThrows(accounts.getPrimary())
 
-            return accounts.delete("1").should.eventually.eql(okResponse)
-        })
-    })
+    t.deepEqual(r, okResponse)
+})
 
+test("route PATCH /bank_accounts/:id # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "update" }
+    const okScope = scope
+        .patch(/\/bank_accounts\/[a-f-0-9\-]+$/i)
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const data: any = null
+
+    const r: any = await t.notThrows(accounts.update("1", data))
+
+    t.deepEqual(r, okResponse)
+})
+
+test("route DELETE /bank_accounts/:id # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "read" }
+    const scopeScope = scope
+        .delete(/\/bank_accounts\/[a-f-0-9\-]+$/i)
+        .once()
+        .reply(204, okResponse, { "Content-Type" : "application/json" })
+
+    const r: any = await t.notThrows(accounts.delete("1"))
+
+    t.deepEqual(r, okResponse)
 })

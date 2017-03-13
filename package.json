@@ -59,7 +59,7 @@
   },
   "ava": {
     "files": [
-      "test/**/api.specs.js"
+      "test/**/*.specs.js"
     ],
     "tap": true
   }

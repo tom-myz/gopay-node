@@ -1,48 +1,45 @@
 import "../utils"
-import { expect } from "chai"
+import { test, AssertContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI } from "../../src/api/RestAPI"
 import { Transfers } from "../../src/resources/Transfers"
 
-describe("Transfers", () => {
-    let api: RestAPI
-    let transfers: Transfers
-    let scope: Scope
-    const testEndpoint = "http://localhost:80"
+let api: RestAPI
+let transfers: Transfers
+let scope: Scope
+const testEndpoint = "http://localhost:80"
 
-    beforeEach(() => {
-        api = new RestAPI({endpoint: testEndpoint })
-        transfers = new Transfers(api)
-        scope = nock(testEndpoint)
-    })
+test.before(() => {
+    api = new RestAPI({endpoint: testEndpoint })
+    transfers = new Transfers(api)
+    scope = nock(testEndpoint)
+})
 
-    afterEach(() => {
-        nock.cleanAll()
-    })
+test.always.after(() => {
+    nock.cleanAll()
+})
 
-    context("route GET /transfers", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "list" }
-            const okScope = scope
-                .get("/transfers")
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+test("route GET /transfers # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "list" }
+    const okScope = scope
+        .get("/transfers")
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return transfers.list().should.eventually.eql(okResponse)
-        })
-    })
+    const r: any = await t.notThrows(transfers.list())
 
-    context("route GET /transfers/:id", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "get" }
-            const okScope = scope
-                .get(/\/transfers\/[a-f0-9\-]+$/i)
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+    t.deepEqual(r, okResponse)
+})
 
-            return transfers.get("1").should.eventually.eql(okResponse)
-        })
-    })
+test("route GET /transfers/:id # should return correct response", async (t: AssertContext) => {
+    const okResponse = { action : "get" }
+    const okScope = scope
+        .get(/\/transfers\/[a-f0-9\-]+$/i)
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
+    const r: any = await t.notThrows(transfers.get("1"))
+
+    t.deepEqual(r, okResponse)
 })
