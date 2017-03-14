@@ -1,6 +1,7 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ProcessingMode } from "./common/ProcessingMode"
+import { PhoneNumber } from "./common/PhoneNumber"
 
 /* Request */
 
@@ -16,6 +17,7 @@ export interface TransactionTokenCardData {
     city?: string
     country?: string
     zip?: string
+    phoneNumer?: string
 }
 
 export interface TransactionTokenQRScanData {
@@ -45,6 +47,7 @@ export interface TransactionTokenCardDataItem {
     city?: string
     country?: string
     zip?: string
+    phoneNumer?: PhoneNumber
 }
 export interface TransactionTokenQRScanDataItem {}
 

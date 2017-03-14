@@ -1,37 +1,25 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
-import { ContactInfo } from "./common/ContactInfo"
+import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
+import { PhoneNumber } from "./common/PhoneNumber"
+
+export interface BaseVerification<T> extends AuthParams {
+    homepageUrl: string
+    companyDescription: string
+    companyContactInfo: T
+    businessType: string
+    systemManagerName: string
+    systemManagerNumber?: PhoneNumber
+    systemManagerEmail?: string
+}
 
 /* Request */
-export interface VerificationCreateParams extends AuthParams {
-    homepageUrl: string
-    companyDescription: string
-    companyContactInfo: ContactInfo
-    businessType: string
-    systemManagerName: string
-    systemManagerNumber?: string
-    systemManagerEmail?: string
-}
-export interface VerificationUpdateParams extends AuthParams {
-    homepageUrl?: string
-    companyDescription?: string
-    companyContactInfo?: ContactInfo
-    businessType?: string
-    systemManagerName?: string
-    systemManagerNumber?: string
-    systemManagerEmail?: string
-}
+export interface VerificationCreateParams extends BaseVerification<ContactInfo> { }
+export type VerificationUpdateParams = Partial<BaseVerification<ContactInfoPartial>>
 
 /* Response */
-export interface VerificationItem {
+export interface VerificationItem extends BaseVerification<ContactInfo> {
     id: string
-    homepageUrl: string
-    companyDescription: string
-    companyContactInfo: ContactInfo
-    businessType: string
-    systemManagerName: string
-    systemManagerNumber?: string
-    systemManagerEmail?: string
     createdOn: number
 }
 
