@@ -17,7 +17,7 @@ export interface TransactionTokenCardData {
     city?: string
     country?: string
     zip?: string
-    phoneNumer?: string
+    phoneNumer?: PhoneNumber
 }
 
 export interface TransactionTokenQRScanData {
