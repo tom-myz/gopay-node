@@ -81,23 +81,6 @@ test("route PATCH /subscriptions/:id # should return correct response", async (t
     t.deepEqual(r, okResponse)
 })
 
-test.skip("route PATCH /subscriptions/:id # should return validation error if data is invalid", (t: AssertContext) => {
-  const okResponse = { action : "update" }
-  const okScope = scope
-      .patch(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
-      .times(1)
-      .reply(400, okResponse, { "Content-Type" : "application/json" })
-
-    const asserts = [
-        {}
-    ]
-
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(subscriptions.update("1", "1", a))
-        t.deepEqual(e.code, VALIDATION_ERROR)
-    }))
-})
-
 test("route GET /stores/:storeId/subscriptions/:id # should return correct response", async (t: AssertContext) => {
     const okResponse = { action : "read" }
     const scopeScope = scope
