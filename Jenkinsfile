@@ -2,13 +2,13 @@ String gitHubProject = "gyro-n/gopay-node"
 String projectName = "gopay-node"
 
 def slackNotification = { String stage, String verb, String color, String channel = "#dev-notifications" ->
-    def gitId = env.GIT_TAG =~ /v[0-9]+(\.[0-9]+){2}}/ ? env.GIT_TAG : env.GIT_BRANCH
-    def jenkinsUrl = "https://jenkins.gyro-n.money/blue/organizations/jenkins/gyron%2F${projectName}/detail/${gitId}/${env.BUILD_NUMBER}/pipeline/"
-    def gitHubUrl = "https://github.com/${gitHubProject}/tree/${gitId}"
+  def gitId = env.GIT_TAG =~ /v[0-9]+(\.[0-9]+){2}}/ ? env.GIT_TAG : env.GIT_BRANCH
+  def jenkinsUrl = "https://jenkins.gyro-n.money/blue/organizations/jenkins/gyron%2F${projectName}/detail/${gitId}/${env.BUILD_NUMBER}/pipeline/"
+  def gitHubUrl = "https://github.com/${gitHubProject}/tree/${gitId}"
 
-    def message = "*${projectName}*\nBuild <${jenkinsUrl}|#${env.BUILD_NUMBER}> for <${gitHubUrl}|[${projectName}:${gitId}]>:\nStage `${stage}` has ${verb}"
+  def message = "*${projectName}*\nBuild <${jenkinsUrl}|#${env.BUILD_NUMBER}> for <${gitHubUrl}|[${projectName}:${gitId}]>:\nStage `${stage}` has ${verb}"
 
-    slackSend channel: channel, color: color, message: message
+  slackSend channel: channel, color: color, message: message
 }
 
 def nodeEnv = docker.image "node:7-alpine"
@@ -24,7 +24,6 @@ node('slave') {
 
     def gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
     def gitTag = sh(returnStdout: true, script: 'git describe --contains ${gitCommit} | sed -e "s/^([0-9]+(\\.[0-9]+){2})$/\1/g"').trim()
-    def packageVersion = sh(returnStdout: true, script: 'node -e \"console.log(require('./package.json').version)').trim()
 
     withEnv(['HOME=$WORKSPACE', "GIT_BRANCH=${env.BRANCH_NAME}", "GIT_TAG=${gitTag}"]) {
       stage("Dependencies") {
@@ -73,8 +72,21 @@ node('slave') {
       }
 
       stage("Deploy") {
-        if (gitTag =~ /v[0-9]+(\.[0-9]+){2}}/ && gitTag == packageVersion) {
-          npm publish
+        if (gitTag =~ /v[0-9]+(\.[0-9]+){2}}/) {
+          nodeEnv.inside {
+            def packageVersion = sh(returnStdout: true, script: 'node -e \"console.log(require(\'./package.json\').version)\"').trim()
+            if (gitTag == packageVersion) {
+              try {
+                npm publish
+                slackNotification("Deploy", "succeeded", "good")
+              } catch (error) {
+                slackNotification("Deploy", "failed", "danger")
+                throw error
+              }
+            } else {
+              slackNotification("Deploy", "skipped", "warning")
+            }
+          }
         } else {
           slackNotification("Deploy", "skipped", "warning")
         }
