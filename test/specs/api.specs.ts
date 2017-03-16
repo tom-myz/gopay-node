@@ -1,7 +1,7 @@
 "use strict"
 
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import * as sinon from "sinon"
 import { SinonSandbox } from "sinon"
 import * as nock from "nock"
@@ -17,7 +17,7 @@ const testEndpoint = "http://localhost:80"
 let scope: Scope
 let sandbox: SinonSandbox
 
-test.before(() => {
+test.beforeEach(() => {
     const REPEATS = 100
     scope = nock(testEndpoint)
     mockOk = scope
@@ -43,12 +43,12 @@ test.before(() => {
     })
 })
 
-test.always.after(() => {
+test.always.afterEach(() => {
     sandbox.restore()
     nock.cleanAll()
 })
 
-test("should create instance with proper parameters", (t: AssertContext) => {
+test("should create instance with proper parameters", (t: TestContext) => {
     const asserts = [
         [{ endpoint : "/" }, "/", undefined, undefined],
         [{ endpoint : "/", appId: "id" }, "/", "id", undefined],
@@ -64,7 +64,7 @@ test("should create instance with proper parameters", (t: AssertContext) => {
     })
 })
 
-test("should take appId and secret from environment variable", (t: AssertContext) => {
+test("should take appId and secret from environment variable", (t: TestContext) => {
     process.env[ENV_KEY_APP_ID] = "envId"
     process.env[ENV_KEY_SECRET] = "envSecret"
 
@@ -76,13 +76,13 @@ test("should take appId and secret from environment variable", (t: AssertContext
     delete process.env[ENV_KEY_SECRET]
 })
 
-test("should send request to the api", async (t: AssertContext) => {
+test("should send request to the api", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
     const r: any = await t.notThrows(api.send("GET", "/ok"))
     t.deepEqual(r, { ok : true })
 })
 
-test("should return error response", async (t: AssertContext) => {
+test("should return error response", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
     const spy = sinon.spy()
     const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error", httpCode : 400 }
@@ -93,7 +93,7 @@ test("should return error response", async (t: AssertContext) => {
     t.true(spy.calledWith(error))
 })
 
-test("should return validation error response", async (t: AssertContext) => {
+test("should return validation error response", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
     const spy = sinon.spy()
     const error: ErrorResponse = {
@@ -110,7 +110,7 @@ test("should return validation error response", async (t: AssertContext) => {
     t.true(spy.calledWith(error))
 })
 
-test("should send request with authorization header", async (t: AssertContext) => {
+test("should send request with authorization header", async (t: TestContext) => {
     const asserts = [
         [{}, null, null],
         [{ appId : "id" }, null, "ApplicationToken id|"],
@@ -146,7 +146,7 @@ test("should send request with authorization header", async (t: AssertContext) =
     (global as any).fetch.restore()
 })
 
-test("should convert all params to underscore", (t: AssertContext) => {
+test("should convert all params to underscore", (t: TestContext) => {
     const expectation = { foo: "bar", "fizz_buzz": true }
     const asserts = [
         { foo: "bar", "fizz_buzz": true },
@@ -158,7 +158,7 @@ test("should convert all params to underscore", (t: AssertContext) => {
     })
 })
 
-test("should return response with camel case properties names", async (t: AssertContext) => {
+test("should return response with camel case properties names", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
     nock(testEndpoint)
         .get("/camel")
@@ -170,7 +170,7 @@ test("should return response with camel case properties names", async (t: Assert
     t.deepEqual(r, { fooBar : true })
 })
 
-test("should do long polling until condition is met", async (t: AssertContext) => {
+test("should do long polling until condition is met", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
     let repeats = 3
 

@@ -1,8 +1,8 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import { Resource } from "../../src/resources/Resource"
 
-test("should compile correct urls", (t: AssertContext) => {
+test("should compile correct urls", (t: TestContext) => {
     const asserts = [
         ["/foo", {}, "/foo"],
         ["/foo/:id", { id : 1 }, "/foo/1"],

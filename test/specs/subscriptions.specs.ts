@@ -1,5 +1,5 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import { expect } from "chai"
 import * as nock from "nock"
 import { Scope } from "nock"
@@ -12,31 +12,33 @@ let subscriptions: Subscriptions
 let scope: Scope
 const testEndpoint = "http://localhost:80"
 
-test.before(() => {
+test.beforeEach(() => {
     api = new RestAPI({endpoint: testEndpoint })
     subscriptions = new Subscriptions(api)
     scope = nock(testEndpoint)
 })
 
-test.always.after(() => {
+test.always.afterEach(() => {
     nock.cleanAll()
 })
 
-test("route GET /stores/:storeId/subscriptions # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/subscriptions # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
         .get(/(\/stores\/[a-f-0-9\-]+)?\/subscriptions$/i)
         .twice()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r1: any = await t.notThrows(subscriptions.list())
-    const r2: any = await t.notThrows(subscriptions.list(null, null, "1"))
+    const [r1, r2]: any[] = await Promise.all([
+        t.notThrows(subscriptions.list()),
+        t.notThrows(subscriptions.list(null, null, "1"))
+    ])
 
     t.deepEqual(r1, okResponse)
     t.deepEqual(r2, okResponse)
 })
 
-test("route POST /subscriptions # should return correct response", async (t: AssertContext) => {
+test("route POST /subscriptions # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "create" }
     const okScope = scope
         .post("/subscriptions")
@@ -54,7 +56,7 @@ test("route POST /subscriptions # should return correct response", async (t: Ass
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /subscriptions # should return validation error if data is invalid", (t: AssertContext) => {
+test("route POST /subscriptions # should return validation error if data is invalid", (t: TestContext) => {
     const asserts = [
         {}
     ]
@@ -65,7 +67,7 @@ test("route POST /subscriptions # should return validation error if data is inva
     }))
 })
 
-test("route PATCH /subscriptions/:id # should return correct response", async (t: AssertContext) => {
+test("route PATCH /subscriptions/:id # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "update" }
     const okScope = scope
         .patch(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
@@ -81,7 +83,7 @@ test("route PATCH /subscriptions/:id # should return correct response", async (t
     t.deepEqual(r, okResponse)
 })
 
-test("route GET /stores/:storeId/subscriptions/:id # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/subscriptions/:id # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "read" }
     const scopeScope = scope
         .get(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
@@ -93,7 +95,7 @@ test("route GET /stores/:storeId/subscriptions/:id # should return correct respo
     t.deepEqual(r, okResponse)
 })
 
-test("route DELETE /stores/:storeId/subscriptions/:id # should return correct response", async (t: AssertContext) => {
+test("route DELETE /stores/:storeId/subscriptions/:id # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "delete" }
     const scopeScope = scope
         .delete(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
@@ -105,7 +107,7 @@ test("route DELETE /stores/:storeId/subscriptions/:id # should return correct re
     t.deepEqual(r, okResponse)
 })
 
-test("route GET /stores/:storeId/subscriptions/:id/charges # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/subscriptions/:id/charges # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const scopeScope = scope
         .get(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+\/charges$/i)

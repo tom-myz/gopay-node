@@ -1,5 +1,5 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
@@ -11,17 +11,17 @@ let refunds: Refunds
 let scope: Scope
 const testEndpoint = "http://localhost:80"
 
-test.before(() => {
+test.beforeEach(() => {
     api = new RestAPI({endpoint: testEndpoint })
     refunds = new Refunds(api)
     scope = nock(testEndpoint)
 })
 
-test.always.after(() => {
+test.always.afterEach(() => {
     nock.cleanAll()
 })
 
-test("route GET /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
         .get(/\/stores\/[a-f0-9\-]+\/charges\/[a-f0-9\-]+\/refunds$/i)
@@ -33,7 +33,7 @@ test("route GET /stores/:storeId/charges/:chargeId/refunds # should return corre
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: AssertContext) => {
+test("route POST /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "create" }
     const okScope = scope
         .post(/\/stores\/[a-f0-9\-]+\/charges\/[a-f0-9\-]+\/refunds$/i)
@@ -50,7 +50,7 @@ test("route POST /stores/:storeId/charges/:chargeId/refunds # should return corr
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /stores/:storeId/charges/:chargeId/refunds # should return validation error if data is invalid", (t: AssertContext) => {
+test("route POST /stores/:storeId/charges/:chargeId/refunds # should return validation error if data is invalid", (t: TestContext) => {
     const asserts = [
         {}
     ]
@@ -61,7 +61,7 @@ test("route POST /stores/:storeId/charges/:chargeId/refunds # should return vali
     }))
 })
 
-test("route GET /stores/:storeId/charges/:chargeId/refunds/:id # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/charges/:chargeId/refunds/:id # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "read" }
     const scopeScope = scope
         .get(/\/stores\/[a-f0-9\-]+\/charges\/[a-f0-9\-]+\/refunds\/[a-z0-9\-]+$/i)

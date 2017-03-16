@@ -1,5 +1,5 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI } from "../../src/api/RestAPI"
@@ -10,17 +10,17 @@ let info: CheckoutInfo
 let scope: Scope
 const testEndpoint = "http://localhost:80"
 
-test.before(() => {
+test.beforeEach(() => {
     api = new RestAPI({endpoint: testEndpoint })
     info = new CheckoutInfo(api)
     scope = nock(testEndpoint)
 })
 
-test.always.after(() => {
+test.always.afterEach(() => {
     nock.cleanAll()
 })
 
-test("route GET /checkout_info # should return correct response", async (t: AssertContext) => {
+test("route GET /checkout_info # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "get" }
     const okScope = scope
         .get(/\/checkout_info/i)

@@ -1,5 +1,5 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import { expect } from "chai"
 import SDK from "../../src/index"
 import { RestAPI } from "../../src/api/RestAPI"
@@ -16,7 +16,7 @@ import { Transfers } from "../../src/resources/Transfers"
 import { Verification } from "../../src/resources/Verification"
 import { WebHooks } from "../../src/resources/WebHooks"
 
-test("SDK", (t: AssertContext) => {
+test("SDK", (t: TestContext) => {
     const sdk = new SDK({ endpoint : "/" })
 
     expect(sdk).to.have.property("api").that.is.an.instanceOf(RestAPI)

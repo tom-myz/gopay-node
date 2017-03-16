@@ -1,5 +1,5 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import { expect } from "chai"
 import * as nock from "nock"
 import { Scope } from "nock"
@@ -12,17 +12,17 @@ let verification: Verification
 let scope: Scope
 const testEndpoint = "http://localhost:80"
 
-test.before(() => {
+test.beforeEach(() => {
     api = new RestAPI({endpoint: testEndpoint })
     verification = new Verification(api)
     scope = nock(testEndpoint)
 })
 
-test.always.after(() => {
+test.always.afterEach(() => {
     nock.cleanAll()
 })
 
-test("route GET /verification # should return correct response", async (t: AssertContext) => {
+test("route GET /verification # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "get" }
     const okScope = scope
         .get("/verification")
@@ -34,7 +34,7 @@ test("route GET /verification # should return correct response", async (t: Asser
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /verification # should return correct response", async (t: AssertContext) => {
+test("route POST /verification # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "create" }
     const okScope = scope
         .post("/verification")
@@ -54,7 +54,7 @@ test("route POST /verification # should return correct response", async (t: Asse
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /verification # should return validation error if data is invalid", (t: AssertContext) => {
+test("route POST /verification # should return validation error if data is invalid", (t: TestContext) => {
     const asserts = [
         {}
     ]
@@ -65,7 +65,7 @@ test("route POST /verification # should return validation error if data is inval
     }))
 })
 
-test("route PATCH /verification # should return correct response", async (t: AssertContext) => {
+test("route PATCH /verification # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "update" }
     const okScope = scope
         .patch("/verification")

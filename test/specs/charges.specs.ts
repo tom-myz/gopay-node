@@ -1,5 +1,5 @@
 import "../utils"
-import { test, AssertContext } from "ava"
+import { test, TestContext } from "ava"
 import { expect } from "chai"
 import * as sinon from "sinon"
 import { SinonSandbox } from "sinon"
@@ -16,7 +16,7 @@ let scope: Scope
 const testEndpoint = "http://localhost:80"
 let sandbox: SinonSandbox
 
-test.before(() => {
+test.beforeEach(() => {
     api = new RestAPI({endpoint: testEndpoint })
     charges = new Charges(api)
     scope = nock(testEndpoint)
@@ -26,12 +26,12 @@ test.before(() => {
     })
 })
 
-test.always.after(() => {
+test.always.afterEach(() => {
     nock.cleanAll()
     sandbox.restore()
 })
 
-test("route GET /stores/:storeId/charges # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/charges # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
         .get(/\/stores\/[a-f-0-9\-]+\/charges$/i)
@@ -43,7 +43,7 @@ test("route GET /stores/:storeId/charges # should return correct response", asyn
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /charges # should return correct response", async (t: AssertContext) => {
+test("route POST /charges # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "create" }
     const okScope = scope
         .post("/charges")
@@ -60,7 +60,7 @@ test("route POST /charges # should return correct response", async (t: AssertCon
     t.deepEqual(r, okResponse)
 })
 
-test("route POST /charges # should return validation error if data is invalid", (t: AssertContext) => {
+test("route POST /charges # should return validation error if data is invalid", (t: TestContext) => {
     const asserts = [
         {}
     ]
@@ -71,7 +71,7 @@ test("route POST /charges # should return validation error if data is invalid", 
     }))
 })
 
-test("route GET /stores/:storeId/charges/:id # should return correct response", async (t: AssertContext) => {
+test("route GET /stores/:storeId/charges/:id # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "read" }
     const scopeScope = scope
         .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+$/i)
@@ -83,7 +83,7 @@ test("route GET /stores/:storeId/charges/:id # should return correct response", 
     t.deepEqual(r, okResponse)
 })
 
-test("route GET /stores/:storeId/charges/:id # should perform long polling until charge is processed", async (t: AssertContext) => {
+test("route GET /stores/:storeId/charges/:id # should perform long polling until charge is processed", async (t: TestContext) => {
     const spy = sandbox.spy(global, "fetch")
     const scopeScope = scope
         .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+$/i)
