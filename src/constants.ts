@@ -1,4 +1,4 @@
-export const DEFAULT_ENDPOINT: string = "http://localhost:9000"
+export const DEFAULT_ENDPOINT: string = "/"
 export const ENV_KEY_ENDPOINT: string = "GOPAY_ENDPOINT"
 export const ENV_KEY_APP_ID: string = "GOPAY_APP_ID"
 export const ENV_KEY_SECRET: string = "GOPAY_SECRET"
