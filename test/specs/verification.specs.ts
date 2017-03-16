@@ -1,4 +1,5 @@
 import "../utils"
+import { test, TestContext } from "ava"
 import { expect } from "chai"
 import * as nock from "nock"
 import { Scope } from "nock"
@@ -6,77 +7,74 @@ import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { Verification } from "../../src/resources/Verification"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
-describe("Verification", () => {
-    let api: RestAPI
-    let verification: Verification
-    let scope: Scope
-    const testEndpoint = "http://localhost:80"
+let api: RestAPI
+let verification: Verification
+let scope: Scope
+const testEndpoint = "http://localhost:80"
 
-    beforeEach(() => {
-        api = new RestAPI({endpoint: testEndpoint })
-        verification = new Verification(api)
-        scope = nock(testEndpoint)
-    })
+test.beforeEach(() => {
+    api = new RestAPI({endpoint: testEndpoint })
+    verification = new Verification(api)
+    scope = nock(testEndpoint)
+})
 
-    afterEach(() => {
-        nock.cleanAll()
-    })
+test.always.afterEach(() => {
+    nock.cleanAll()
+})
 
-    context("route GET /verification", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "get" }
-            const okScope = scope
-                .get("/verification")
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+test("route GET /verification # should return correct response", async (t: TestContext) => {
+    const okResponse = { action : "get" }
+    const okScope = scope
+        .get("/verification")
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-            return verification.get().should.eventually.eql(okResponse)
-        })
-    })
+    const r: any = await t.notThrows(verification.get())
 
-    context("route POST /verification", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "create" }
-            const okScope = scope
-                .post("/verification")
-                .once()
-                .reply(201, okResponse, { "Content-Type" : "application/json" })
+    t.deepEqual(r, okResponse)
+})
 
-            const data = {
-                homepageUrl: "test",
-                companyDescription: "test",
-                companyContactInfo: {},
-                businessType: "test",
-                systemManagerName: "test"
-            }
+test("route POST /verification # should return correct response", async (t: TestContext) => {
+    const okResponse = { action : "create" }
+    const okScope = scope
+        .post("/verification")
+        .once()
+        .reply(201, okResponse, { "Content-Type" : "application/json" })
 
-            return verification.create(data).should.eventually.eql(okResponse)
-        })
+    const data = {
+        homepageUrl: "test",
+        companyDescription: "test",
+        companyContactInfo: {} as any,
+        businessType: "test",
+        systemManagerName: "test"
+    }
 
-        it("should return validation error if data is invalid", () => {
-            const asserts = [
-                {}
-            ]
+    const r: any = await t.notThrows(verification.create(data))
 
-            return Promise.all(asserts.map((a: any) => {
-                return verification.create(a).should.be.rejected
-                    .then((e: ErrorResponse) => expect(e.code).to.equal(VALIDATION_ERROR))
-            }))
-        })
-    })
+    t.deepEqual(r, okResponse)
+})
 
-    context("route PATCH /verification", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "update" }
-            const okScope = scope
-                .patch("/verification")
-                .once()
-                .reply(200, okResponse, { "Content-Type" : "application/json" })
+test("route POST /verification # should return validation error if data is invalid", (t: TestContext) => {
+    const asserts = [
+        {}
+    ]
 
-            const data: any = null
+    return Promise.all(asserts.map(async (a: any) => {
+        const e: ErrorResponse = await t.throws(verification.create(a))
+        t.deepEqual(e.code, VALIDATION_ERROR)
+    }))
+})
 
-            return verification.update().should.eventually.eql(okResponse)
-        })
-    })
+test("route PATCH /verification # should return correct response", async (t: TestContext) => {
+    const okResponse = { action : "update" }
+    const okScope = scope
+        .patch("/verification")
+        .once()
+        .reply(200, okResponse, { "Content-Type" : "application/json" })
 
+    const data: any = null
+
+    const r: any = await t.notThrows(verification.update(data))
+
+    t.deepEqual(r, okResponse)
 })

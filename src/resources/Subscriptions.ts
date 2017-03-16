@@ -78,7 +78,7 @@ export class Subscriptions extends CRUDResource {
     public update (storeId: string,
                    id: string,
                    data?: SubscriptionUpdateParams,
-                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+                   callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
