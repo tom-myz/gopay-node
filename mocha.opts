@@ -1,4 +1,0 @@
---require jsdom-global/register
---require ts-node/register
---watch-extensions ts
-test/**/*.specs.ts

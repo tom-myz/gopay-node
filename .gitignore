@@ -13,3 +13,6 @@ test/**/*.js.map
 *.iml
 .idea
 *.orig
+.nyc_output
+coverage
+reports
