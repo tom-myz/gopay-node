@@ -44,7 +44,7 @@ test("route POST /verification # should return correct response", async (t: Test
     const data = {
         homepageUrl: "test",
         companyDescription: "test",
-        companyContactInfo: {},
+        companyContactInfo: {} as any,
         businessType: "test",
         systemManagerName: "test"
     }
