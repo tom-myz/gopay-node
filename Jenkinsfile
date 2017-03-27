@@ -1,96 +1,104 @@
-String gitHubProject = "gyro-n/gopay-node"
 String projectName = "gopay-node"
-
-def slackNotification = { String stage, String verb, String color, String channel = "#dev-notifications" ->
-  def gitId = env.GIT_TAG =~ /v[0-9]+(\.[0-9]+){2}}/ ? env.GIT_TAG : env.GIT_BRANCH
-  def jenkinsUrl = "https://jenkins.gyro-n.money/blue/organizations/jenkins/gyron%2F${projectName}/detail/${gitId}/${env.BUILD_NUMBER}/pipeline/"
-  def gitHubUrl = "https://github.com/${gitHubProject}/tree/${gitId}"
-
-  def message = "*${projectName}*\nBuild <${jenkinsUrl}|#${env.BUILD_NUMBER}> for <${gitHubUrl}|[${projectName}:${gitId}]>:\nStage `${stage}` has ${verb}"
-
-  slackSend channel: channel, color: color, message: message
-}
-
-def nodeEnv = docker.image "node:7-alpine"
+String stack = "gopay-node"
 
 node('slave') {
-  // This is to prevent node from crashing on first run
-  nodeEnv.pull()
-
   ansiColor('xterm') {
+
     stage('Checkout') {
       checkout scm
     }
 
-    def gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-    def gitTag = sh(returnStdout: true, script: 'git describe --contains ${gitCommit} | sed -e "s/^([0-9]+(\\.[0-9]+){2})$/\1/g"').trim()
+    def yarnEnv = docker.build("gopay-yarn", "./docker-ci")
 
-    withEnv(['HOME=$WORKSPACE', "GIT_BRANCH=${env.BRANCH_NAME}", "GIT_TAG=${gitTag}"]) {
+    def basicTools = load "${JENKINS_TOOLS_DIR}/basic-tools.groovy"
+    def buildTools = load "${JENKINS_TOOLS_DIR}/build-tools.groovy"
+    def gitTools = load "${JENKINS_TOOLS_DIR}/git-tools.groovy"
+    def gitInfo = gitTools.getGitInformation(projectName, "gyro-n")
+    def notificationsChannel = basicTools.getChannels().Notifications
+    def states = basicTools.getStates()
+    def domain = (gitInfo.isMaster || gitInfo.tagVersionNumber != null) ? "gopay.jp": "gyro-n.money"
+
+    withEnv(['HOME=$WORKSPACE', "GIT_BRANCH=${gitInfo.branch}", "GIT_TAG=${gitInfo.tag || ""}"]) {
+      // Dependencies
       stage("Dependencies") {
- 	    withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_AUTH_TOKEN')]) {
- 	      nodeEnv.inside {
- 	        writeFile file:"$HOME/.npmrc", text: """
-              //registry.npmjs.org/:_authToken=${env.NPM_AUTH_TOKEN}
-              scope=gyro-n
-              @gyro-n:registry=https://registry.npmjs.org/
-              sign-git-tag=true
-            """
-            sh "yarn global add node-gyp"
+        withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_AUTH_TOKEN')]) {
+          yarnEnv.inside {
+            buildTools.writeNpmRC()
             sh "yarn"
- 	      }
- 	    }
+          }
+        }
       }
 
+      // Test
       stage("Test") {
-        nodeEnv.inside {
-          slackNotification("Test", "started", "#4183C4")
+        yarnEnv.inside {
+          basicTools.sendSlackMessage(notificationsChannel, "Test", gitInfo.githubUrl, states.Starting)
           try {
             sh "yarn test"
-            slackNotification("Test", "succeeded", "good")
+            basicTools.sendSlackMessage(notificationsChannel, "Test", gitInfo.githubUrl, states.Success)
           } catch (error) {
-            slackNotification("Test", "failed", "danger")
+            basicTools.sendSlackMessage(notificationsChannel, "Test", gitInfo.githubUrl, states.Failed, error.toString())
             throw error
           }
         }
       }
 
+      // Build
       stage("Build") {
-        nodeEnv.inside {
-          slackNotification("Build", "started", "#4183C4")
-          sh "yarn run clean"
+        yarnEnv.inside {
+          basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
+
+          withEnv(["GOPAY_API_ENDPOINT=https://api.${domain}"]) {
+            try {
+              sh "yarn run clean"
+              sh "yarn run build"
+
+              basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Success)
+            } catch (error) {
+              basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Failed, error.toString())
+              throw error
+            }
+          }
+        }
+      }
+
+      // Deploy
+      stage("Deploy") {
+        def npmVersion = null
+
+        yarnEnv.inside {
+          npmVersion = sh(returnStdout: true, script: "npm info gopay-node version").trim()
+        }
+
+        if (gitInfo.isMaster && gitInfo.tagVersionNumber != null && gitInfo.tagVersionNumber != npmVersion) {
+          basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
 
           try {
-            withEnv(['GOPAY_API_ENDPOINT=https://api.gyro-n.money']) {
-              sh "yarn run build"
+            yarnEnv.inside {
+              sh "npm publish"
             }
-            slackNotification("Build", "succeeded", "good")
+
+            basicTools.sendSlackMessage(
+                    notificationsChannel,
+                    "Deploy",
+                    gitInfo.githubUrl,
+                    states.Success
+            )
           } catch (error) {
-            slackNotification("Build", "failed", "danger")
+            basicTools.sendSlackMessage(
+                    notificationsChannel,
+                    "Deploy",
+                    gitInfo.githubUrl,
+                    states.Failed
+            )
             throw error
           }
-        }
-      }
-
-      stage("Deploy") {
-        if (gitTag =~ /v[0-9]+(\.[0-9]+){2}}/) {
-          nodeEnv.inside {
-            def packageVersion = sh(returnStdout: true, script: 'node -e \"console.log(require(\'./package.json\').version)\"').trim()
-            if (gitTag == packageVersion) {
-              try {
-                npm publish
-                slackNotification("Deploy", "succeeded", "good")
-              } catch (error) {
-                slackNotification("Deploy", "failed", "danger")
-                throw error
-              }
-            } else {
-              slackNotification("Deploy", "skipped", "warning")
-            }
-          }
         } else {
-          slackNotification("Deploy", "skipped", "warning")
+          echo "Not deploying..."
+          basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
         }
       }
     }
+
   }
 }
