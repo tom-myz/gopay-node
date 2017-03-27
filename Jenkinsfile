@@ -64,38 +64,36 @@ node('slave') {
 
       // Deploy
       stage("Deploy") {
-        def npmVersion = null
-
         yarnEnv.inside {
-          npmVersion = sh(returnStdout: true, script: "npm info gopay-node version").trim()
-        }
+          def npmVersion = sh(returnStdout: true, script: "npm info gopay-node version").trim()
 
-        if (gitInfo.isMaster && gitInfo.tagVersionNumber != null && gitInfo.tagVersionNumber != npmVersion) {
-          basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
+          echo "${npmVersion} ${gitInfo.tagVersionNumber}"
 
-          try {
-            yarnEnv.inside {
+          if (gitInfo.isMaster && gitInfo.tagVersionNumber != null && gitInfo.tagVersionNumber != npmVersion) {
+            basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
+
+            try {
               sh "npm publish"
-            }
 
-            basicTools.sendSlackMessage(
-                    notificationsChannel,
-                    "Deploy",
-                    gitInfo.githubUrl,
-                    states.Success
-            )
-          } catch (error) {
-            basicTools.sendSlackMessage(
-                    notificationsChannel,
-                    "Deploy",
-                    gitInfo.githubUrl,
-                    states.Failed
-            )
-            throw error
+              basicTools.sendSlackMessage(
+                      notificationsChannel,
+                      "Deploy",
+                      gitInfo.githubUrl,
+                      states.Success
+              )
+            } catch (error) {
+              basicTools.sendSlackMessage(
+                      notificationsChannel,
+                      "Deploy",
+                      gitInfo.githubUrl,
+                      states.Failed
+              )
+              throw error
+            }
+          } else {
+            echo "Not deploying..."
+            basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
           }
-        } else {
-          echo "Not deploying..."
-          basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
         }
       }
     }
