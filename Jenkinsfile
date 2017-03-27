@@ -74,7 +74,9 @@ node('slave') {
           basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
 
           try {
-            sh "npm publish"
+            yarnEnv.inside {
+              sh "npm publish"
+            }
 
             basicTools.sendSlackMessage(
                     notificationsChannel,
