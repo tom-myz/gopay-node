@@ -1,17 +1,14 @@
-def yarnEnv = docker.image "node:alpine"
-
 String projectName = "gopay-node"
 String stack = "gopay-node"
 
 node('slave') {
-  // This is to prevent node from crashing on first run
-  yarnEnv.pull()
-
   ansiColor('xterm') {
 
     stage('Checkout') {
       checkout scm
     }
+
+    def yarnEnv = docker.build("gopay-yarn", "./docker-ci")
 
     def basicTools = load "${JENKINS_TOOLS_DIR}/basic-tools.groovy"
     def buildTools = load "${JENKINS_TOOLS_DIR}/build-tools.groovy"
@@ -27,7 +24,6 @@ node('slave') {
         withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_AUTH_TOKEN')]) {
           yarnEnv.inside {
             buildTools.writeNpmRC()
-            sh "yarn global add node-gyp"
             sh "yarn"
           }
         }
@@ -69,10 +65,7 @@ node('slave') {
       // Deploy
       stage("Deploy") {
 
-        // FIXME: change after infor is updated
-        def tagVersionNumber = gitInfo.tag != null ? gitInfo.tag.replaceAll("v", "") : null
-
-        if (tagVersionNumber != null && gitInfo.isMaster) {
+        if (gitInfo.isMaster && gitInfo.tagVersionNumber != null) {
           basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
 
           try {
