@@ -64,7 +64,11 @@ node('slave') {
 
       // Deploy
       stage("Deploy") {
-        def npmVersion = sh(returnStdout: true, script: "npm info @gyro-n/gopay-node-private version").trim()
+        def npmVersion = null
+
+        yarnEnv.inside {
+          npmVersion = sh(returnStdout: true, script: "npm info gopay-node version").trim()
+        }
 
         if (gitInfo.isMaster && gitInfo.tagVersionNumber != null && gitInfo.tagVersionNumber != npmVersion) {
           basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
