@@ -33,8 +33,8 @@ export interface ErrorResponse {
 
 export type ResponseCallback<A> = (response: A | ErrorResponse) => void
 
-type PromiseResolve<A> = (value?: A | PromiseLike<A>) => void
-type PromiseReject = (reason?: any) => void
+export type PromiseResolve<A> = (value?: A | PromiseLike<A>) => void
+export type PromiseReject = (reason?: any) => void
 
 export interface AuthParams {
     appId?: string
