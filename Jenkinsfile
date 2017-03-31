@@ -56,6 +56,8 @@ node('slave') {
           yarnEnv.inside {
             def npmVersion = basicTools.getNpmVersion("gopay-node")
 
+            echo "${npmVersion} ${gitInfo.tagVersion.source}"
+
             if (gitInfo.isMaster && gitInfo.tagVersion.isRelease && gitInfo.tagVersion.source != npmVersion) {
               sh "npm publish"
             } else {
