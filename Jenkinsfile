@@ -31,32 +31,20 @@ node('slave') {
 
       // Test
       stage("Test") {
-        yarnEnv.inside {
-          basicTools.sendSlackMessage(notificationsChannel, "Test", gitInfo.githubUrl, states.Starting)
-          try {
+        basicTools.withDevNotifications("Test", gitInfo.githubUrl) {
+          yarnEnv.inside {
             sh "yarn test"
-            basicTools.sendSlackMessage(notificationsChannel, "Test", gitInfo.githubUrl, states.Success)
-          } catch (error) {
-            basicTools.sendSlackMessage(notificationsChannel, "Test", gitInfo.githubUrl, states.Failed, error.toString())
-            throw error
           }
         }
       }
 
       // Build
       stage("Build") {
-        yarnEnv.inside {
-          basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
-
-          withEnv(["GOPAY_API_ENDPOINT=https://api.${domain}"]) {
-            try {
+        basicTools.withDevNotifications("Build", gitInfo.githubUrl) {
+          yarnEnv.inside {
+            withEnv(["GOPAY_API_ENDPOINT=https://api.${domain}"]) {
               sh "yarn run clean"
               sh "yarn run build"
-
-              basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Success)
-            } catch (error) {
-              basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Failed, error.toString())
-              throw error
             }
           }
         }
@@ -64,33 +52,18 @@ node('slave') {
 
       // Deploy
       stage("Deploy") {
-        yarnEnv.inside {
-          def npmVersion = sh(returnStdout: true, script: "npm info gopay-node version").trim()
+        basicTools.withDevNotifications("Deploy", gitInfo.githubUrl) {
+          yarnEnv.inside {
+            def npmVersion = basicTools.getNpmVersion("gopay-node")
 
-          if (gitInfo.isMaster && gitInfo.tagVersionNumber != null && gitInfo.tagVersionNumber != npmVersion) {
-            basicTools.sendSlackMessage(notificationsChannel, "Build", gitInfo.githubUrl, states.Starting)
+            echo "${npmVersion} ${gitInfo.tagVersion.source}"
 
-            try {
+            if (gitInfo.isMaster && gitInfo.tagVersion.isRelease && gitInfo.tagVersion.source != npmVersion) {
               sh "npm publish"
-
-              basicTools.sendSlackMessage(
-                      notificationsChannel,
-                      "Deploy",
-                      gitInfo.githubUrl,
-                      states.Success
-              )
-            } catch (error) {
-              basicTools.sendSlackMessage(
-                      notificationsChannel,
-                      "Deploy",
-                      gitInfo.githubUrl,
-                      states.Failed
-              )
-              throw error
+            } else {
+              echo "Not deploying..."
+              basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
             }
-          } else {
-            echo "Not deploying..."
-            basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
           }
         }
       }
