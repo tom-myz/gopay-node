@@ -8,7 +8,7 @@ export type DefinedRoute = (data?: any, callback?: any, pathParams?: Array<strin
 
 export abstract class Resource {
 
-    public static compilePath (path: string, pathParams: any): string {
+    public static compilePath(path: string, pathParams: any): string {
         return path
             .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
                 const part: string = o.replace(/:(\w+)/ig, (s: string, p: string) => {
@@ -21,17 +21,17 @@ export abstract class Resource {
 
     public api: RestAPI
 
-    constructor (api: RestAPI) {
+    constructor(api: RestAPI) {
         this.api = api
     }
 
-    public defineRoute (method: HTTPMethod, path: string, required: Array<string> = []): DefinedRoute {
+    public defineRoute(method: HTTPMethod, path: string, required: Array<string> = []): DefinedRoute {
         const api: RestAPI = this.api
 
-        return function route<A, B> (data?: A,
-                                     callback?: ResponseCallback<B>,
-                                     pathParams: Array<string> = [],
-                                     ...params: Array<string>): Promise<B> {
+        return function route<A, B>(data?: A,
+                                    callback?: ResponseCallback<B>,
+                                    pathParams: Array<string> = [],
+                                    ...params: Array<string>): Promise<B> {
 
             const _params: any = params.reduce((p: any, param: string, i: number) => {
                 if (pathParams && pathParams[i]) {

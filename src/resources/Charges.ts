@@ -48,19 +48,19 @@ export class Charges extends CRUDResource {
 
     public static routeBase: string = "/stores/:storeId/charges"
 
-    public list (storeId: string, data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
+    public list(storeId: string, data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
-    public create (data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    public create(data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this.defineRoute("POST", "/charges", Charges.requiredParams)(data, callback)
     }
 
-    public get (storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    public get(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public poll (storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    public poll(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         const promise: () => Promise<ResponseCharge> = () => this._getRoute()(data, null, ["storeId", "id"], storeId, id)
         return this.api.longPolling(
             promise,

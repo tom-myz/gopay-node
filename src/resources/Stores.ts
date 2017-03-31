@@ -35,23 +35,23 @@ export class Stores extends CRUDResource {
 
     public static routeBase: string = "/stores"
 
-    public list (data?: StoresListParams, callback?: ResponseCallback<ResponseStores>): Promise<ResponseStores> {
+    public list(data?: StoresListParams, callback?: ResponseCallback<ResponseStores>): Promise<ResponseStores> {
         return this._listRoute()(data, callback)
     }
 
-    public create (data: StoreCreateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+    public create(data: StoreCreateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
         return this._createRoute(Stores.requiredParams)(data, callback)
     }
 
-    public get (id: string, data?: AuthParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+    public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
         return this._getRoute()(data, callback, ["id"], id)
     }
 
-    public update (id: string, data?: StoreUpdateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+    public update(id: string, data?: StoreUpdateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
         return this._updateRoute()(data, callback, ["id"], id)
     }
 
-    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+    public delete(id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
         return this._deleteRoute()(data, callback, ["id"], id)
     }
 

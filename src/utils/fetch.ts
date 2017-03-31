@@ -2,7 +2,7 @@ import camelcase = require("camel-case")
 import { APIError } from "../errors/APIError"
 import { transformKeys } from "./object"
 
-export function checkStatus (response: Response): Promise<Response> {
+export function checkStatus(response: Response): Promise<Response> {
     if (response.status >= 200 && response.status < 400) {
         return Promise.resolve(response)
     }

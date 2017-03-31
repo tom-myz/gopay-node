@@ -5,6 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
     "inlineSourceMap": true
   },
   "include": [

@@ -33,40 +33,40 @@ export class WebHooks extends CRUDResource {
 
     public static routeBase: string = "/stores/:storeId/webhooks"
 
-    public list (storeId: string,
-                 data?: WebHooksListParams,
-                 callback?: ResponseCallback<ResponseWebHooks>): Promise<ResponseWebHooks> {
+    public list(storeId: string,
+                data?: WebHooksListParams,
+                callback?: ResponseCallback<ResponseWebHooks>): Promise<ResponseWebHooks> {
 
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
-    public create (storeId: string,
-                   data: WebHookCreateParams,
-                   callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
+    public create(storeId: string,
+                  data: WebHookCreateParams,
+                  callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
 
         return this._createRoute(WebHooks.requiredParams)(data, callback, ["storeId"], storeId)
     }
 
-    public get (storeId: string,
-                id: string,
-                data?: AuthParams,
-                callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
+    public get(storeId: string,
+               id: string,
+               data?: AuthParams,
+               callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public update (storeId: string,
-                   id: string,
-                   data?: WebHookUpdateParams,
-                   callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
+    public update(storeId: string,
+                  id: string,
+                  data?: WebHookUpdateParams,
+                  callback?: ResponseCallback<ResponseWebHook>): Promise<ResponseWebHook> {
 
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public delete (storeId: string,
-                   id: string,
-                   data?: AuthParams,
-                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+    public delete(storeId: string,
+                  id: string,
+                  data?: AuthParams,
+                  callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
 
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }

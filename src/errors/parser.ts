@@ -5,7 +5,7 @@ import { PathParameterError } from "./PathParameterError"
 import { RequestParameterError } from "./RequestParameterError"
 import * as Code from "./ErrorsConstants"
 
-function getCodeByStatus (status: number): string {
+function getCodeByStatus(status: number): string {
     const codeMap: any = {
         400 : Code.BAD_REQUEST,
         401 : Code.NOT_AUTHORIZED,
@@ -25,7 +25,7 @@ function getCodeByStatus (status: number): string {
     return Code.UNKNOWN
 }
 
-export function fromError (error: GenericError): ErrorResponse {
+export function fromError(error: GenericError): ErrorResponse {
     let errorResponse: any
 
     if (error instanceof PathParameterError) {
