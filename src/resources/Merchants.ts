@@ -30,7 +30,7 @@ export interface MerchantBanParams {
 
 export class Merchants extends CRUDResource {
 
-    public me (data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
+    public me(data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
         return this.defineRoute("GET", "/me")(data, callback)
     }
 

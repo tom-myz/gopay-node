@@ -34,7 +34,7 @@ export type ResponseCheckoutInfo = CheckoutInfoItem
 
 export class CheckoutInfo extends Resource {
 
-    public get (data: CheckoutInfoParams, callback?: ResponseCallback<ResponseCheckoutInfo>): Promise<ResponseCheckoutInfo> {
+    public get(data: CheckoutInfoParams, callback?: ResponseCallback<ResponseCheckoutInfo>): Promise<ResponseCheckoutInfo> {
         return this.defineRoute("GET", "/checkout_info", ["origin"])(data, callback)
     }
 

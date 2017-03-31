@@ -38,11 +38,11 @@ export class Transfers extends CRUDResource {
 
     public static routeBase: string = "/transfers"
 
-    public list (data?: TransfersListParams, callback?: ResponseCallback<ResponseTransfers>): Promise<ResponseTransfers> {
+    public list(data?: TransfersListParams, callback?: ResponseCallback<ResponseTransfers>): Promise<ResponseTransfers> {
         return this._listRoute()(data, callback)
     }
 
-    public get (id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransfer>): Promise<ResponseTransfer> {
+    public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransfer>): Promise<ResponseTransfer> {
         return this._getRoute()(data, callback, ["id"], id)
     }
 

@@ -33,6 +33,9 @@ export interface ErrorResponse {
 
 export type ResponseCallback<A> = (response: A | ErrorResponse) => void
 
+export type PromiseResolve<A> = (value?: A | PromiseLike<A>) => void
+export type PromiseReject = (reason?: any) => void
+
 export interface AuthParams {
     appId?: string
     secret?: string
@@ -46,7 +49,7 @@ export type PromiseCreator<A> = () => Promise<A>
 
 export class RestAPI {
 
-    public static requestParams (params: any): any {
+    public static requestParams(params: any): any {
         return transformKeys(params, decamelize)
     }
 
@@ -61,14 +64,14 @@ export class RestAPI {
         return queryString ? `${url}?${queryString}` : url
     }
 
-    public static handleSuccess<A> (response: A, resolve: Function, callback?: ResponseCallback<A>): void {
+    public static handleSuccess<A>(response: A, resolve: PromiseResolve<A>, callback?: ResponseCallback<A>): void {
         if (typeof callback === "function") {
             callback(response)
         }
         resolve(response)
     }
 
-    public static handleError<A> (error: Error, reject: Function, callback?: ResponseCallback<A>): void {
+    public static handleError<A>(error: Error, reject: PromiseReject, callback?: ResponseCallback<A>): void {
         const err: ErrorResponse = fromError(error)
         if (typeof callback === "function") {
             callback(err)
@@ -76,7 +79,7 @@ export class RestAPI {
         reject(err)
     }
 
-    public static getData (data: any): Array<any> {
+    public static getData(data: any): Array<any> {
         return partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
     }
 
@@ -84,18 +87,18 @@ export class RestAPI {
     public secret: string
     public endpoint: string
 
-    constructor (options: RestAPIOptions = {}) {
+    constructor(options: RestAPIOptions = {}) {
         this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT
         this.appId = options.appId || process.env[ENV_KEY_APP_ID]
         this.secret = options.secret || process.env[ENV_KEY_SECRET]
     }
 
-    public getBody (data: any, payload: boolean): any {
+    public getBody(data: any, payload: boolean): any {
         const [_, _data]: Array<any> = RestAPI.getData(data)
         return !payload ? JSON.stringify(RestAPI.requestParams(_data)) : null
     }
 
-    public getHeaders (data?: any, body?: any): Headers {
+    public getHeaders(data?: any, body?: any): Headers {
         const [{appId, secret}, _]: Array<any> = RestAPI.getData(data)
         const headers: Headers = new Headers()
 
@@ -108,21 +111,27 @@ export class RestAPI {
         return headers
     }
 
-    public send<A> (method: HTTPMethod, url: string, data?: any, callback?: ResponseCallback<A>): Promise<A> {
+    public send<A>(method: HTTPMethod, url: string, data?: any, callback?: ResponseCallback<A>): Promise<A> {
         const payload: boolean = ["GET", "DELETE"].indexOf(method) !== -1
         const body: any = this.getBody(data, payload)
         const headers: Headers = this.getHeaders(data, body)
         const [_, _data]: Array<string> = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
 
-        return new Promise((resolve: Function, reject: Function) => {
+        return new Promise((resolve: PromiseResolve<A>, reject: PromiseReject) => {
+            const params: RequestInit = {
+                body,
+                headers,
+                method,
+                mode : "cors"
+            }
             const request: Request = new Request(
                 `${this.endpoint}${RestAPI.requestUrl(url, RestAPI.requestParams(_data), payload)}`,
-                {
-                    body,
-                    headers,
-                    method,
-                    mode : "cors"
-                }
+                Object.keys(params).reduce((r: RequestInit, key: string) => {
+                    if (!!params[key]) {
+                        r[key] = params[key]
+                    }
+                    return r
+                }, {})
             )
 
             fetch(request)
@@ -133,22 +142,22 @@ export class RestAPI {
         })
     }
 
-    public longPolling<A> (promise: PromiseCreator<A>,
-                           condition: (response: A) => boolean,
-                           callback?: ResponseCallback<A>,
-                           interval: number = POLLING_INTERVAL,
-                           timeout: number = POLLING_TIMEOUT): Promise<A> {
+    public longPolling<A>(promise: PromiseCreator<A>,
+                          condition: (response: A) => boolean,
+                          callback?: ResponseCallback<A>,
+                          interval: number = POLLING_INTERVAL,
+                          timeout: number = POLLING_TIMEOUT): Promise<A> {
 
         let elapsedTime: number = 0
 
-        function pollWait (wait: number): Promise<any> {
-            return new Promise((resolve: Function) => setTimeout(() => {
+        function pollWait(wait: number): Promise<any> {
+            return new Promise((resolve: PromiseResolve<any>) => setTimeout(() => {
                 elapsedTime += wait
                 resolve()
             }, wait))
         }
 
-        function polling (creator: PromiseCreator<A> = promise): Promise<A> {
+        function polling(creator: PromiseCreator<A> = promise): Promise<A> {
             if (elapsedTime >= timeout) {
                 return Promise.reject(new TimeoutError(timeout))
             }
@@ -163,7 +172,7 @@ export class RestAPI {
                 })
         }
 
-        return new Promise((resolve: Function, reject: Function) => {
+        return new Promise((resolve: PromiseResolve<A>, reject: PromiseReject) => {
             polling()
                 .then((response: A) => RestAPI.handleSuccess(response, resolve, callback))
                 .catch((error: Error) => RestAPI.handleError(error, reject, callback))

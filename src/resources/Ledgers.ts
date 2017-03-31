@@ -40,9 +40,9 @@ export class Ledgers extends CRUDResource {
 
     public static routeBase: string = "/transfers/:transferId/ledgers"
 
-    public list (transferId: string,
-                 data?: LedgersListParams,
-                 callback?: ResponseCallback<ResponseLedgers>): Promise<ResponseLedgers> {
+    public list(transferId: string,
+                data?: LedgersListParams,
+                callback?: ResponseCallback<ResponseLedgers>): Promise<ResponseLedgers> {
 
         return this._listRoute()(data, callback, ["transferId"], transferId)
     }

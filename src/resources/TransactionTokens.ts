@@ -49,7 +49,7 @@ export interface TransactionTokenCardDataItem {
     zip?: string
     phoneNumer?: PhoneNumber
 }
-export interface TransactionTokenQRScanDataItem {}
+export type TransactionTokenQRScanDataItem = object
 
 export interface TransactionTokenItem {
     id: string
@@ -71,15 +71,15 @@ export class TransactionTokens extends CRUDResource {
 
     public static routeBase: string = "/stores/:storeId/tokens"
 
-    public create (data: TransactionTokenCreateParams,
-                   callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+    public create(data: TransactionTokenCreateParams,
+                  callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this.defineRoute("POST", "/tokens", TransactionTokens.requiredParams)(data, callback)
     }
 
-    public get (storeId: string,
-                id: string,
-                data?: AuthParams,
-                callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+    public get(storeId: string,
+               id: string,
+               data?: AuthParams,
+               callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 

@@ -54,47 +54,47 @@ export class Subscriptions extends CRUDResource {
 
     public static routeBase: string = "/stores/:storeId/subscriptions"
 
-    public list (data?: SubscriptionsListParams,
-                 callback?: ResponseCallback<ResponseSubscriptions>,
-                 storeId?: string): Promise<ResponseSubscriptions> {
+    public list(data?: SubscriptionsListParams,
+                callback?: ResponseCallback<ResponseSubscriptions>,
+                storeId?: string): Promise<ResponseSubscriptions> {
 
         return this.defineRoute("GET", "(/stores/:storeId)/subscriptions")(data, callback, ["storeId"], storeId)
     }
 
-    public create (data: SubscriptionCreateParams,
-                   callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    public create(data: SubscriptionCreateParams,
+                  callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this.defineRoute("POST", "/subscriptions", Subscriptions.requiredParams)(data, callback)
     }
 
-    public get (storeId: string,
-                id: string,
-                data?: AuthParams,
-                callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    public get(storeId: string,
+               id: string,
+               data?: AuthParams,
+               callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public update (storeId: string,
-                   id: string,
-                   data?: SubscriptionUpdateParams,
-                   callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    public update(storeId: string,
+                  id: string,
+                  data?: SubscriptionUpdateParams,
+                  callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public delete (storeId: string,
-                   id: string,
-                   data?: AuthParams,
-                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+    public delete(storeId: string,
+                  id: string,
+                  data?: AuthParams,
+                  callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
 
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public charges (storeId: string,
-                    id: string,
-                    data?: ChargesListParams,
-                    callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
+    public charges(storeId: string,
+                   id: string,
+                   data?: ChargesListParams,
+                   callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
 
         return this.defineRoute("GET", `${Subscriptions.routeBase}/:id/charges`)(
             data, callback, ["storeId", "id"], storeId, id
