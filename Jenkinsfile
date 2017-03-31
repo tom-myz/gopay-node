@@ -31,7 +31,7 @@ node('slave') {
 
       // Test
       stage("Test") {
-        basictTools.withDevNotifications("Test", gitInfo.githubUrl) {
+        basicTools.withDevNotifications("Test", gitInfo.githubUrl) {
           yarnEnv.inside {
             sh "yarn test"
           }
@@ -40,7 +40,7 @@ node('slave') {
 
       // Build
       stage("Build") {
-        basictTools.withDevNotifications("Build", gitInfo.githubUrl) {
+        basicTools.withDevNotifications("Build", gitInfo.githubUrl) {
           yarnEnv.inside {
             withEnv(["GOPAY_API_ENDPOINT=https://api.${domain}"]) {
               sh "yarn run clean"
@@ -52,7 +52,7 @@ node('slave') {
 
       // Deploy
       stage("Deploy") {
-        basictTools.withDevNotifications("Deploy", gitInfo.githubUrl) {
+        basicTools.withDevNotifications("Deploy", gitInfo.githubUrl) {
           yarnEnv.inside {
             def npmVersion = basicTools.getNpmVersion("gopay-node")
 
