@@ -17,10 +17,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route POST /tokens # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "create" }
     const okScope = scope
@@ -37,7 +33,7 @@ test("route POST /tokens # should return correct response", async (t: TestContex
         data: {} as any
     }
 
-    const r: any = await t.notThrows(tokens.create(data))
+    const r: any = await tokens.create(data)
 
     t.deepEqual(r, okResponse)
 })
@@ -60,7 +56,7 @@ test("route GET /stores/:storeId/tokens/:id # should return correct response", a
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(tokens.get("1", "1"))
+    const r: any = await tokens.get("1", "1")
 
     t.deepEqual(r, okResponse)
 })

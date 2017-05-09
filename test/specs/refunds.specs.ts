@@ -17,10 +17,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route GET /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
@@ -28,7 +24,7 @@ test("route GET /stores/:storeId/charges/:chargeId/refunds # should return corre
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(refunds.list("1", "1"))
+    const r: any = await refunds.list("1", "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -45,7 +41,7 @@ test("route POST /stores/:storeId/charges/:chargeId/refunds # should return corr
         currency : "usd"
     }
 
-    const r: any = await t.notThrows(refunds.create("1", "1", data))
+    const r: any = await refunds.create("1", "1", data)
 
     t.deepEqual(r, okResponse)
 })
@@ -68,7 +64,7 @@ test("route GET /stores/:storeId/charges/:chargeId/refunds/:id # should return c
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(refunds.get("1", "1", "1"))
+    const r: any = await refunds.get("1", "1", "1")
 
     t.deepEqual(r, okResponse)
 })

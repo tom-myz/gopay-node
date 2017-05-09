@@ -18,10 +18,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route GET /stores/:storeId/subscriptions # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
@@ -30,8 +26,8 @@ test("route GET /stores/:storeId/subscriptions # should return correct response"
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
     const [r1, r2]: any[] = await Promise.all([
-        t.notThrows(subscriptions.list()),
-        t.notThrows(subscriptions.list(null, null, "1"))
+        subscriptions.list(),
+        subscriptions.list(null, null, "1")
     ])
 
     t.deepEqual(r1, okResponse)
@@ -51,7 +47,7 @@ test("route POST /subscriptions # should return correct response", async (t: Tes
         period             : "monthly"
     }
 
-    const r: any = await t.notThrows(subscriptions.create(data))
+    const r: any = await subscriptions.create(data)
 
     t.deepEqual(r, okResponse)
 })
@@ -78,7 +74,7 @@ test("route PATCH /subscriptions/:id # should return correct response", async (t
         amount             : 10
     }
 
-    const r: any = await t.notThrows(subscriptions.update("1", "1", data))
+    const r: any = await subscriptions.update("1", "1", data)
 
     t.deepEqual(r, okResponse)
 })
@@ -90,7 +86,7 @@ test("route GET /stores/:storeId/subscriptions/:id # should return correct respo
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(subscriptions.get("1", "1"))
+    const r: any = await subscriptions.get("1", "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -102,7 +98,7 @@ test("route DELETE /stores/:storeId/subscriptions/:id # should return correct re
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(subscriptions.delete("1", "1"))
+    const r: any = await subscriptions.delete("1", "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -114,7 +110,7 @@ test("route GET /stores/:storeId/subscriptions/:id/charges # should return corre
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(subscriptions.charges("1", "1"))
+    const r: any = await subscriptions.charges("1", "1")
 
     t.deepEqual(r, okResponse)
 })

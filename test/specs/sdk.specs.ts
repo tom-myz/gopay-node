@@ -19,17 +19,50 @@ import { WebHooks } from "../../src/resources/WebHooks"
 test("SDK", (t: TestContext) => {
     const sdk = new SDK({ endpoint : "/" })
 
-    expect(sdk).to.have.property("api").that.is.an.instanceOf(RestAPI)
+    t.truthy(sdk.api)
+    t.true(sdk.api instanceof RestAPI)
 
-    expect(sdk).to.have.property("bankAccounts").that.is.an.instanceOf(BankAccounts).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("charges").that.is.an.instanceOf(Charges).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("checkoutInfo").that.is.an.instanceOf(CheckoutInfo).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("merchants").that.is.an.instanceOf(Merchants).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("refunds").that.is.an.instanceOf(Refunds).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("stores").that.is.an.instanceOf(Stores).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("subscriptions").that.is.an.instanceOf(Subscriptions).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("transactionTokens").that.is.an.instanceOf(TransactionTokens).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("transfers").that.is.an.instanceOf(Transfers).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("verification").that.is.an.instanceOf(Verification).and.has.property("api", sdk.api)
-    expect(sdk).to.have.property("webHooks").that.is.an.instanceOf(WebHooks).and.has.property("api", sdk.api)
+    t.truthy(sdk.bankAccounts)
+    t.true(sdk.bankAccounts instanceof BankAccounts)
+    t.deepEqual(sdk.bankAccounts.api, sdk.api)
+
+    t.truthy(sdk.charges)
+    t.true(sdk.charges instanceof Charges)
+    t.deepEqual(sdk.charges.api, sdk.api)
+
+    t.truthy(sdk.checkoutInfo)
+    t.true(sdk.checkoutInfo instanceof CheckoutInfo)
+    t.deepEqual(sdk.checkoutInfo.api, sdk.api)
+
+    t.truthy(sdk.merchants)
+    t.true(sdk.merchants instanceof Merchants)
+    t.deepEqual(sdk.merchants.api, sdk.api)
+
+    t.truthy(sdk.refunds)
+    t.true(sdk.refunds instanceof Refunds)
+    t.deepEqual(sdk.refunds.api, sdk.api)
+
+    t.truthy(sdk.stores)
+    t.true(sdk.stores instanceof Stores)
+    t.deepEqual(sdk.stores.api, sdk.api)
+
+    t.truthy(sdk.subscriptions)
+    t.true(sdk.subscriptions instanceof Subscriptions)
+    t.deepEqual(sdk.subscriptions.api, sdk.api)
+
+    t.truthy(sdk.transactionTokens)
+    t.true(sdk.transactionTokens instanceof TransactionTokens)
+    t.deepEqual(sdk.transactionTokens.api, sdk.api)
+
+    t.truthy(sdk.transfers)
+    t.true(sdk.transfers instanceof Transfers)
+    t.deepEqual(sdk.transfers.api, sdk.api)
+
+    t.truthy(sdk.verification)
+    t.true(sdk.verification instanceof Verification)
+    t.deepEqual(sdk.verification.api, sdk.api)
+
+    t.truthy(sdk.webHooks)
+    t.true(sdk.webHooks instanceof WebHooks)
+    t.deepEqual(sdk.webHooks.api, sdk.api)
 })

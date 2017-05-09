@@ -1,8 +1,10 @@
-FROM node:7-alpine
+FROM node:6
 
-RUN apk add --update \
+RUN apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y \
     python \
     gcc \
     make \
     g++ \
-   && yarn global add node-gyp
+  && npm i -g node-gyp \

@@ -18,10 +18,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route GET /verification # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "get" }
     const okScope = scope
@@ -29,7 +25,7 @@ test("route GET /verification # should return correct response", async (t: TestC
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(verification.get())
+    const r: any = await verification.get()
 
     t.deepEqual(r, okResponse)
 })
@@ -49,7 +45,7 @@ test("route POST /verification # should return correct response", async (t: Test
         systemManagerName: "test"
     }
 
-    const r: any = await t.notThrows(verification.create(data))
+    const r: any = await verification.create(data)
 
     t.deepEqual(r, okResponse)
 })
@@ -74,7 +70,7 @@ test("route PATCH /verification # should return correct response", async (t: Tes
 
     const data: any = null
 
-    const r: any = await t.notThrows(verification.update(data))
+    const r: any = await verification.update(data)
 
     t.deepEqual(r, okResponse)
 })
