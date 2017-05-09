@@ -17,10 +17,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route GET /transfer/:transferId/ledgers # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "get" }
     const okScope = scope
@@ -28,7 +24,7 @@ test("route GET /transfer/:transferId/ledgers # should return correct response",
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(ledgers.list("1"))
+    const r: any = await ledgers.list("1")
 
     t.deepEqual(r, okResponse)
 })

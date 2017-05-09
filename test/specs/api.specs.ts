@@ -19,7 +19,7 @@ let sandbox: SinonSandbox
 
 test.beforeEach(() => {
     const REPEATS = 100
-    scope = nock(testEndpoint)
+    scope = nock(testEndpoint).persist()
     mockOk = scope
         .get("/ok")
         .times(REPEATS)
@@ -41,11 +41,6 @@ test.beforeEach(() => {
     sandbox = sinon.sandbox.create({
         properties: ["spy", "clock"]
     })
-})
-
-test.always.afterEach(() => {
-    sandbox.restore()
-    nock.cleanAll()
 })
 
 test("should create instance with proper parameters", (t: TestContext) => {
@@ -78,7 +73,7 @@ test("should take appId and secret from environment variable", (t: TestContext) 
 
 test("should send request to the api", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    const r: any = await t.notThrows(api.send("GET", "/ok"))
+    const r: any = await api.send("GET", "/ok")
     t.deepEqual(r, { ok : true })
 })
 
@@ -133,7 +128,7 @@ test("should send request with authorization header", async (t: TestContext) => 
                 a[2] ? { "Authorization" : a[2] } : null
             ))
 
-        const r: any = await t.notThrows(api.send("GET", "/header", a[1]))
+        const r: any = await api.send("GET", "/header", a[1])
 
         if (!a[2]) {
             t.false((spy.getCall(spy.callCount - 1).args[0].headers as Headers).has("Authorization"))
@@ -165,7 +160,7 @@ test("should return response with camel case properties names", async (t: TestCo
         .once()
         .reply(200, { "foo_bar" : true }, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(api.send("GET", "/camel"))
+    const r: any = await api.send("GET", "/camel")
 
     t.deepEqual(r, { fooBar : true })
 })
@@ -177,12 +172,12 @@ test("should do long polling until condition is met", async (t: TestContext) => 
     const promise: () => Promise<boolean> = () => new Promise((resolve: Function) => resolve(--repeats === 0))
     const spy = sandbox.spy(promise)
 
-    const result = await t.notThrows(api.longPolling(
+    const result = await api.longPolling(
         spy,
         (result: boolean) => result === true,
         null,
         10
-    ))
+    )
 
     t.true(result)
     t.true(spy.calledThrice)

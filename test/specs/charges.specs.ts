@@ -26,11 +26,6 @@ test.beforeEach(() => {
     })
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-    sandbox.restore()
-})
-
 test("route GET /stores/:storeId/charges # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
@@ -38,7 +33,7 @@ test("route GET /stores/:storeId/charges # should return correct response", asyn
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(charges.list("1"))
+    const r: any = await charges.list("1")
 
     t.deepEqual(r, okResponse)
 })
@@ -55,7 +50,7 @@ test("route POST /charges # should return correct response", async (t: TestConte
         currency           : "usd"
     }
 
-    const r: any = await t.notThrows(charges.create(data))
+    const r: any = await charges.create(data)
 
     t.deepEqual(r, okResponse)
 })
@@ -78,7 +73,7 @@ test("route GET /stores/:storeId/charges/:id # should return correct response", 
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(charges.get("1", "1"))
+    const r: any = await charges.get("1", "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -90,10 +85,13 @@ test("route GET /stores/:storeId/charges/:id # should perform long polling until
         .once()
         .reply(200, () => ({ status : "success" }), { "Content-Type" : "application/json" })
 
-    const result = charges.poll("1", "1").should.eventually.eql({ status : "success" })
-                .then(() => expect(spy).to.have.been.calledOnce)
+    const promise = charges.poll("1", "1")
 
     sandbox.clock.tick(POLLING_INTERVAL)
 
-    return result
+    const result = await promise
+
+    t.deepEqual(result, { status : "success" })
+
+    expect(spy).to.have.been.calledOnce
 })

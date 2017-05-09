@@ -17,10 +17,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route GET /bank_accounts # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "list" }
     const okScope = scope
@@ -28,7 +24,7 @@ test("route GET /bank_accounts # should return correct response", async (t: Test
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(accounts.list())
+    const r: any = await accounts.list()
 
     t.deepEqual(r, okResponse)
 })
@@ -47,7 +43,7 @@ test("route POST /bank_accounts # should return correct response", async (t: Tes
         bankName      : "test"
     }
 
-    const r: any = await t.notThrows(accounts.create(data))
+    const r: any = await accounts.create(data)
 
     t.deepEqual(r, okResponse)
 })
@@ -70,7 +66,7 @@ test("route GET /bank_accounts/:id # should return correct response", async (t: 
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(accounts.get("1"))
+    const r: any = await accounts.get("1")
 
     t.deepEqual(r, okResponse)
 })
@@ -82,7 +78,7 @@ test("route GET /bank_accounts/primary # should return correct response", async 
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(accounts.getPrimary())
+    const r: any = await accounts.getPrimary()
 
     t.deepEqual(r, okResponse)
 })
@@ -95,7 +91,7 @@ test("route PATCH /bank_accounts/:id # should return correct response", async (t
         .reply(200, okResponse, { "Content-Type" : "application/json" })
     const data: any = null
 
-    const r: any = await t.notThrows(accounts.update("1", data))
+    const r: any = await accounts.update("1", data)
 
     t.deepEqual(r, okResponse)
 })
@@ -107,7 +103,7 @@ test("route DELETE /bank_accounts/:id # should return correct response", async (
         .once()
         .reply(204, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(accounts.delete("1"))
+    const r: any = await accounts.delete("1")
 
     t.deepEqual(r, okResponse)
 })

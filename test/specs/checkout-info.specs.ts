@@ -16,10 +16,6 @@ test.beforeEach(() => {
     scope = nock(testEndpoint)
 })
 
-test.always.afterEach(() => {
-    nock.cleanAll()
-})
-
 test("route GET /checkout_info # should return correct response", async (t: TestContext) => {
     const okResponse = { action : "get" }
     const okScope = scope
@@ -27,7 +23,7 @@ test("route GET /checkout_info # should return correct response", async (t: Test
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await t.notThrows(info.get({ origin : "http://test.com" }))
+    const r: any = await info.get({ origin : "http://test.com" })
 
     t.deepEqual(r, okResponse)
 })
