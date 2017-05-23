@@ -34,13 +34,17 @@ export interface TransactionTokenCreateParams extends AuthParams {
 }
 
 /* Response */
-export interface TransactionTokenCardDataItem {
+
+export interface TransactionTokenCardDetails {
     cardholder: string
     expMonth: number
     expYear: number
     lastFour: string
     brand: string
-    name?: string
+    country?: string
+}
+
+export interface TransactionTokenCardBilling {
     line1?: string
     line2?: string
     state?: string
@@ -49,7 +53,14 @@ export interface TransactionTokenCardDataItem {
     zip?: string
     phoneNumer?: PhoneNumber
 }
+
+export interface TransactionTokenCardDataItem {
+    card?: TransactionTokenCardDetails
+    billing?: TransactionTokenCardBilling
+}
 export type TransactionTokenQRScanDataItem = object
+
+export type TransactionTokenType = "ontime" | "subscription" | "recurring"
 
 export interface TransactionTokenItem {
     id: string
@@ -59,6 +70,7 @@ export interface TransactionTokenItem {
     subscription: boolean
     createdOn: number
     lastUsedOn: number
+    type: TransactionTokenType
     paymentType: string
     data: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem
 }
