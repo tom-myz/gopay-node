@@ -34,7 +34,9 @@ export interface SubscriptionUpdateParams extends AuthParams {
 /* Response */
 export interface SubscriptionItem {
     id: string
+    merchantId: string
     storeId: string
+    transactionTokenId: string
     amount: number
     currency: string
     amountFormatted: number
