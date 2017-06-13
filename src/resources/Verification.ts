@@ -3,6 +3,9 @@ import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
 import { PhoneNumber } from "./common/PhoneNumber"
 
+export type RecurringTokenPrivilege = "none" | "bounded" | "infinite"
+
+
 export interface BaseVerification<T> extends AuthParams {
     homepageUrl: string
     companyDescription: string
@@ -11,6 +14,8 @@ export interface BaseVerification<T> extends AuthParams {
     systemManagerName: string
     systemManagerNumber?: PhoneNumber
     systemManagerEmail?: string
+    recurringTokenRequest?: RecurringTokenPrivilege
+    recurringTokenRequestReason?: string
 }
 
 /* Request */

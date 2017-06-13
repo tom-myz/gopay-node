@@ -1,5 +1,5 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource } from "./CRUDResource"
+import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource, CRUDSortingParams } from "./CRUDResource"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { PhoneNumber } from "./common/PhoneNumber"
 
@@ -31,6 +31,15 @@ export interface TransactionTokenCreateParams extends AuthParams {
     amount: number
     currency: string
     data: TransactionTokenCardData | TransactionTokenQRScanData
+}
+
+export type TransactionTokensSortBy = "id"
+
+export interface TransactionTokenListParams extends CRUDPaginationParams, CRUDSortingParams<TransactionTokensSortBy>, AuthParams {
+}
+
+export interface TransactionTokenUpdateParams extends AuthParams {
+    amount: number
 }
 
 /* Response */
@@ -72,10 +81,13 @@ export interface TransactionTokenItem {
     lastUsedOn: number
     type: TransactionTokenType
     paymentType: string
-    data: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem
+    requestedAmount: number
+    requestedCurrency: string
+    data?: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem
 }
 
 export type ResponseTransactionToken = TransactionTokenItem
+export type ResponseTransactionTokens = CRUDItemsResponse<TransactionTokenItem>
 
 export class TransactionTokens extends CRUDResource {
 
@@ -93,6 +105,19 @@ export class TransactionTokens extends CRUDResource {
                data?: AuthParams,
                callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
+    }
+
+    public list(storeId: string,
+                data?: TransactionTokenListParams,
+                callback?: ResponseCallback<ResponseTransactionTokens>): Promise<ResponseTransactionTokens> {
+        return this._listRoute()(data, callback, ["storeId"], storeId)
+    }
+
+    public update(storeId: string,
+                  id: string,
+                  data?: TransactionTokenUpdateParams,
+                  callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+        return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
 }
