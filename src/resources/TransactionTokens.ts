@@ -17,7 +17,7 @@ export interface TransactionTokenCardData {
     city?: string
     country?: string
     zip?: string
-    phoneNumer?: PhoneNumber
+    phoneNumber?: PhoneNumber
 }
 
 export interface TransactionTokenQRScanData {
@@ -26,7 +26,7 @@ export interface TransactionTokenQRScanData {
 
 export interface TransactionTokenCreateParams extends AuthParams {
     paymentType: string
-    subscription: boolean
+    type: TransactionTokenType
     email: string
     amount: number
     currency: string
@@ -60,7 +60,7 @@ export interface TransactionTokenCardBilling {
     city?: string
     country?: string
     zip?: string
-    phoneNumer?: PhoneNumber
+    phoneNumber?: PhoneNumber
 }
 
 export interface TransactionTokenCardDataItem {
@@ -69,14 +69,13 @@ export interface TransactionTokenCardDataItem {
 }
 export type TransactionTokenQRScanDataItem = object
 
-export type TransactionTokenType = "ontime" | "subscription" | "recurring"
+export type TransactionTokenType = "one_time" | "subscription" | "recurring"
 
 export interface TransactionTokenItem {
     id: string
     storeId: string
     email: string
     mode: ProcessingMode
-    subscription: boolean
     createdOn: number
     lastUsedOn: number
     type: TransactionTokenType
