@@ -31,8 +31,19 @@ export interface TransferItem {
     to: number
 }
 
+export interface TransferStatusChangeItem {
+    id: string
+    merchantId: string
+    transferId: string
+    oldStatus: TransferStatus
+    newStatus: TransferStatus
+    reason?: string
+    createdOn: number
+}
+
 export type ResponseTransfer = TransferItem
 export type ResponseTransfers = CRUDItemsResponse<TransferItem>
+export type ResponseTransferStatusChanges = CRUDItemsResponse<TransferStatusChangeItem>
 
 export class Transfers extends CRUDResource {
 
@@ -44,6 +55,11 @@ export class Transfers extends CRUDResource {
 
     public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransfer>): Promise<ResponseTransfer> {
         return this._getRoute()(data, callback, ["id"], id)
+    }
+
+    public statusChanges(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransferStatusChanges>): Promise<ResponseTransferStatusChanges> {
+        return this.defineRoute("GET", `${Transfers.routeBase}/:id/status_changes`)
+        (data, callback, ["id"], id)
     }
 
 }
