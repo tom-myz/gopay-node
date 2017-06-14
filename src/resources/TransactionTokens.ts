@@ -90,7 +90,7 @@ export type ResponseTransactionTokens = CRUDItemsResponse<TransactionTokenItem>
 
 export class TransactionTokens extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["paymentType", "subscription", "email", "amount", "currency", "data"]
+    public static requiredParams: Array<string> = ["paymentType", "type", "email", "amount", "currency", "data"]
 
     public static routeBase: string = "/stores/:storeId/tokens"
 

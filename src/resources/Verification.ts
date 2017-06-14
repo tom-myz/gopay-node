@@ -5,7 +5,6 @@ import { PhoneNumber } from "./common/PhoneNumber"
 
 export type RecurringTokenPrivilege = "none" | "bounded" | "infinite"
 
-
 export interface BaseVerification<T> extends AuthParams {
     homepageUrl: string
     companyDescription: string
@@ -50,7 +49,6 @@ export class Verification extends CRUDResource {
 
     public update(data?: VerificationUpdateParams,
                   callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
-
         return this.defineRoute("PATCH", this._routeBase)(data, callback)
     }
 

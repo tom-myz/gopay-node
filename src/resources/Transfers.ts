@@ -57,9 +57,10 @@ export class Transfers extends CRUDResource {
         return this._getRoute()(data, callback, ["id"], id)
     }
 
-    public statusChanges(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransferStatusChanges>): Promise<ResponseTransferStatusChanges> {
-        return this.defineRoute("GET", `${Transfers.routeBase}/:id/status_changes`)
-        (data, callback, ["id"], id)
+    public statusChanges(id: string,
+                         data?: AuthParams,
+                         callback?: ResponseCallback<ResponseTransferStatusChanges>): Promise<ResponseTransferStatusChanges> {
+        return this.defineRoute("GET", `${Transfers.routeBase}/:id/status_changes`)(data, callback, ["id"], id)
     }
 
 }

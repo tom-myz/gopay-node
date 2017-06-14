@@ -3,7 +3,7 @@ import { test, TestContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { TransactionTokens } from "../../src/resources/TransactionTokens"
+import { TransactionTokenCreateParams, TransactionTokens } from "../../src/resources/TransactionTokens"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
@@ -24,12 +24,12 @@ test("route POST /tokens # should return correct response", async (t: TestContex
         .once()
         .reply(201, okResponse, { "Content-Type" : "application/json" })
 
-    const data = {
+    const data: TransactionTokenCreateParams = {
         paymentType: "test",
-        subscription: true,
         email: "test",
         amount: 1,
         currency: "test",
+        type: "one_time",
         data: {} as any
     }
 
