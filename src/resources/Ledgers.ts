@@ -4,6 +4,8 @@ import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 
+export type LedgerOrigin = "charge" | "refund" | "manual"
+
 /* Request */
 export type LedgersSortBy = "createdOn"
 
@@ -30,6 +32,7 @@ export interface LedgerItem {
     flatFeeCurrency: string
     flatFeeFormatted: number
     exchangeRate: number
+    origin: LedgerOrigin
     note?: string
     createdOn: number
 }
