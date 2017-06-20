@@ -1,13 +1,11 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 
 export type TransferStatus = "created" | "approved" | "cancelled" | "processing" | "paid" | "failed"
 
 /* Request */
-export type TransfersSortBy = "createdOn"
-
-export interface TransfersListParams extends CRUDPaginationParams, CRUDSortingParams<TransfersSortBy>, AuthParams {
+export interface TransfersListParams extends CRUDPaginationParams, AuthParams {
     currency?: string
     status?: TransferStatus
     startedBy?: string
@@ -26,9 +24,9 @@ export interface TransferItem {
     errorText?: string
     metadata?: Metadata
     startedBy: string
-    createdOn: number
-    from: number
-    to: number
+    createdOn: string
+    from: string
+    to: string
 }
 
 export interface TransferStatusChangeItem {
@@ -38,7 +36,7 @@ export interface TransferStatusChangeItem {
     oldStatus: TransferStatus
     newStatus: TransferStatus
     reason?: string
-    createdOn: number
+    createdOn: string
 }
 
 export type ResponseTransfer = TransferItem

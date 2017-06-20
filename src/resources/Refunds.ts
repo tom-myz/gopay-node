@@ -1,5 +1,5 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
@@ -9,9 +9,8 @@ export type RefundStatus = "pending" | "successful" | "failed" | "error"
 export type RefundReason = "duplicate" | "fraud" | "customer_request"
 
 /* Request */
-export type RefundsSortBy = "createdOn"
+export interface RefundsListParams extends CRUDPaginationParams, AuthParams {}
 
-export interface RefundsListParams extends CRUDPaginationParams, CRUDSortingParams<RefundsSortBy>, AuthParams {}
 export interface RefundCreateParams extends AuthParams {
     amount: number
     currency: string
@@ -34,7 +33,7 @@ export interface RefundItem {
     error?: PaymentError
     metadata?: Metadata
     mode: ProcessingMode
-    createdOn: number
+    createdOn: string
 }
 
 export type ResponseRefund = RefundItem

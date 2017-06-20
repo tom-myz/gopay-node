@@ -1,12 +1,10 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
 export type BankAccountStatus = "new" | "unable_to_verify" | "verified" | "errored"
 
 /* Request */
-export type BankAccountsSortBy = "createdOn"
-
-export interface BankAccountsListParams extends CRUDPaginationParams, CRUDSortingParams<BankAccountsSortBy>, AuthParams {
+export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {
     primary?: boolean
 }
 
@@ -23,19 +21,7 @@ export interface BankAccountCreateParams extends AuthParams {
     ifscCode?: string
     routingCode?: string
 }
-export interface BankAccountUpdateParams extends AuthParams {
-    primary?: boolean
-    accountNumber?: string
-    holderName?: string
-    bankAddress?: string
-    currency?: string
-    bankName: string
-    branchName?: string
-    routingNumber?: string
-    swiftCode?: string
-    ifscCode?: string
-    routingCode?: string
-}
+export type BankAccountUpdateParams = Partial<BankAccountCreateParams>
 
 /* Response */
 export interface BankAccountItem {

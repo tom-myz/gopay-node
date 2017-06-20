@@ -1,5 +1,5 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource, CRUDSortingParams } from "./CRUDResource"
+import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { PhoneNumber } from "./common/PhoneNumber"
 
@@ -33,10 +33,7 @@ export interface TransactionTokenCreateParams extends AuthParams {
     data: TransactionTokenCardData | TransactionTokenQRScanData
 }
 
-export type TransactionTokensSortBy = "id"
-
-export interface TransactionTokenListParams extends CRUDPaginationParams, CRUDSortingParams<TransactionTokensSortBy>, AuthParams {
-}
+export interface TransactionTokenListParams extends CRUDPaginationParams, AuthParams {}
 
 export interface TransactionTokenUpdateParams extends AuthParams {
     amount: number
@@ -76,8 +73,8 @@ export interface TransactionTokenItem {
     storeId: string
     email: string
     mode: ProcessingMode
-    createdOn: number
-    lastUsedOn: number
+    createdOn: string
+    lastUsedOn: string
     type: TransactionTokenType
     paymentType: string
     requestedAmount: number

@@ -1,5 +1,5 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
@@ -7,9 +7,7 @@ import { ProcessingMode } from "./common/ProcessingMode"
 export type LedgerOrigin = "charge" | "refund" | "manual"
 
 /* Request */
-export type LedgersSortBy = "createdOn"
-
-export interface LedgersListParams extends CRUDPaginationParams, CRUDSortingParams<LedgersSortBy>, AuthParams {
+export interface LedgersListParams extends CRUDPaginationParams, AuthParams {
     all?: boolean
     from?: number | string
     to?: number | string
@@ -34,7 +32,7 @@ export interface LedgerItem {
     exchangeRate: number
     origin: LedgerOrigin
     note?: string
-    createdOn: number
+    createdOn: string
 }
 
 export type ResponseLedgers = CRUDItemsResponse<LedgerItem>

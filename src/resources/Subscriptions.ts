@@ -1,5 +1,5 @@
 import { ResponseCallback, AuthParams, ErrorResponse } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { ResponseCharges, ChargesListParams } from "./Charges"
@@ -9,9 +9,7 @@ export type SubscriptionPeriod = "daily" | "weekly" | "biweekly" | "monthly" | "
 export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelled"
 
 /* Request */
-export type SubscriptionsSortBy = "createdOn"
-
-export interface SubscriptionsListParams extends CRUDPaginationParams, CRUDSortingParams<SubscriptionsSortBy>, AuthParams {
+export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParams {
     search?: string
     status?: SubscriptionStatus
     mode?: ProcessingMode
@@ -44,7 +42,7 @@ export interface SubscriptionItem {
     status: SubscriptionStatus
     metadata?: Metadata
     mode: ProcessingMode
-    createdOn: number
+    createdOn: string
 }
 
 export type ResponseSubscription = SubscriptionItem

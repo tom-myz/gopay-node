@@ -1,5 +1,5 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
@@ -7,9 +7,7 @@ import { ProcessingMode } from "./common/ProcessingMode"
 export type ChargeStatus = "pending" | "successful" | "failed" | "error"
 
 /* Request */
-export type ChargesSortBy = "createdOn"
-
-export interface ChargesListParams extends CRUDPaginationParams, CRUDSortingParams<ChargesSortBy>, AuthParams {}
+export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
 
 export interface ChargeCreateParams extends AuthParams {
     transactionTokenId: string
@@ -35,7 +33,7 @@ export interface ChargeItem {
     error?: PaymentError
     metadata?: Metadata
     mode: ProcessingMode
-    createdOn: number
+    createdOn: string
     transactionTokenId?: string
 }
 

@@ -10,10 +10,6 @@ export interface CRUDPaginationParams {
     cursorDirection?: CursorDirection
 }
 
-export interface CRUDSortingParams<A> {
-    sortBy?: A
-}
-
 /* Response */
 export interface CRUDItemsResponse<A> {
     items: Array<A>

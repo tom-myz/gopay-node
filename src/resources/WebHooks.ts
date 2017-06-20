@@ -1,10 +1,8 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
 /* Request */
-export type WebHooksSortBy = "createdOn"
-
-export interface WebHooksListParams extends CRUDPaginationParams, CRUDSortingParams<WebHooksSortBy>, AuthParams {}
+export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
 
 export interface WebHookCreateParams extends AuthParams {
     triggers: Array<string>
@@ -21,7 +19,7 @@ export interface WebHookItem {
     storeId: string
     triggers: Array<string>
     url: string
-    createdOn: number
+    createdOn: string
 }
 
 export type ResponseWebHook = WebHookItem

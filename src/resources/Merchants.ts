@@ -18,7 +18,7 @@ export interface MerchantItem {
     email: string
     roles: Array<string>
     verified: boolean
-    createdOn: number
+    createdOn: string
     configuration: MerchantConfigurationItem
 }
 

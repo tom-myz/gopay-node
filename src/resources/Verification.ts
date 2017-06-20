@@ -24,7 +24,7 @@ export type VerificationUpdateParams = Partial<BaseVerification<ContactInfoParti
 /* Response */
 export interface VerificationItem extends BaseVerification<ContactInfo> {
     id: string
-    createdOn: number
+    createdOn: string
 }
 
 export type ResponseVerification = VerificationItem
