@@ -101,4 +101,19 @@ export class Subscriptions extends CRUDResource {
         )
     }
 
+    public poll(storeId: string,
+                id: string,
+                data?: AuthParams,
+                callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+        const promise: () => Promise<ResponseSubscription> = () => this._getRoute()(
+            data, null, ["storeId", "id"], storeId, id
+        )
+
+        return this.api.longPolling(
+            promise,
+            (response: ResponseSubscription) => response.status !== "unverified",
+            callback
+        )
+    }
+
 }
