@@ -1,8 +1,8 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/ProcessingMode"
-import { RecurringTokenPrivilege } from "../../lib/resources/Verification";
-import { CardConfigurationItem, QRScanConfigurationItem } from "../../lib/resources/common/Configuration";
+import { RecurringTokenPrivilege } from "./Verification"
+import { CardConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
 
 /* Request */
 export interface CheckoutInfoParams extends AuthParams {
