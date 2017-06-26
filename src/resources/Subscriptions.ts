@@ -6,7 +6,7 @@ import { ResponseCharges, ChargesListParams } from "./Charges"
 
 export type SubscriptionPeriod = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "biannually" | "annually"
 
-export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelled"
+export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelled" | "unconfirmed"
 
 /* Request */
 export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParams {
