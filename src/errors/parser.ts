@@ -47,6 +47,11 @@ export function fromError(error: GenericError): ErrorResponse {
             httpCode : error.status,
             errors   : error.response ? error.response.errors || [] : []
         }
+    } else if (
+        Object.getOwnPropertyNames(error)
+            .every((props: string) => ["code", "errors", "httpCode", "status"].indexOf(props) !== -1)
+    ) {
+        errorResponse = error
     }
 
     return {
