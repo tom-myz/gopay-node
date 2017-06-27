@@ -3,6 +3,8 @@ import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDRes
 import { ProcessingMode } from "./common/ProcessingMode"
 import { PhoneNumber } from "./common/PhoneNumber"
 
+export type UsageLimit = "daily" | "weekly" | "monthly" | "yearly"
+
 /* Request */
 
 export interface TransactionTokenCardData {
@@ -28,15 +30,14 @@ export interface TransactionTokenCreateParams extends AuthParams {
     paymentType: string
     type: TransactionTokenType
     email: string
-    amount: number
-    currency: string
+    usageLimit?: UsageLimit
     data: TransactionTokenCardData | TransactionTokenQRScanData
 }
 
 export interface TransactionTokenListParams extends CRUDPaginationParams, AuthParams {}
 
 export interface TransactionTokenUpdateParams extends AuthParams {
-    amount: number
+    email?: string
 }
 
 /* Response */
@@ -77,8 +78,7 @@ export interface TransactionTokenItem {
     lastUsedOn: string
     type: TransactionTokenType
     paymentType: string
-    requestedAmount: number
-    requestedCurrency: string
+    usageLimit?: UsageLimit
     data?: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem
 }
 
@@ -87,7 +87,7 @@ export type ResponseTransactionTokens = CRUDItemsResponse<TransactionTokenItem>
 
 export class TransactionTokens extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["paymentType", "type", "email", "amount", "currency", "data"]
+    public static requiredParams: Array<string> = ["paymentType", "type", "email", "data"]
 
     public static routeBase: string = "/stores/:storeId/tokens"
 
