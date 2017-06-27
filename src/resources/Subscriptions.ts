@@ -6,7 +6,7 @@ import { ResponseCharges, ChargesListParams } from "./Charges"
 
 export type SubscriptionPeriod = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "biannually" | "annually"
 
-export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelled"
+export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelled" | "unconfirmed"
 
 /* Request */
 export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParams {
@@ -98,6 +98,21 @@ export class Subscriptions extends CRUDResource {
 
         return this.defineRoute("GET", `${Subscriptions.routeBase}/:id/charges`)(
             data, callback, ["storeId", "id"], storeId, id
+        )
+    }
+
+    public poll(storeId: string,
+                id: string,
+                data?: AuthParams,
+                callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+        const promise: () => Promise<ResponseSubscription> = () => this._getRoute()(
+            data, null, ["storeId", "id"], storeId, id
+        )
+
+        return this.api.longPolling(
+            promise,
+            (response: ResponseSubscription) => response.status !== "unverified",
+            callback
         )
     }
 
