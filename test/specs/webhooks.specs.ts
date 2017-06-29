@@ -24,7 +24,7 @@ test("route GET /stores/:storeId/webhooks # should return correct response", asy
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await webHooks.list("1")
+    const r: any = await webHooks.list(null, null, "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -40,7 +40,7 @@ test("route POST /stores/:storeId/webhooks # should return correct response", as
         url: "test"
     }
 
-    const r: any = await webHooks.create("1", data)
+    const r: any = await webHooks.create(data, null, "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -51,7 +51,7 @@ test("route POST /stores/:storeId/webhooks # should return validation error if d
     ]
 
     return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(webHooks.create("1", a))
+        const e: ErrorResponse = await t.throws(webHooks.create(a))
         t.deepEqual(e.code, VALIDATION_ERROR)
     }))
 })
@@ -63,7 +63,7 @@ test("route GET /stores/:storeId/webhooks/:id # should return correct response",
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await webHooks.get("1", "1")
+    const r: any = await webHooks.get("1", null, null, "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -79,7 +79,7 @@ test("route PATCH /stores/:storeId/webhooks/:id # should return correct response
         url: "test"
     }
 
-    const r: any = await webHooks.update("1", "1", data)
+    const r: any = await webHooks.update("1", data, null, "1")
 
     t.deepEqual(r, okResponse)
 })
@@ -91,7 +91,7 @@ test("route DELETE /stores/:storeId/webhooks/:id # should return correct respons
         .once()
         .reply(204, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await webHooks.delete("1", "1")
+    const r: any = await webHooks.delete("1", null, null, "1")
 
     t.deepEqual(r, okResponse)
 })
