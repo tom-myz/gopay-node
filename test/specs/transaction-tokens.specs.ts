@@ -27,8 +27,6 @@ test("route POST /tokens # should return correct response", async (t: TestContex
     const data: TransactionTokenCreateParams = {
         paymentType: "test",
         email: "test",
-        amount: 1,
-        currency: "test",
         type: "one_time",
         data: {} as any
     }
