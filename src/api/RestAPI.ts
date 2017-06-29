@@ -15,6 +15,7 @@ import { transformKeys, partitionKeys } from "../utils/object"
 import { checkStatus, parseJSON } from "../utils/fetch"
 import { TimeoutError } from "../errors/TimeoutError"
 import { fromError } from "../errors/parser"
+import { stringify as stringifyQuery } from "query-string"
 
 export type HTTPMethod = "GET" | "POST" | "PATCH" | "DELETE"
 
@@ -54,14 +55,11 @@ export class RestAPI {
     }
 
     public static requestUrl(url: string, data: any, isQueryString: boolean): string {
-        let queryString: string
+        const _data: any = data || {}
 
-        if (isQueryString) {
-            queryString = Object.keys(data || {})
-                .map((k: string) => `${encodeURIComponent(k)}=${encodeURIComponent((data as any)[k])}`)
-                .join("&")
-        }
-        return queryString ? `${url}?${queryString}` : url
+        return (isQueryString && Object.getOwnPropertyNames(_data).length !== 0)
+            ? `${url}?${stringifyQuery(_data, { arrayFormat : "bracket" } )}`
+            : url
     }
 
     public static handleSuccess<A>(response: A, resolve: PromiseResolve<A>, callback?: ResponseCallback<A>): void {
