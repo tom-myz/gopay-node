@@ -16,6 +16,7 @@ export interface WebHookUpdateParams extends AuthParams {
 /* Response */
 export interface WebHookItem {
     id: string
+    merchantId: string
     storeId: string
     triggers: Array<string>
     url: string
