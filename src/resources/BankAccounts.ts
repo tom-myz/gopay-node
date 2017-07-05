@@ -3,6 +3,8 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 
 export type BankAccountStatus = "new" | "unable_to_verify" | "verified" | "errored"
 
+export type BankAccountType = "checking" | "savings"
+
 /* Request */
 export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {
     primary?: boolean
@@ -20,6 +22,7 @@ export interface BankAccountCreateParams extends AuthParams {
     swiftCode?: string
     ifscCode?: string
     routingCode?: string
+    accountType: BankAccountType
 }
 export type BankAccountUpdateParams = Partial<BankAccountCreateParams>
 
@@ -41,6 +44,7 @@ export interface BankAccountItem {
     createdOn: number
     primary: boolean
     accountNumber: string
+    accountType: BankAccountType
 }
 
 export type ResponseBankAccount = BankAccountItem

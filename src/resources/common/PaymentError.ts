@@ -1,5 +1,5 @@
 export interface PaymentError {
-    name: string
+    message: string
     code: number
     details?: string
 }
