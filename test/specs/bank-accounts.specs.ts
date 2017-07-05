@@ -3,7 +3,7 @@ import { test, TestContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { BankAccounts } from "../../src/resources/BankAccounts"
+import { BankAccounts, BankAccountType } from "../../src/resources/BankAccounts"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
@@ -40,7 +40,8 @@ test("route POST /bank_accounts # should return correct response", async (t: Tes
         country       : "test",
         currency      : "test",
         holderName    : "test",
-        bankName      : "test"
+        bankName      : "test",
+        accountType   : "checking" as BankAccountType
     }
 
     const r: any = await accounts.create(data)
