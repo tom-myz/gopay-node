@@ -8,6 +8,9 @@ export interface CardConfigurationItem extends PaymentTypeConfiguration {
     debitEnabled: boolean
     prepaidEnabled: boolean
     forbiddenCardBrands: Array<CardBrand>
+    foreignCardsAllowed: boolean
+    failOnNewEmail: boolean
+    allowedCountriesByIp: Array<string>
 }
 
 export type QRScanConfigurationItem = PaymentTypeConfiguration
