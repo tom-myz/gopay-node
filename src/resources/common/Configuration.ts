@@ -4,6 +4,17 @@ export interface PaymentTypeConfiguration {
     enabled?: boolean
 }
 
+export interface CardBrandPercentFeesItem {
+    americanExpress: number
+    dinersClub: number
+    discover: number
+    jcb: number
+    maestro: number
+    mastercard: number
+    unionPay: number
+    visa: number
+}
+
 export interface CardConfigurationItem extends PaymentTypeConfiguration {
     debitEnabled: boolean
     prepaidEnabled: boolean
@@ -16,8 +27,12 @@ export interface CardConfigurationItem extends PaymentTypeConfiguration {
 export type QRScanConfigurationItem = PaymentTypeConfiguration
 
 export interface ConfigurationItem {
+    cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
+    flatFeeAmount: number
+    flatFeeCurrency: string
+    percentFee: number
     logoUrl?: string
 }
 
