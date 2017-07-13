@@ -89,30 +89,30 @@ export class TransactionTokens extends CRUDResource {
 
     public static requiredParams: Array<string> = ["paymentType", "type", "email", "data"]
 
-    public static routeBase: string = "/stores/:storeId/tokens"
+    public static routeBase: string = "(/stores/:storeId)/tokens"
 
     public create(data: TransactionTokenCreateParams,
                   callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this.defineRoute("POST", "/tokens", TransactionTokens.requiredParams)(data, callback)
     }
 
-    public get(storeId: string,
-               id: string,
+    public get(id: string,
                data?: AuthParams,
-               callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+               callback?: ResponseCallback<ResponseTransactionToken>,
+               storeId?: string): Promise<ResponseTransactionToken> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public list(storeId: string,
-                data?: TransactionTokenListParams,
-                callback?: ResponseCallback<ResponseTransactionTokens>): Promise<ResponseTransactionTokens> {
+    public list(data?: TransactionTokenListParams,
+                callback?: ResponseCallback<ResponseTransactionTokens>,
+                storeId?: string): Promise<ResponseTransactionTokens> {
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
-    public update(storeId: string,
-                  id: string,
+    public update(id: string,
                   data?: TransactionTokenUpdateParams,
-                  callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+                  callback?: ResponseCallback<ResponseTransactionToken>,
+                  storeId?: string): Promise<ResponseTransactionToken> {
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 

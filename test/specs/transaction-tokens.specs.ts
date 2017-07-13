@@ -54,7 +54,7 @@ test("route GET /stores/:storeId/tokens/:id # should return correct response", a
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await tokens.get("1", "1")
+    const r: any = await tokens.get("1", null, null, "1")
 
     t.deepEqual(r, okResponse)
 })
