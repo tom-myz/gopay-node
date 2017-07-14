@@ -33,7 +33,7 @@ test("route GET /stores/:storeId/charges # should return correct response", asyn
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
 
-    const r: any = await charges.list("1")
+    const r: any = await charges.list(null, null, "1")
 
     t.deepEqual(r, okResponse)
 })
