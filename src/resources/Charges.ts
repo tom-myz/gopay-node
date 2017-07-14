@@ -44,9 +44,9 @@ export class Charges extends CRUDResource {
 
     public static requiredParams: Array<string> = ["transactionTokenId", "amount", "currency"]
 
-    public static routeBase: string = "/stores/:storeId/charges"
+    public static routeBase: string = "(/stores/:storeId)/charges"
 
-    public list(storeId: string, data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
+    public list(data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>, storeId?: string): Promise<ResponseCharges> {
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
