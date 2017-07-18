@@ -15,6 +15,11 @@ export interface CardBrandPercentFeesItem {
     visa: number
 }
 
+export interface CardConfigurationMonthlyLimit {
+    amount: number
+    currency: string
+}
+
 export interface CardConfigurationItem extends PaymentTypeConfiguration {
     debitEnabled: boolean
     prepaidEnabled: boolean
@@ -22,6 +27,7 @@ export interface CardConfigurationItem extends PaymentTypeConfiguration {
     foreignCardsAllowed: boolean
     failOnNewEmail: boolean
     allowedCountriesByIp: Array<string>
+    monthlyLimit: CardConfigurationMonthlyLimit
 }
 
 export type QRScanConfigurationItem = PaymentTypeConfiguration

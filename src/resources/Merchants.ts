@@ -4,6 +4,13 @@ import { ConfigurationItem } from "./common/Configuration"
 import { RecurringTokenPrivilege } from "./Verification"
 
 export type TransferPeriod = "weekly" | "biweekly" | "monthly"
+
+export interface TransferSchedule {
+    period: TransferPeriod
+    dayOfWeek: number
+    weekOfMonth: number
+    dayOfMonth: number
+}
 /* Request */
 
 /* Response */
@@ -18,7 +25,7 @@ export interface SecurityConfiguration {
 
 export interface MerchantConfigurationItem extends ConfigurationItem {
     waitPeriod?: string
-    transferPeriod?: TransferPeriod
+    transferSchedule?: TransferSchedule
     recurringTokenConfiguration?: RecurringTokenConfiguration
     securityConfiguration?: SecurityConfiguration
 }
