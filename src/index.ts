@@ -14,6 +14,7 @@ import { TransactionTokens } from "./resources/TransactionTokens"
 import { Transfers } from "./resources/Transfers"
 import { Verification } from "./resources/Verification"
 import { WebHooks } from "./resources/WebHooks"
+import { PlatformConfiguration } from "./resources/PlatformConfiguration"
 
 export default class SDK extends PaymentsSDK {
 
@@ -29,6 +30,7 @@ export default class SDK extends PaymentsSDK {
     public transfers: Transfers
     public verification: Verification
     public webHooks: WebHooks
+    public platformConfiguration: PlatformConfiguration
 
     constructor (options?: RestAPIOptions) {
         super(options)
@@ -45,6 +47,8 @@ export default class SDK extends PaymentsSDK {
         this.transfers = new Transfers(this.api)
         this.verification = new Verification(this.api)
         this.webHooks = new WebHooks(this.api)
+        this.platformConfiguration = new PlatformConfiguration(this.api)
+
     }
 
 }

@@ -2,15 +2,8 @@ import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ConfigurationItem } from "./common/Configuration"
 import { RecurringTokenPrivilege } from "./Verification"
+import { TransferSchedule } from "./common/TransferSchedule"
 
-export type TransferPeriod = "weekly" | "biweekly" | "monthly"
-
-export interface TransferSchedule {
-    period: TransferPeriod
-    dayOfWeek: number
-    weekOfMonth: number
-    dayOfMonth: number
-}
 /* Request */
 
 /* Response */

@@ -16,3 +16,5 @@ test/**/*.js.map
 .nyc_output
 coverage
 reports
+
+.vscode/

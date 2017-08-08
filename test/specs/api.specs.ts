@@ -111,13 +111,13 @@ test("should send request with authorization header", async (t: TestContext) => 
         [{ appId : "id" }, null, "ApplicationToken id|"],
         [{ appId : "id", secret : "secret" }, null, "ApplicationToken id|secret"],
         [{ appId : "id", secret : "secret" }, { appId : "id1" }, "ApplicationToken id1|secret"],
-        [{ appId : "id", secret : "secret" }, { secret : "secret1" }, "ApplicationToken id|secret1"],
+        [{ appId : "id", secret : "secret" }, { secret : "secret1" }, "ApplicationToken id|secret1"]
     ]
     let mock: Scope
 
-    const spy = sandbox.spy(global, "fetch")
+    const spy = sandbox.spy(global as NodeJS.Global & GlobalFetch, "fetch")
 
-    for (let a of asserts) {
+    for (const a of asserts) {
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...a[0] })
 
         mock = scope
@@ -125,7 +125,7 @@ test("should send request with authorization header", async (t: TestContext) => 
             .once()
             .reply(200, { ok : true }, Object.assign(
                 { "Content-Type" : "application/json" },
-                a[2] ? { "Authorization" : a[2] } : null
+                a[2] ? { Authorization : a[2] } : null
             ))
 
         const r: any = await api.send("GET", "/header", a[1])
@@ -142,9 +142,9 @@ test("should send request with authorization header", async (t: TestContext) => 
 })
 
 test("should convert all params to underscore", (t: TestContext) => {
-    const expectation = { foo: "bar", "fizz_buzz": true }
+    const expectation = { foo: "bar", fizz_buzz: true }
     const asserts = [
-        { foo: "bar", "fizz_buzz": true },
+        { foo: "bar", fizz_buzz: true },
         { foo: "bar", fizzBuzz: true }
     ]
 
@@ -158,7 +158,7 @@ test("should return response with camel case properties names", async (t: TestCo
     nock(testEndpoint)
         .get("/camel")
         .once()
-        .reply(200, { "foo_bar" : true }, { "Content-Type" : "application/json" })
+        .reply(200, { foo_bar : true }, { "Content-Type" : "application/json" })
 
     const r: any = await api.send("GET", "/camel")
 

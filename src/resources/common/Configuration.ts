@@ -1,4 +1,5 @@
 import { CardBrand } from "./CardBrand"
+import { AmountWithCurrency } from "./Common"
 
 export interface PaymentTypeConfiguration {
     enabled?: boolean
@@ -15,10 +16,7 @@ export interface CardBrandPercentFeesItem {
     visa: number
 }
 
-export interface CardConfigurationMonthlyLimit {
-    amount: number
-    currency: string
-}
+export interface CardConfigurationMonthlyLimit extends AmountWithCurrency { }
 
 export interface CardConfigurationItem extends PaymentTypeConfiguration {
     debitEnabled: boolean
