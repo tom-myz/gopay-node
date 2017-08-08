@@ -56,8 +56,7 @@
     "ava": "tsc -p tsconfig.tests.json && nyc ava | tap-nyan",
     "build": "rimraf lib && tsc && yarn run postprocess",
     "postprocess": "sed -i -e \"s#\\(exports\\.DEFAULT_ENDPOINT = \\\"\\)\\(.*\\)\\(\\\";\\)#\\1${GOPAY_API_ENDPOINT}\\3#g\" ./lib/constants.js",
-    "preversion": "yarn test",
-    "postversion": "git add package.json && git commit -m \"Bump version to `node -e \"console.log(require('./package.json').version);\"`\""
+    "preversion": "yarn test"
   },
   "ava": {
     "files": [
