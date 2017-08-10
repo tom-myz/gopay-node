@@ -8,7 +8,7 @@ export interface PlatformUserDefaults {
     transferSchedule: TransferSchedule
     flatFees: Array<AmountWithCurrency>
     waitPeriod: string
-    cardBrandPercentFees: CardBrandPercentFeesItem
+    cardBrandPercentFees: Partial<CardBrandPercentFeesItem>
 }
 
 export interface PlatformPaymentDefaults {
