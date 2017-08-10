@@ -20,7 +20,7 @@ export interface PlatformPaymentDefaults {
 
 export interface PlatformItem extends WithCreatedOn {
     id: string
-    key: string
+    domain: string
     name: string
     invoiceChargeFee: Array<InvoiceChargeFee>
 }
