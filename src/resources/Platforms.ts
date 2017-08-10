@@ -1,5 +1,5 @@
 import { ResponseCallback } from "../api/RestAPI"
-import { Resource } from "./Resource"
+import { CRUDResource } from "./CRUDResource"
 import { CardBrand } from "./common/CardBrand"
 import { PlatformItem, PlatformConfiguration as PlatformConfig } from "./common/Platform"
 import { WithConfig } from "./common/Common"
@@ -10,15 +10,16 @@ import { WithConfig } from "./common/Common"
 export interface PlatformConfigurationItem extends PlatformItem, WithConfig<PlatformConfig> {
     supportedPaymentTypes?: Array<string>
     supportedCardBrands?: Array<CardBrand>
-    supportedGateways?: Array<string>
 }
 
 export type ResponsePlatformConfiguration = Readonly<PlatformConfigurationItem>
 
-export class PlatformConfiguration extends Resource {
+export class Platforms extends CRUDResource {
 
-    public get(data?: any, callback?: ResponseCallback<ResponsePlatformConfiguration>): Promise<ResponsePlatformConfiguration> {
-        return this.defineRoute("GET", "/platform")(data, callback)
+    public getConfiguration(
+        callback?: ResponseCallback<ResponsePlatformConfiguration>
+    ): Promise<ResponsePlatformConfiguration> {
+        return this.defineRoute("GET", "/platform")(null, callback)
     }
 
 }
