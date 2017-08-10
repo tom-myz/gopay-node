@@ -34,8 +34,7 @@ export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
-    flatFeeAmount: number
-    flatFeeCurrency: string
+    flatFees: Array<AmountWithCurrency>
     percentFee: number
     logoUrl?: string
 }
