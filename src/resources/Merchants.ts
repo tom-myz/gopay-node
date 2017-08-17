@@ -28,7 +28,6 @@ export interface MerchantItem {
     verificationDataId?: string
     name: string
     email: string
-    roles: Array<string>
     verified: boolean
     createdOn: string
     configuration: MerchantConfigurationItem
