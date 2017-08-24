@@ -16,6 +16,7 @@ export interface PlatformPaymentDefaults {
     qrScanEnabled: boolean
     prepaidEnabled: boolean
     debitEnabled: boolean
+    convenienceEnabled: boolean
 }
 
 export interface PlatformItem extends WithCreatedOn {

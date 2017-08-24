@@ -4,7 +4,7 @@ import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 
-export type ChargeStatus = "pending" | "successful" | "failed" | "error"
+export type ChargeStatus = "pending" | "successful" | "failed" | "error" | "canceled" | "awaiting"
 
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}

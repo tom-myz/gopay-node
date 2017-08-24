@@ -30,10 +30,13 @@ export interface CardConfigurationItem extends PaymentTypeConfiguration {
 
 export type QRScanConfigurationItem = PaymentTypeConfiguration
 
+export type ConvenienceConfigurationItem = PaymentTypeConfiguration
+
 export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
+    convenienceConfiguration: ConvenienceConfigurationItem
     flatFees: Array<AmountWithCurrency>
     percentFee: number
     logoUrl?: string
@@ -43,6 +46,7 @@ export interface ConfigurationParams {
     logoUrl?: string
     cardConfiguration?: Partial<CardConfigurationItem>
     qrScanConfiguration?: Partial<QRScanConfigurationItem>
+    convenienceConfiguration?: Partial<ConvenienceConfigurationItem>
 }
 
 export type ConfigurationCreateParams = ConfigurationParams
