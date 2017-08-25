@@ -15,6 +15,7 @@ import { Transfers } from "./resources/Transfers"
 import { Verification } from "./resources/Verification"
 import { WebHooks } from "./resources/WebHooks"
 import { Platforms } from "./resources/Platforms"
+import { Cancels } from "./resources/Cancels"
 
 export default class SDK extends PaymentsSDK {
 
@@ -31,6 +32,7 @@ export default class SDK extends PaymentsSDK {
     public transfers: Transfers
     public verification: Verification
     public webHooks: WebHooks
+    public cancels: Cancels
 
 
     constructor (options?: RestAPIOptions) {
@@ -49,6 +51,7 @@ export default class SDK extends PaymentsSDK {
         this.transfers = new Transfers(this.api)
         this.verification = new Verification(this.api)
         this.webHooks = new WebHooks(this.api)
+        this.cancels = new Cancels(this.api)
     }
 
 }

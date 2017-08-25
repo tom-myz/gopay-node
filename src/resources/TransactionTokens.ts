@@ -66,6 +66,12 @@ export interface TransactionTokenCardDataItem {
     billing?: TransactionTokenCardBilling
 }
 export type TransactionTokenQRScanDataItem = object
+export interface TransactionTokenConvenienceDataItem {
+    convenienceStore?: string
+    customerName?: string
+    expirationDate?: string
+    phoneNumber?: PhoneNumber
+}
 
 export type TransactionTokenType = "one_time" | "subscription" | "recurring"
 
@@ -79,7 +85,7 @@ export interface TransactionTokenItem {
     type: TransactionTokenType
     paymentType: string
     usageLimit?: UsageLimit
-    data?: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem
+    data?: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem | TransactionTokenConvenienceDataItem
 }
 
 export type ResponseTransactionToken = TransactionTokenItem
