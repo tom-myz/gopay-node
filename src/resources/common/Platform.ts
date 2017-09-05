@@ -30,6 +30,7 @@ export interface PlatformConfiguration {
     adminEmailAddresses: Array<string>
     notifyUserTransactions: boolean
     defaultLanguage: string
+    supportedLanguages: Array<string>
     country: string
     currency: string
     logoUri: string
