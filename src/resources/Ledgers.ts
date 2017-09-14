@@ -36,6 +36,7 @@ export interface LedgerItem {
 }
 
 export type ResponseLedgers = CRUDItemsResponse<LedgerItem>
+export type ResponseLedger = LedgerItem
 
 export class Ledgers extends CRUDResource {
 
@@ -46,6 +47,10 @@ export class Ledgers extends CRUDResource {
                 callback?: ResponseCallback<ResponseLedgers>): Promise<ResponseLedgers> {
 
         return this._listRoute()(data, callback, ["transferId"], transferId)
+    }
+
+    public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseLedger>): Promise<ResponseLedger> {
+        return this._getRoute()(data, callback, ["id"], id)
     }
 
 }
