@@ -4,7 +4,8 @@ import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 
-export type ChargeStatus = "pending" | "successful" | "failed" | "error" | "canceled" | "awaiting"
+export type ChargeStatus = "pending" | "successful" | "failed" | "error" | "canceled" | "awaiting" | "authorized"
+export type CaptureStatus = "not_authorized" | "authorized" | "captured"
 
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
@@ -29,6 +30,8 @@ export interface ChargeItem {
     chargedAmount: number
     chargedCurrency: string
     chargedAmountFormatted: number
+    captureAt?: string
+    captureStatus?: CaptureStatus
     status: ChargeStatus
     error?: PaymentError
     metadata?: Metadata

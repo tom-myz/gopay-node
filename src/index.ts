@@ -8,6 +8,7 @@ import { CheckoutInfo } from "./resources/CheckoutInfo"
 import { Merchants } from "./resources/Merchants"
 import { Ledgers } from "./resources/Ledgers"
 import { Refunds } from "./resources/Refunds"
+import { Captures } from "./resources/Captures"
 import { Stores } from "./resources/Stores"
 import { Subscriptions } from "./resources/Subscriptions"
 import { TransactionTokens } from "./resources/TransactionTokens"
@@ -26,6 +27,7 @@ export default class SDK extends PaymentsSDK {
     public ledgers: Ledgers
     public platforms: Platforms
     public refunds: Refunds
+    public captures: Captures
     public stores: Stores
     public subscriptions: Subscriptions
     public transactionTokens: TransactionTokens
@@ -45,6 +47,7 @@ export default class SDK extends PaymentsSDK {
         this.ledgers = new Ledgers(this.api)
         this.platforms = new Platforms(this.api)
         this.refunds = new Refunds(this.api)
+        this.captures = new Captures(this.api)
         this.stores = new Stores(this.api)
         this.subscriptions = new Subscriptions(this.api)
         this.transactionTokens = new TransactionTokens(this.api)
