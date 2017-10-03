@@ -105,7 +105,7 @@ test("should return validation error response", async (t: TestContext) => {
     t.true(spy.calledWith(error))
 })
 
-test("should send request with authorization header", async (t: TestContext) => {
+test.serial("should send request with authorization header", async (t: TestContext) => {
     const asserts = [
         [{}, null, null],
         [{ appId : "id" }, null, "ApplicationToken id|"],
@@ -138,6 +138,27 @@ test("should send request with authorization header", async (t: TestContext) => 
         t.deepEqual(r, { ok : true })
     }
 
+    (global as any).fetch.restore()
+})
+
+test.serial("should send request with idempotent key", async (t: TestContext) => {
+    let mock: Scope
+
+    const spy = sandbox.spy(global as NodeJS.Global & GlobalFetch, "fetch")
+
+    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+
+    mock = scope
+        .get("/header")
+        .once()
+        .reply(200, { ok : true }, Object.assign(
+            { "Content-Type" : "application/json" }
+        ))
+
+    const r: any = await api.send("GET", "/header", { idempotentKey : "test" })
+
+    t.is((spy.getCall(0).args[0].headers as Headers).get("Idempotency-Key"), "test")
+    t.deepEqual(r, { ok : true });
     (global as any).fetch.restore()
 })
 

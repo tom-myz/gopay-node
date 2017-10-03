@@ -1,4 +1,4 @@
-import { RestAPI, HTTPMethod, ResponseCallback, ErrorResponse } from "../api/RestAPI"
+import {RestAPI, HTTPMethod, ResponseCallback, ErrorResponse, DataParams} from "../api/RestAPI"
 import { PathParameterError } from "../errors/PathParameterError"
 import { RequestParameterError } from "../errors/RequestParameterError"
 import { fromError } from "../errors/parser"
@@ -28,7 +28,7 @@ export abstract class Resource {
     public defineRoute(method: HTTPMethod, path: string, required: Array<string> = []): DefinedRoute {
         const api: RestAPI = this.api
 
-        return function route<A, B>(data?: A,
+        return function route<A, B>(data?: DataParams<A>,
                                     callback?: ResponseCallback<B>,
                                     pathParams: Array<string> = [],
                                     ...params: Array<string>): Promise<B> {

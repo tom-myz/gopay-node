@@ -37,13 +37,21 @@ export type ResponseCallback<A> = (response: A | ErrorResponse) => void
 export type PromiseResolve<A> = (value?: A | PromiseLike<A>) => void
 export type PromiseReject = (reason?: any) => void
 
+export const IDEMPOTENCY_KEY_HEADER: string = "Idempotency-Key"
+
 export interface AuthParams {
     appId?: string
     secret?: string
 }
 
+export interface IdempotentParams {
+    idempotentKey?: string
+}
+
+export type DataParams<T> = T & AuthParams & IdempotentParams
+
 export interface RestAPIStatic extends Function {
-    getData(data: any): Array<string>
+    getData: typeof RestAPI.getData
 }
 
 export type PromiseCreator<A> = () => Promise<A>
@@ -77,8 +85,10 @@ export class RestAPI {
         reject(err)
     }
 
-    public static getData(data: any): Array<any> {
-        return partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
+    public static getData<Data = any>(
+        data: DataParams<Data>
+    ): [Pick<DataParams<Data>, "appId" | "secret" | "idempotentKey">, Omit<DataParams<Data>, "appId" | "secret" | "idempotentKey">] {
+        return partitionKeys(data, "appId", "secret", "idempotentKey")
     }
 
     public appId: string
@@ -109,11 +119,18 @@ export class RestAPI {
         return headers
     }
 
-    public send<A>(method: HTTPMethod, url: string, data?: any, callback?: ResponseCallback<A>): Promise<A> {
+    public send<A, Data = any>(method: HTTPMethod,
+                               url: string,
+                               data?: Data & AuthParams & IdempotentParams,
+                               callback?: ResponseCallback<A>): Promise<A> {
         const payload: boolean = ["GET", "DELETE"].indexOf(method) !== -1
         const body: any = this.getBody(data, payload)
         const headers: Headers = this.getHeaders(data, body)
-        const [_, _data]: Array<string> = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
+        const [_requestParams, _data] = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
+
+        if (_requestParams.idempotentKey) {
+            headers.append(IDEMPOTENCY_KEY_HEADER, _requestParams.idempotentKey)
+        }
 
         return new Promise((resolve: PromiseResolve<A>, reject: PromiseReject) => {
             const params: RequestInit = {

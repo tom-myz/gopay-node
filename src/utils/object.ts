@@ -37,12 +37,12 @@ export function missingKeys(obj: any, keys: Array<string> = []): Array<string> {
     return missing
 }
 
-export function partitionKeys(obj: any, condition: (key: string) => boolean): Array<any> {
-    const left: any = {}
-    const right: any = {}
+export function partitionKeys<T, K extends keyof T>(obj: T, ...keys: K[]): [Pick<T, K>, Omit<T, K>] {
+    const left: Pick<T, K> = {} as any
+    const right: Omit<T, K> = {} as any
 
-    Object.keys(obj || {}).forEach((k: string) => {
-        if (condition(k)) {
+    Object.keys(obj || {}).forEach((k: K) => {
+        if (keys.indexOf(k) !== -1) {
             left[k] = obj[k]
         } else {
             right[k] = obj[k]
