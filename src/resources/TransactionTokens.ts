@@ -17,6 +17,12 @@ export const enum PaymentType {
     APPLE_PAY = "apple_pay"
 }
 
+export const enum TransactionTokenType {
+    ONE_TIME     = "one_time",
+    SUBSCRIPTION = "subscription",
+    RECURRING    = "recurring"
+}
+
 /* Request */
 
 export interface TransactionTokenCardData {
@@ -84,8 +90,6 @@ export interface TransactionTokenConvenienceDataItem {
     expirationDate?: string
     phoneNumber?: PhoneNumber
 }
-
-export type TransactionTokenType = "one_time" | "subscription" | "recurring"
 
 export interface TransactionTokenItem {
     id: string
