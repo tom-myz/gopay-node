@@ -1,9 +1,17 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export type BankAccountStatus = "new" | "unable_to_verify" | "verified" | "errored"
+export const enum BankAccountStatus {
+    NEW              = "new",
+    UNABLE_TO_VERIFY = "unable_to_verify",
+    VERIFIED         = "verified",
+    ERRORED          = "errored"
+}
 
-export type BankAccountType = "checking" | "savings"
+export const enum BankAccountType {
+    CHECKING = "checking",
+    SAVINGS  = "savings"
+}
 
 /* Request */
 export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {

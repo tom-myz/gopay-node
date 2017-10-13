@@ -3,8 +3,14 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
+import { Resource } from "./Resource"
 
-export type CancelStatus = "pending" | "successful" | "failed" | "error"
+export const enum CancelStatus {
+    PENDING    = "pending",
+    SUCCESSFUL = "successful",
+    FAILED     = "failed",
+    ERROR      = "error"
+}
 
 /* Request */
 export interface CancelsListParams extends CRUDPaginationParams, AuthParams {}
@@ -57,6 +63,11 @@ export class Cancels extends CRUDResource {
                callback?: ResponseCallback<ResponseCancel>): Promise<ResponseCancel> {
 
         return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
+    }
+
+    public socket(storeId: string, chargeId: string, id: string): WebSocket {
+        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, chargeId, id })
+        return new WebSocket(`${this.api.endpoint.replace(/^http/, "ws")}${path}`)
     }
 
     public poll(storeId: string,

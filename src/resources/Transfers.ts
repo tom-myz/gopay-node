@@ -2,7 +2,14 @@ import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 
-export type TransferStatus = "created" | "approved" | "cancelled" | "processing" | "paid" | "failed"
+export const enum TransferStatus {
+    CREATED    = "created",
+    APPROVED   = "approved",
+    CANCELLED  = "cancelled",
+    PROCESSING = "processing",
+    PAID       = "paid",
+    FAILEd     = "failed"
+}
 
 /* Request */
 export interface TransfersListParams extends CRUDPaginationParams, AuthParams {

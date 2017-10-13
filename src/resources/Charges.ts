@@ -3,9 +3,24 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
+import { Resource } from "./Resource"
 
-export type ChargeStatus = "pending" | "successful" | "failed" | "error" | "canceled" | "awaiting" | "authorized"
-export type CaptureStatus = "not_authorized" | "authorized" | "captured"
+export const enum ChargeStatus {
+    PENDING    = "pending",
+    SUCCESSFUL = "successful",
+    FAILED     = "failed",
+    ERROR      = "error",
+    CANCELLED  = "cancelled",
+    AWAITING   = "awaiting",
+    AUTHORIZED = "authorized"
+}
+
+export const enum CaptureStatus {
+    PENDING    = "pending",
+    SUCCESSFUL = "successful",
+    FAILED     = "failed",
+    ERROR      = "error"
+}
 
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
@@ -59,6 +74,11 @@ export class Charges extends CRUDResource {
 
     public get(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
+    }
+
+    public socket(storeId: string, id: string): WebSocket {
+        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, id })
+        return new WebSocket(`${this.api.endpoint.replace(/^http/, "ws")}${path}`)
     }
 
     public poll(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {

@@ -4,7 +4,10 @@ import { expect } from "chai"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { Subscriptions, SubscriptionCreateParams, SubscriptionUpdateParams } from "../../src/resources/Subscriptions"
+import {
+    Subscriptions, SubscriptionCreateParams, SubscriptionUpdateParams,
+    SubscriptionPeriod
+} from "../../src/resources/Subscriptions"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
@@ -44,7 +47,7 @@ test("route POST /subscriptions # should return correct response", async (t: Tes
         transactionTokenId : "test",
         amount             : 1,
         currency           : "usd",
-        period             : "monthly"
+        period             : SubscriptionPeriod.MONTHLY
     }
 
     const r: any = await subscriptions.create(data)

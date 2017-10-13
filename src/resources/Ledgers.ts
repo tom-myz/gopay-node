@@ -4,7 +4,11 @@ import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 
-export type LedgerOrigin = "charge" | "refund" | "manual"
+export const enum LedgerOrigin {
+    CHARGE = "charge",
+    REFUND = "refund",
+    MANUAL = "manual"
+}
 
 /* Request */
 export interface LedgersListParams extends CRUDPaginationParams, AuthParams {

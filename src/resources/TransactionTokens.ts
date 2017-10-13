@@ -3,7 +3,19 @@ import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDRes
 import { ProcessingMode } from "./common/ProcessingMode"
 import { PhoneNumber } from "./common/PhoneNumber"
 
-export type UsageLimit = "daily" | "weekly" | "monthly" | "yearly"
+export const enum UsageLimit {
+    DAILY   = "daily",
+    WEEKLY  = "weekly",
+    MONTHLY = "monthly",
+    YEARLY  = "yearly"
+}
+
+export const enum PaymentType {
+    CARD      = "card",
+    QR_SCAN   = "qr_scan",
+    KONBINI   = "konbini",
+    APPLE_PAY = "apple_pay"
+}
 
 /* Request */
 

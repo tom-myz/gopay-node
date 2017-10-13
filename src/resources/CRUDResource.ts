@@ -1,7 +1,10 @@
 import { RestAPI } from "../api/RestAPI"
 import { Resource, DefinedRoute } from "./Resource"
 
-export type CursorDirection = "asc" | "desc"
+export const enum CursorDirection {
+    ASC  = "asc",
+    DESC = "desc"
+}
 
 /* Request */
 export interface CRUDPaginationParams {
