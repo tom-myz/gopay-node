@@ -3,7 +3,11 @@ import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
 import { PhoneNumber } from "./common/PhoneNumber"
 
-export type RecurringTokenPrivilege = "none" | "bounded" | "infinite"
+export const enum RecurringTokenPrivilege {
+    NONE     = "none",
+    BOUNDED  = "bounded",
+    INFINITE = "infinite"
+}
 
 export interface BaseVerification<T> extends AuthParams {
     homepageUrl: string

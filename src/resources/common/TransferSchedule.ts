@@ -1,4 +1,8 @@
-export type TransferPeriod = "weekly" | "biweekly" | "monthly"
+export const enum TransferPeriod {
+    WEEKLY   = "weekly",
+    BIWEEKLY = "biweekly",
+    MONTHLY  = "monthly"
+}
 
 export interface TransferSchedule {
     period: TransferPeriod

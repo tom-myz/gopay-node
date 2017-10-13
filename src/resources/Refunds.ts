@@ -3,10 +3,20 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
+import { Resource } from "./Resource"
 
-export type RefundStatus = "pending" | "successful" | "failed" | "error"
+export const enum RefundStatus {
+    PENDING    = "pending",
+    SUCCESSFUL = "successful",
+    FAILED     = "failed",
+    ERROR      = "error"
+}
 
-export type RefundReason = "duplicate" | "fraud" | "customer_request"
+export const enum RefundReason {
+    DUPLICATE        = "duplicate",
+    FRAUD            = "fraud",
+    CUSTOMER_REQUEST = "customer_request"
+}
 
 /* Request */
 export interface RefundsListParams extends CRUDPaginationParams, AuthParams {}
@@ -68,6 +78,11 @@ export class Refunds extends CRUDResource {
                callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
+    }
+
+    public socket(storeId: string, chargeId: string, id: string): WebSocket {
+        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, chargeId, id })
+        return new WebSocket(`${this.api.endpoint.replace(/^http/, "ws")}${path}`)
     }
 
     public poll(storeId: string,

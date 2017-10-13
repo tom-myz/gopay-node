@@ -3,10 +3,25 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { ResponseCharges, ChargesListParams } from "./Charges"
+import { Resource } from "./Resource"
 
-export type SubscriptionPeriod = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "biannually" | "annually"
+export const enum SubscriptionPeriod {
+    DAILY      = "daily",
+    WEEKLY     = "weekly",
+    BIWEEKLY   = "biweekly",
+    MONTHLY    = "monthly",
+    QUARTERLY  = "quarterly",
+    BIANNUALLY = "biannually",
+    ANNUALLY   = "annually"
+}
 
-export type SubscriptionStatus = "unverified" | "current" | "unpaid" | "cancelled" | "unconfirmed"
+export const enum SubscriptionStatus {
+    UNVERIFIED  = "unverified",
+    CURRENT     = "current",
+    UNPAID      = "unpaid",
+    CANCELLED   = "cancelled",
+    UNCONFIRMED = "unconfirmed"
+}
 
 /* Request */
 export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParams {
@@ -99,6 +114,11 @@ export class Subscriptions extends CRUDResource {
         return this.defineRoute("GET", `${Subscriptions.routeBase}/:id/charges`)(
             data, callback, ["storeId", "id"], storeId, id
         )
+    }
+
+    public socket(storeId: string, id: string): WebSocket {
+        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, id })
+        return new WebSocket(`${this.api.endpoint.replace(/^http/, "ws")}${path}`)
     }
 
     public poll(storeId: string,
