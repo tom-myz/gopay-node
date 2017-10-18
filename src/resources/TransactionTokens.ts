@@ -2,6 +2,7 @@ import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { PhoneNumber } from "./common/PhoneNumber"
+import { WithIdempotentKey } from "./common/Common"
 
 export const enum UsageLimit {
     DAILY   = "daily",
@@ -44,7 +45,7 @@ export interface TransactionTokenQRScanData {
     scannedQR: string
 }
 
-export interface TransactionTokenCreateParams extends AuthParams {
+export interface TransactionTokenCreateParams extends AuthParams, WithIdempotentKey {
     paymentType: string
     type: TransactionTokenType
     email: string

@@ -4,6 +4,7 @@ import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { Resource } from "./Resource"
+import { WithIdempotentKey } from "./common/Common"
 
 export const enum ChargeStatus {
     PENDING    = "pending",
@@ -25,7 +26,7 @@ export const enum CaptureStatus {
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
 
-export interface ChargeCreateParams extends AuthParams {
+export interface ChargeCreateParams extends AuthParams, WithIdempotentKey {
     transactionTokenId: string
     amount: number
     currency: string

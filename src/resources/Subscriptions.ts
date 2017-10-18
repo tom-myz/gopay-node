@@ -4,6 +4,7 @@ import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { ResponseCharges, ChargesListParams } from "./Charges"
 import { Resource } from "./Resource"
+import { WithIdempotentKey } from "./common/Common"
 
 export const enum SubscriptionPeriod {
     DAILY      = "daily",
@@ -30,7 +31,7 @@ export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParam
     mode?: ProcessingMode
 }
 
-export interface SubscriptionCreateParams extends AuthParams {
+export interface SubscriptionCreateParams extends AuthParams, WithIdempotentKey {
     transactionTokenId: string
     amount: number
     currency: string
@@ -38,7 +39,7 @@ export interface SubscriptionCreateParams extends AuthParams {
     metadata?: Metadata
 }
 
-export interface SubscriptionUpdateParams extends AuthParams {
+export interface SubscriptionUpdateParams extends AuthParams, WithIdempotentKey {
     transactionTokenId?: string
     amount?: number
     metadata?: Metadata
