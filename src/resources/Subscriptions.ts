@@ -119,7 +119,8 @@ export class Subscriptions extends CRUDResource {
 
     public socket(storeId: string, id: string): WebSocket {
         const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, id })
-        return new WebSocket(`${this.api.endpoint.replace(/^http/, "ws")}${path}`)
+        const url: string = this.api.getWebSocketUrl(path)
+        return new WebSocket(url)
     }
 
     public poll(storeId: string,

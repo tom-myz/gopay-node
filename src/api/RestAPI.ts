@@ -119,6 +119,11 @@ export class RestAPI {
         return headers
     }
 
+    public getWebSocketUrl(path: string): string {
+        const auth: string = `ApplicationToken:${this.appId || ""}@`
+        return `${this.endpoint.replace(/^http(s?:\/\/)(.*)/, `ws$1${auth}$2`)}${path}`
+    }
+
     public send<A, Data = any>(method: HTTPMethod,
                                url: string,
                                data?: Data & AuthParams & IdempotentParams,
