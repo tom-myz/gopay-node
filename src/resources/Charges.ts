@@ -17,10 +17,9 @@ export const enum ChargeStatus {
 }
 
 export const enum CaptureStatus {
-    PENDING    = "pending",
-    SUCCESSFUL = "successful",
-    FAILED     = "failed",
-    ERROR      = "error"
+    NOT_AUTHORIZED = "not_authorized",
+    AUTHORIZED     = "authorized",
+    CAPTURED       = "captured"
 }
 
 /* Request */
