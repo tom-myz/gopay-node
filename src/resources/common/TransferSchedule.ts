@@ -1,8 +1,8 @@
 export const enum TransferPeriod {
-    WEEKLY          = "weekly",
-    BIWEEKLY        = "biweekly",
-    SEMI_MONTHLY    = "semi_monthly",
-    MONTHLY         = "monthly"
+    WEEKLY      = "weekly",
+    BIWEEKLY    = "biweekly",
+    SEMIMONTHLY = "semimonthly",
+    MONTHLY     = "monthly"
 }
 
 export const enum DayOfWeek {

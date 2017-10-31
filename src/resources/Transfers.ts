@@ -8,7 +8,7 @@ export const enum TransferStatus {
     CANCELLED  = "cancelled",
     PROCESSING = "processing",
     PAID       = "paid",
-    FAILEd     = "failed"
+    FAILED     = "failed"
 }
 
 /* Request */

@@ -7,13 +7,13 @@ import { Resource } from "./Resource"
 import { WithIdempotentKey } from "./common/Common"
 
 export const enum SubscriptionPeriod {
-    DAILY      = "daily",
-    WEEKLY     = "weekly",
-    BIWEEKLY   = "biweekly",
-    MONTHLY    = "monthly",
-    QUARTERLY  = "quarterly",
-    BIANNUALLY = "biannually",
-    ANNUALLY   = "annually"
+    DAILY        = "daily",
+    WEEKLY       = "weekly",
+    BIWEEKLY     = "biweekly",
+    MONTHLY      = "monthly",
+    QUARTERLY    = "quarterly",
+    SEMIANNUALLY = "semiannually",
+    ANNUALLY     = "annually"
 }
 
 export const enum SubscriptionStatus {
