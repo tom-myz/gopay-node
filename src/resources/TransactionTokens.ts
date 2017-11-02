@@ -46,7 +46,7 @@ export interface TransactionTokenQRScanData {
 }
 
 export interface TransactionTokenCreateParams extends AuthParams, WithIdempotentKey {
-    paymentType: string
+    paymentType: PaymentType
     type: TransactionTokenType
     email: string
     usageLimit?: UsageLimit

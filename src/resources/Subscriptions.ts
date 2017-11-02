@@ -133,7 +133,7 @@ export class Subscriptions extends CRUDResource {
 
         return this.api.longPolling(
             promise,
-            (response: ResponseSubscription) => response.status !== "unverified",
+            (response: ResponseSubscription) => response.status !== SubscriptionStatus.UNVERIFIED,
             callback
         )
     }

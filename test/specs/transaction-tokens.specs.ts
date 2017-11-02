@@ -4,6 +4,7 @@ import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import {
+    PaymentType,
     TransactionTokenCreateParams, TransactionTokens, TransactionTokenType
 } from "../../src/resources/TransactionTokens"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
@@ -27,7 +28,7 @@ test("route POST /tokens # should return correct response", async (t: TestContex
         .reply(201, okResponse, { "Content-Type" : "application/json" })
 
     const data: TransactionTokenCreateParams = {
-        paymentType: "test",
+        paymentType: PaymentType.CARD,
         email: "test",
         type: TransactionTokenType.ONE_TIME,
         data: {} as any
