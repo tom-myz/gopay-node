@@ -16,12 +16,6 @@ export const enum ChargeStatus {
     AUTHORIZED = "authorized"
 }
 
-export const enum CaptureStatus {
-    NOT_AUTHORIZED = "not_authorized",
-    AUTHORIZED     = "authorized",
-    CAPTURED       = "captured"
-}
-
 /* Request */
 export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
 
@@ -46,7 +40,6 @@ export interface ChargeItem {
     chargedCurrency: string
     chargedAmountFormatted: number
     captureAt?: string
-    captureStatus?: CaptureStatus
     status: ChargeStatus
     error?: PaymentError
     metadata?: Metadata
