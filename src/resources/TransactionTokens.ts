@@ -45,12 +45,18 @@ export interface TransactionTokenQRScanData {
     scannedQR: string
 }
 
+export interface TransactionTokenConvenienceData {
+    customerName: string
+    convenienceStore: string
+    phoneNumber: PhoneNumber
+}
+
 export interface TransactionTokenCreateParams extends AuthParams, WithIdempotentKey {
     paymentType: PaymentType
     type: TransactionTokenType
     email: string
     usageLimit?: UsageLimit
-    data: TransactionTokenCardData | TransactionTokenQRScanData
+    data: TransactionTokenCardData | TransactionTokenQRScanData | TransactionTokenConvenienceData
 }
 
 export interface TransactionTokenListParams extends CRUDPaginationParams, AuthParams {}
