@@ -92,7 +92,7 @@ export class Refunds extends CRUDResource {
                 data?: AuthParams,
                 callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
         const promise: () => Promise<ResponseRefund> = () => this._getRoute()(
-            data, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
+            { ...data, poll : true }, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
         )
 
         return this.api.longPolling(

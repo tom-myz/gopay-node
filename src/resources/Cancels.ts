@@ -77,7 +77,7 @@ export class Cancels extends CRUDResource {
                 data?: AuthParams,
                 callback?: ResponseCallback<ResponseCancel>): Promise<ResponseCancel> {
         const promise: () => Promise<ResponseCancel> = () => this._getRoute()(
-            data, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
+            { ...data, poll : true }, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
        )
 
         return this.api.longPolling(

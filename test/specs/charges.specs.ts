@@ -81,7 +81,7 @@ test("route GET /stores/:storeId/charges/:id # should return correct response", 
 test("route GET /stores/:storeId/charges/:id # should perform long polling until charge is processed", async (t: TestContext) => {
     const spy = sandbox.spy(global as NodeJS.Global & GlobalFetch, "fetch")
     const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+$/i)
+        .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+(.*)$/i)
         .once()
         .reply(200, () => ({ status : "success" }), { "Content-Type" : "application/json" })
 

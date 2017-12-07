@@ -44,6 +44,10 @@ export interface AuthParams {
     secret?: string
 }
 
+export interface PollParams {
+    poll: boolean
+}
+
 export interface IdempotentParams {
     idempotentKey?: string
 }

@@ -76,7 +76,9 @@ export class Charges extends CRUDResource {
     }
 
     public poll(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
-        const promise: () => Promise<ResponseCharge> = () => this._getRoute()(data, null, ["storeId", "id"], storeId, id)
+        const promise: () => Promise<ResponseCharge> = () => this._getRoute()(
+            { ...data, poll : true }, null, ["storeId", "id"], storeId, id
+        )
         return this.api.longPolling(
             promise,
             (response: ResponseCharge) => response.status !== ChargeStatus.PENDING,
