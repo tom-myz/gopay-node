@@ -25,7 +25,8 @@ export interface CardConfigurationItem extends PaymentTypeConfiguration {
     foreignCardsAllowed: boolean
     failOnNewEmail: boolean
     allowedCountriesByIp: Array<string>
-    monthlyLimit: CardConfigurationMonthlyLimit
+    cardLimit: CardConfigurationMonthlyLimit
+    allowEmptyCvv: boolean
 }
 
 export type QRScanConfigurationItem = PaymentTypeConfiguration
