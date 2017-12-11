@@ -1,4 +1,4 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import {ResponseCallback, AuthParams, PollParams} from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
@@ -59,16 +59,10 @@ export class Cancels extends CRUDResource {
     public get(storeId: string,
                chargeId: string,
                id: string,
-               data?: AuthParams,
+               data?: AuthParams & Partial<PollParams>,
                callback?: ResponseCallback<ResponseCancel>): Promise<ResponseCancel> {
 
         return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
-    }
-
-    public socket(storeId: string, chargeId: string, id: string): WebSocket {
-        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, chargeId, id })
-        const url: string = this.api.getWebSocketUrl(path)
-        return new WebSocket(url)
     }
 
     public poll(storeId: string,
@@ -76,14 +70,16 @@ export class Cancels extends CRUDResource {
                 id: string,
                 data?: AuthParams,
                 callback?: ResponseCallback<ResponseCancel>): Promise<ResponseCancel> {
-        const promise: () => Promise<ResponseCancel> = () => this._getRoute()(
-            { ...data, poll : true }, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
-       )
-
+        const promise: () => Promise<ResponseCancel> = () => this.get(
+            storeId,
+            chargeId,
+            id,
+            { ...data, poll : true }
+        )
         return this.api.longPolling(
-                promise,
-                (response: ResponseCancel) => response.status !== "pending",
-                callback
+            promise,
+            (response: ResponseCancel) => response.status !== CancelStatus.PENDING,
+            callback
         )
     }
 

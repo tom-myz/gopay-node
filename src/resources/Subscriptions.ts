@@ -1,4 +1,4 @@
-import { ResponseCallback, AuthParams, ErrorResponse } from "../api/RestAPI"
+import {ResponseCallback, AuthParams, ErrorResponse, PollParams} from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
@@ -85,7 +85,7 @@ export class Subscriptions extends CRUDResource {
 
     public get(storeId: string,
                id: string,
-               data?: AuthParams,
+               data?: AuthParams & Partial<PollParams>,
                callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
@@ -117,20 +117,15 @@ export class Subscriptions extends CRUDResource {
         )
     }
 
-    public socket(storeId: string, id: string): WebSocket {
-        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, id })
-        const url: string = this.api.getWebSocketUrl(path)
-        return new WebSocket(url)
-    }
-
     public poll(storeId: string,
                 id: string,
                 data?: AuthParams,
                 callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
-        const promise: () => Promise<ResponseSubscription> = () => this._getRoute()(
-            { ...data, poll : true }, null, ["storeId", "id"], storeId, id
+        const promise: () => Promise<ResponseSubscription> = () => this.get(
+            storeId,
+            id,
+            { ...data, poll : true }
         )
-
         return this.api.longPolling(
             promise,
             (response: ResponseSubscription) => response.status !== SubscriptionStatus.UNVERIFIED,
