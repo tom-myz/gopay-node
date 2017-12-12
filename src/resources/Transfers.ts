@@ -5,7 +5,7 @@ import { Metadata } from "./common/Metadata"
 export const enum TransferStatus {
     CREATED    = "created",
     APPROVED   = "approved",
-    CANCELLED  = "cancelled",
+    CANCELED   = "canceled",
     PROCESSING = "processing",
     PAID       = "paid",
     FAILED     = "failed"

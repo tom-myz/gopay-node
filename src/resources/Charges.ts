@@ -11,7 +11,7 @@ export const enum ChargeStatus {
     SUCCESSFUL = "successful",
     FAILED     = "failed",
     ERROR      = "error",
-    CANCELLED  = "cancelled",
+    CANCELED   = "canceled",
     AWAITING   = "awaiting",
     AUTHORIZED = "authorized"
 }

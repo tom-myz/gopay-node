@@ -2,7 +2,7 @@ import { ResponseCallback, AuthParams } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { RecurringTokenPrivilege } from "./Verification"
-import { CardConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
+import { CardConfigurationItem, ConvenienceConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
 
 /* Request */
 export interface CheckoutInfoParams extends AuthParams {
@@ -26,9 +26,9 @@ export interface CheckoutInfoItem {
     name: string
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
+    convenienceConfiguration: ConvenienceConfigurationItem
     logoImage?: string
     theme: {
-        dark: boolean
         colors: CheckoutColors
     }
 }

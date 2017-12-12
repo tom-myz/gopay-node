@@ -20,7 +20,7 @@ export const enum SubscriptionStatus {
     UNVERIFIED  = "unverified",
     CURRENT     = "current",
     UNPAID      = "unpaid",
-    CANCELLED   = "cancelled",
+    CANCELED    = "canceled",
     UNCONFIRMED = "unconfirmed"
 }
 
