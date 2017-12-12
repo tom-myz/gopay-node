@@ -12,15 +12,10 @@ export interface RecurringTokenConfiguration {
     chargeWaitPeriod?: string
 }
 
-export interface SecurityConfiguration {
-    inspectSuspiciousLoginAfter?: string
-}
-
 export interface MerchantConfigurationItem extends ConfigurationItem {
     waitPeriod?: string
     transferSchedule?: TransferSchedule
     recurringTokenConfiguration?: RecurringTokenConfiguration
-    securityConfiguration?: SecurityConfiguration
     language?: string
 }
 

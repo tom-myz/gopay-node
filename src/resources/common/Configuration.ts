@@ -33,6 +33,15 @@ export type QRScanConfigurationItem = PaymentTypeConfiguration
 
 export type ConvenienceConfigurationItem = PaymentTypeConfiguration
 
+export interface SecurityConfiguration {
+    inspectSuspiciousLoginAfter?: string
+    limitChargeByCardConfiguration?: {
+        quantityOfCharges: number
+        durationWindow: string
+    }
+    refundPercentLimit?: number
+}
+
 export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
@@ -41,6 +50,7 @@ export interface ConfigurationItem {
     flatFees: Array<AmountWithCurrency>
     percentFee: number
     logoUrl?: string
+    securityConfiguration?: SecurityConfiguration
 }
 
 export interface ConfigurationParams {
