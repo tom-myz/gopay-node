@@ -19,6 +19,7 @@ export interface BaseVerification<T> extends AuthParams {
     systemManagerEmail?: string
     recurringTokenRequest?: RecurringTokenPrivilege
     recurringTokenRequestReason?: string
+    allowEmptyCVV?: boolean
 }
 
 /* Request */
