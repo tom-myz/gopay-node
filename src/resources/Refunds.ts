@@ -30,6 +30,13 @@ export interface RefundCreateParams extends AuthParams {
     metadata?: Metadata
 }
 
+export interface RefundUpdateParams extends AuthParams {
+    status?: RefundStatus
+    reason?: RefundReason
+    message?: string
+    metadata?: Metadata
+}
+
 /* Response */
 export interface RefundItem {
     id: string
@@ -81,10 +88,13 @@ export class Refunds extends CRUDResource {
         return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
     }
 
-    public socket(storeId: string, chargeId: string, id: string): WebSocket {
-        const path: string = Resource.compilePath(`${this._routeBase}/:id`, { storeId, chargeId, id })
-        const url: string = this.api.getWebSocketUrl(path)
-        return new WebSocket(url)
+    public update(storeId: string,
+                  chargeId: string,
+                  id: string,
+                  data?: RefundUpdateParams,
+                  callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+
+        return this._updateRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
     }
 
     public poll(storeId: string,
