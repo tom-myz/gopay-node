@@ -15,7 +15,8 @@ export const enum RefundStatus {
 export const enum RefundReason {
     DUPLICATE        = "duplicate",
     FRAUD            = "fraud",
-    CUSTOMER_REQUEST = "customer_request"
+    CUSTOMER_REQUEST = "customer_request",
+    CHARGEBACK       = "chargeback"
 }
 
 /* Request */
