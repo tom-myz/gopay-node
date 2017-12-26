@@ -9,6 +9,7 @@ export interface PlatformUserDefaults {
     flatFees: Array<AmountWithCurrency>
     waitPeriod: string
     cardBrandPercentFees: Partial<CardBrandPercentFeesItem>
+    minTransferPayout: AmountWithCurrency;
 }
 
 export interface PlatformPaymentDefaults {
