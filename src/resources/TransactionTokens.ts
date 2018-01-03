@@ -18,6 +18,19 @@ export const enum PaymentType {
     APPLE_PAY = "apple_pay"
 }
 
+export const enum ConvenienceStore {
+    SEVEN_ELEVEN         = "seven_eleven",
+    FAMILY_MART          = "family_mart",
+    LAWSON               = "lawson",
+    MINI_STOP            = "mini_stop",
+    SEICO_MART           = "seico_mart",
+    PAY_EASY             = "pay_easy",
+    CIRCLE_K             = "circle_k",
+    SUNKUS               = "sunkus",
+    DAILY_YAMAZAKI       = "daily_yamazaki",
+    YAMAZAKI_DAILY_STORE = "yamazaki_daily_store"
+}
+
 export const enum TransactionTokenType {
     ONE_TIME     = "one_time",
     SUBSCRIPTION = "subscription",
@@ -47,7 +60,7 @@ export interface TransactionTokenQRScanData {
 
 export interface TransactionTokenConvenienceData {
     customerName: string
-    convenienceStore: string
+    convenienceStore: ConvenienceStore
     phoneNumber: PhoneNumber
 }
 
@@ -92,7 +105,7 @@ export interface TransactionTokenCardDataItem {
 }
 export type TransactionTokenQRScanDataItem = object
 export interface TransactionTokenConvenienceDataItem {
-    convenienceStore?: string
+    convenienceStore?: ConvenienceStore
     customerName?: string
     expirationDate?: string
     phoneNumber?: PhoneNumber
@@ -106,7 +119,7 @@ export interface TransactionTokenItem {
     createdOn: string
     lastUsedOn: string
     type: TransactionTokenType
-    paymentType: string
+    paymentType: PaymentType
     usageLimit?: UsageLimit
     data?: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem | TransactionTokenConvenienceDataItem
 }
