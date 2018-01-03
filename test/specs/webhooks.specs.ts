@@ -3,7 +3,7 @@ import { test, TestContext } from "ava"
 import * as nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { WebHooks } from "../../src/resources/WebHooks"
+import { WebHooks, WebHookTrigger } from "../../src/resources/WebHooks"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
@@ -36,7 +36,7 @@ test("route POST /stores/:storeId/webhooks # should return correct response", as
         .once()
         .reply(201, okResponse, { "Content-Type" : "application/json" })
     const data = {
-        triggers: ["test"],
+        triggers: [WebHookTrigger.CHARGE_FINISHED],
         url: "test"
     }
 
@@ -75,7 +75,7 @@ test("route PATCH /stores/:storeId/webhooks/:id # should return correct response
         .once()
         .reply(200, okResponse, { "Content-Type" : "application/json" })
     const data = {
-        triggers: ["test"],
+        triggers: [WebHookTrigger.CHARGE_FINISHED],
         url: "test"
     }
 

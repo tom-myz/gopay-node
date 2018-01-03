@@ -1,15 +1,28 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
+export const enum WebHookTrigger {
+    // Store
+    CHARGE_FINISHED       = "charge_finished",
+    SUBSCRIPTION_PAYMENT  = "subscription_payment",
+    SUBSCRIPTION_FAILURE  = "subscription_failure",
+    SUBSCRIPTION_CANCELED = "subscription_canceled",
+    REFUND_FINISHED       = "refund_finished",
+    CANCEL_FINISHED       = "cancel_finished",
+
+    // Merchant
+    TRANSFER_FINALIZED    = "transfer_finalized"
+}
+
 /* Request */
 export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
 
 export interface WebHookCreateParams extends AuthParams {
-    triggers: Array<string>
+    triggers: Array<WebHookTrigger>
     url: string
 }
 export interface WebHookUpdateParams extends AuthParams {
-    triggers?: Array<string>
+    triggers?: Array<WebHookTrigger>
     url?: string
 }
 
@@ -18,7 +31,7 @@ export interface WebHookItem {
     id: string
     merchantId: string
     storeId: string
-    triggers: Array<string>
+    triggers: Array<WebHookTrigger>
     url: string
     createdOn: string
 }
