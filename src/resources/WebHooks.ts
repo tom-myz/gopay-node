@@ -4,6 +4,7 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 export const enum WebHookTrigger {
     // Store
     CHARGE_FINISHED       = "charge_finished",
+    CHARGE_UPDATED        = "charge_updated",
     SUBSCRIPTION_PAYMENT  = "subscription_payment",
     SUBSCRIPTION_FAILURE  = "subscription_failure",
     SUBSCRIPTION_CANCELED = "subscription_canceled",
