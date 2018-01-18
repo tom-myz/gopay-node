@@ -1,6 +1,6 @@
 {
   "name": "gopay-node",
-  "version": "0.3.80",
+  "version": "0.4.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -78,7 +78,9 @@
     "files": [
       "test/**/*.specs.js"
     ],
-    "require": ["babel-register"],
+    "require": [
+      "babel-register"
+    ],
     "babel": "inherit",
     "tap": true
   }
