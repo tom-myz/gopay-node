@@ -70,8 +70,7 @@
     "clean": "rimraf lib",
     "test": "npm run linter && npm run ava",
     "ava": "tsc -p tsconfig.tests.json && nyc ava | tap-nyan",
-    "build": "rimraf lib && tsc && npm run postprocess",
-    "postprocess": "sed -i -e \"s#\\(exports\\.DEFAULT_ENDPOINT = \\\"\\)\\(.*\\)\\(\\\";\\)#\\1${GOPAY_API_ENDPOINT}\\3#g\" ./lib/constants.js",
+    "build": "rimraf lib && tsc --outDir lib",
     "preversion": "npm test"
   },
   "ava": {
