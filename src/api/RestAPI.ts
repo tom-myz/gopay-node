@@ -1,8 +1,6 @@
-"use strict"
-
 import "isomorphic-fetch"
-import * as process from "process"
-import * as decamelize from "decamelize"
+import process from "process"
+import decamelize from "decamelize"
 import {
     DEFAULT_ENDPOINT,
     ENV_KEY_ENDPOINT,
@@ -16,8 +14,18 @@ import { checkStatus, parseJSON } from "../utils/fetch"
 import { TimeoutError } from "../errors/TimeoutError"
 import { fromError } from "../errors/parser"
 import { stringify as stringifyQuery } from "query-string"
+import { Omit } from "type-zoo"
+import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError"
 
-export type HTTPMethod = "GET" | "POST" | "PATCH" | "DELETE"
+export const enum HTTPMethod {
+    GET    = "GET",
+    POST   = "POST",
+    PATCH  = "PATCH",
+    UPDATE = "PATCH",
+    DELETE = "DELETE",
+    OPTION = "OPTION",
+    HEAD   = "HEAD"
+}
 
 export interface RestAPIOptions {
     endpoint?: string
@@ -25,11 +33,19 @@ export interface RestAPIOptions {
     secret?: string
 }
 
+export interface SubError {
+    reason: RequestErrorCode | ResponseErrorCode
+}
+
+export interface ValidationError extends SubError {
+    field: string
+}
+
 export interface ErrorResponse {
     httpCode?: number
     status: string
-    code: string
-    errors: Array<{[key: string]: string}>
+    code: ResponseErrorCode | RequestErrorCode
+    errors: Array<SubError | ValidationError>
 }
 
 export type ResponseCallback<A> = (response: A | ErrorResponse) => void
@@ -132,7 +148,7 @@ export class RestAPI {
                                url: string,
                                data?: Data & AuthParams & IdempotentParams,
                                callback?: ResponseCallback<A>): Promise<A> {
-        const payload: boolean = ["GET", "DELETE"].indexOf(method) !== -1
+        const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) !== -1
         const body: any = this.getBody(data, payload)
         const headers: Headers = this.getHeaders(data, body)
         const [_requestParams, _data] = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)

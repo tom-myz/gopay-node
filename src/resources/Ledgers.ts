@@ -1,4 +1,4 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
@@ -54,7 +54,7 @@ export class Ledgers extends CRUDResource {
     }
 
     public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseLedger>): Promise<ResponseLedger> {
-        return this.defineRoute("GET", "/ledgers/:id")(data, callback, ["id"], id)
+        return this.defineRoute(HTTPMethod.GET, "/ledgers/:id")(data, callback, ["id"], id)
     }
 
 }

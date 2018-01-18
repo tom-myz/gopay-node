@@ -1,4 +1,4 @@
-import {ResponseCallback, AuthParams, ErrorResponse, PollParams} from "../api/RestAPI"
+import { ResponseCallback, AuthParams, ErrorResponse, PollParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 import { ProcessingMode } from "./common/ProcessingMode"
@@ -21,7 +21,8 @@ export const enum SubscriptionStatus {
     CURRENT     = "current",
     UNPAID      = "unpaid",
     CANCELED    = "canceled",
-    UNCONFIRMED = "unconfirmed"
+    UNCONFIRMED = "unconfirmed",
+    COMPLETED   = "completed"
 }
 
 /* Request */
@@ -74,13 +75,13 @@ export class Subscriptions extends CRUDResource {
                 callback?: ResponseCallback<ResponseSubscriptions>,
                 storeId?: string): Promise<ResponseSubscriptions> {
 
-        return this.defineRoute("GET", "(/stores/:storeId)/subscriptions")(data, callback, ["storeId"], storeId)
+        return this.defineRoute(HTTPMethod.GET, "(/stores/:storeId)/subscriptions")(data, callback, ["storeId"], storeId)
     }
 
     public create(data: SubscriptionCreateParams,
                   callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
-        return this.defineRoute("POST", "/subscriptions", Subscriptions.requiredParams)(data, callback)
+        return this.defineRoute(HTTPMethod.POST, "/subscriptions", Subscriptions.requiredParams)(data, callback)
     }
 
     public get(storeId: string,
@@ -112,7 +113,7 @@ export class Subscriptions extends CRUDResource {
                    data?: ChargesListParams,
                    callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
 
-        return this.defineRoute("GET", `${Subscriptions.routeBase}/:id/charges`)(
+        return this.defineRoute(HTTPMethod.GET, `${Subscriptions.routeBase}/:id/charges`)(
             data, callback, ["storeId", "id"], storeId, id
         )
     }

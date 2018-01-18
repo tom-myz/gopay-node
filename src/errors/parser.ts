@@ -1,44 +1,42 @@
 import { ErrorResponse } from "../api/RestAPI"
-import { GenericError } from "./GenericError"
-import { APIError } from "./APIError"
+import { APIError, RequestErrorCode, ResponseErrorCode } from "./APIError"
 import { PathParameterError } from "./PathParameterError"
 import { RequestParameterError } from "./RequestParameterError"
-import * as Code from "./ErrorsConstants"
 
 function getCodeByStatus(status: number): string {
     const codeMap: any = {
-        400 : Code.BAD_REQUEST,
-        401 : Code.NOT_AUTHORIZED,
-        403 : Code.FORBIDDEN,
-        404 : Code.NOT_FOUND,
-        405 : Code.NOT_ALLOWED,
-        409 : Code.CONFLICTED,
-        429 : Code.TOO_MANY_REQUESTS,
-        500 : Code.INTERNAL_ERROR,
-        503 : Code.SERVICE_UNAVAILABLE
+        400 : ResponseErrorCode.BadRequest,
+        401 : ResponseErrorCode.NotAuthorized,
+        403 : ResponseErrorCode.Forbidden,
+        404 : ResponseErrorCode.NotFound,
+        405 : ResponseErrorCode.NotAllowed,
+        409 : ResponseErrorCode.Conflicted,
+        429 : ResponseErrorCode.TooManyRequests,
+        500 : ResponseErrorCode.InternalServerError,
+        503 : ResponseErrorCode.ServiceUnavailable
     }
 
     if (Object.keys(codeMap).indexOf(status.toString()) !== -1) {
         return (codeMap as any)[status]
     }
 
-    return Code.UNKNOWN
+    return ResponseErrorCode.UnknownError
 }
 
-export function fromError(error: GenericError): ErrorResponse {
+export function fromError(error: Error): ErrorResponse {
     let errorResponse: any
 
     if (error instanceof PathParameterError) {
         errorResponse = {
-            code : Code.REQUEST_ERROR,
+            code : RequestErrorCode.RequestError,
             errors : [{ [error.parameter] : "required" }]
         }
     } else if (error instanceof RequestParameterError) {
         errorResponse = {
-            code : Code.VALIDATION_ERROR,
+            code : ResponseErrorCode.ValidationError,
             errors : [{
                 field  : error.parameter,
-                reason : "REQUIRED_VALUE"
+                reason : ResponseErrorCode.RequiredValue
             }]
         }
     } else if (error instanceof APIError) {
@@ -55,7 +53,7 @@ export function fromError(error: GenericError): ErrorResponse {
     }
 
     return {
-        code     : Code.UNKNOWN,
+        code     : ResponseErrorCode.UnknownError,
         errors   : [],
         status   : "error",
         ...errorResponse

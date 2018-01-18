@@ -1,8 +1,9 @@
-import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, ErrorResponse, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { PhoneNumber } from "./common/PhoneNumber"
 import { WithIdempotentKey } from "./common/Common"
+import { CardBrand } from "./common/CardBrand"
 
 export const enum UsageLimit {
     DAILY   = "daily",
@@ -85,7 +86,7 @@ export interface TransactionTokenCardDetails {
     expMonth: number
     expYear: number
     lastFour: string
-    brand: string
+    brand: CardBrand
     country?: string
 }
 
@@ -135,7 +136,7 @@ export class TransactionTokens extends CRUDResource {
 
     public create(data: TransactionTokenCreateParams,
                   callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
-        return this.defineRoute("POST", "/tokens", TransactionTokens.requiredParams)(data, callback)
+        return this.defineRoute(HTTPMethod.POST, "/tokens", TransactionTokens.requiredParams)(data, callback)
     }
 
     public get(id: string,

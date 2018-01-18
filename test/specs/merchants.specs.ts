@@ -1,6 +1,6 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI } from "../../src/api/RestAPI"
 import { Merchants } from "../../src/resources/Merchants"

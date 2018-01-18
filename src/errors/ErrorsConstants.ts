@@ -1,3 +1,4 @@
+/*
 export const BAD_REQUEST: string = "BAD_REQUEST"
 export const NOT_AUTHORIZED: string = "NOT_AUTHORIZED"
 export const FORBIDDEN: string = "FORBIDDEN_ACCESS"
@@ -10,3 +11,4 @@ export const SERVICE_UNAVAILABLE: string = "SERVICE_UNAVAILABLE"
 export const VALIDATION_ERROR: string = "VALIDATION_ERROR"
 export const UNKNOWN: string = "UNKNOWN_ERROR"
 export const REQUEST_ERROR: string = "REQUEST_ERROR"
+*/

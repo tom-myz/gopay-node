@@ -1,4 +1,4 @@
-import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, ErrorResponse, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
 export const enum BankAccountStatus {
@@ -87,7 +87,7 @@ export class BankAccounts extends CRUDResource {
     }
 
     public getPrimary(data?: AuthParams, callback?: ResponseCallback<ResponseBankAccount>): Promise<ResponseBankAccount> {
-        return this.defineRoute("GET", `${this._routeBase}/primary`)(data, callback)
+        return this.defineRoute(HTTPMethod.GET, `${this._routeBase}/primary`)(data, callback)
     }
 
 }

@@ -1,14 +1,12 @@
-"use strict"
-
 import "../utils"
 import { test, TestContext } from "ava"
 import * as sinon from "sinon"
 import { SinonSandbox } from "sinon"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { BAD_REQUEST, VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
+import { ResponseErrorCode, RequestErrorCode } from "../../src/errors/APIError"
+import { RestAPI, ErrorResponse, HTTPMethod } from "../../src/api/RestAPI"
 
 let mockOk: Scope
 let mockError: Scope
@@ -34,7 +32,13 @@ test.beforeEach(() => {
         .get("/validation-error")
         .times(REPEATS)
         .reply(400,
-            {status : "error", code : VALIDATION_ERROR, errors : [{field : "currency", reason : "UNSUPPORTED_CURRENCY"}]},
+            {
+                status : "error",
+                code : ResponseErrorCode.ValidationError,
+                errors : [
+                    { field : "currency", reason : ResponseErrorCode.UnsupportedCurrency }
+                ]
+            },
             { "Content-Type" : "application/json" }
         )
 
@@ -73,15 +77,15 @@ test("should take appId and secret from environment variable", (t: TestContext) 
 
 test("should send request to the api", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    const r: any = await api.send("GET", "/ok")
+    const r: any = await api.send(HTTPMethod.GET, "/ok")
     t.deepEqual(r, { ok : true })
 })
 
 test("should return error response", async (t: TestContext) => {
     const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
     const spy = sinon.spy()
-    const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error", httpCode : 400 }
-    const e = await t.throws(api.send("GET", "/error", null, spy))
+    const error: ErrorResponse = { code : ResponseErrorCode.BadRequest, errors : [], status : "error", httpCode : 400 }
+    const e = await t.throws(api.send(HTTPMethod.GET, "/error", null, spy))
 
     t.deepEqual(e, error)
     t.true(spy.calledOnce)
@@ -94,12 +98,12 @@ test("should return validation error response", async (t: TestContext) => {
     const error: ErrorResponse = {
         httpCode : 400,
         status : "error",
-        code : VALIDATION_ERROR,
+        code : ResponseErrorCode.ValidationError,
         errors : [
-            {field : "currency", reason : "UNSUPPORTED_CURRENCY"}
+            { field : "currency", reason : ResponseErrorCode.UnsupportedCurrency }
         ]
     }
-    const e = await t.throws(api.send("GET", "/validation-error", null, spy))
+    const e = await t.throws(api.send(HTTPMethod.GET, "/validation-error", null, spy))
     t.deepEqual(e, error)
     t.true(spy.calledOnce)
     t.true(spy.calledWith(error))
@@ -128,7 +132,7 @@ test.serial("should send request with authorization header", async (t: TestConte
                 a[2] ? { Authorization : a[2] } : null
             ))
 
-        const r: any = await api.send("GET", "/header", a[1])
+        const r: any = await api.send(HTTPMethod.GET, "/header", a[1])
 
         if (!a[2]) {
             t.false((spy.getCall(spy.callCount - 1).args[0].headers as Headers).has("Authorization"))
@@ -155,7 +159,7 @@ test.serial("should send request with idempotent key", async (t: TestContext) =>
             { "Content-Type" : "application/json" }
         ))
 
-    const r: any = await api.send("GET", "/header", { idempotentKey : "test" })
+    const r: any = await api.send(HTTPMethod.GET, "/header", { idempotentKey : "test" })
 
     t.is((spy.getCall(0).args[0].headers as Headers).get("Idempotency-Key"), "test")
     t.deepEqual(r, { ok : true });
@@ -181,7 +185,7 @@ test("should return response with camel case properties names", async (t: TestCo
         .once()
         .reply(200, { foo_bar : true }, { "Content-Type" : "application/json" })
 
-    const r: any = await api.send("GET", "/camel")
+    const r: any = await api.send(HTTPMethod.GET, "/camel")
 
     t.deepEqual(r, { fooBar : true })
 })

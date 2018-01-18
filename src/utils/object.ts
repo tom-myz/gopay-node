@@ -1,3 +1,5 @@
+import { Omit } from "type-zoo"
+
 export type Transformer = (...args: Array<any>) => string
 
 export function transformKeys(obj: any, transformer: Transformer): any {

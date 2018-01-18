@@ -1,4 +1,4 @@
-import camelcase = require("camel-case")
+import camelCase from "camelcase"
 import { APIError } from "../errors/APIError"
 import { transformKeys } from "./object"
 
@@ -13,5 +13,5 @@ export function checkStatus(response: Response): Promise<Response> {
 
 export function parseJSON(response: Response): Promise<any> {
     return response.text()
-        .then((text: string) => text ? transformKeys(JSON.parse(text), camelcase) : {})
+        .then((text: string) => text ? transformKeys(JSON.parse(text), camelCase) : {})
 }

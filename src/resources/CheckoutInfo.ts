@@ -1,4 +1,4 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/ProcessingMode"
 import { RecurringTokenPrivilege } from "./Verification"
@@ -38,7 +38,7 @@ export type ResponseCheckoutInfo = CheckoutInfoItem
 export class CheckoutInfo extends Resource {
 
     public get(data: CheckoutInfoParams, callback?: ResponseCallback<ResponseCheckoutInfo>): Promise<ResponseCheckoutInfo> {
-        return this.defineRoute("GET", "/checkout_info", ["origin"])(data, callback)
+        return this.defineRoute(HTTPMethod.GET, "/checkout_info", ["origin"])(data, callback)
     }
 
 }

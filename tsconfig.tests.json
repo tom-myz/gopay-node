@@ -1,18 +1,6 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "es6", "scripthost"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "inlineSourceMap": true
-  },
+  "extends": "./tsconfig.json",
   "include": [
-    "src/**/*.ts",
     "test/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

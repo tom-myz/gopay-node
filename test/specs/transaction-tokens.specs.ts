@@ -1,13 +1,13 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
+import { ResponseErrorCode } from "../../src/errors/APIError"
 import {
     PaymentType,
     TransactionTokenCreateParams, TransactionTokens, TransactionTokenType
 } from "../../src/resources/TransactionTokens"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
 let tokens: TransactionTokens
@@ -46,7 +46,7 @@ test("route POST /tokens # should return validation error if data is invalid", (
 
     return Promise.all(asserts.map(async (a: any) => {
         const e: ErrorResponse = await t.throws(tokens.create(a))
-        t.deepEqual(e.code, VALIDATION_ERROR)
+        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
     }))
 })
 

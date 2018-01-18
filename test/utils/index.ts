@@ -1,8 +1,8 @@
 import "ava"
 
 import * as chai from "chai"
-import * as chaiAsPromised from "chai-as-promised"
-import * as sinonChai from "sinon-chai"
+import chaiAsPromised from "chai-as-promised"
+import sinonChai from "sinon-chai"
 
 /* Chai plugins */
 chai.use(chaiAsPromised)

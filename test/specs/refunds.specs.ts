@@ -1,10 +1,10 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
+import { ResponseErrorCode } from "../../src/errors/APIError"
 import { Refunds } from "../../src/resources/Refunds"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
 let refunds: Refunds
@@ -53,7 +53,7 @@ test("route POST /stores/:storeId/charges/:chargeId/refunds # should return vali
 
     return Promise.all(asserts.map(async (a: any) => {
         const e: ErrorResponse = await t.throws(refunds.create("1", "1", a))
-        t.deepEqual(e.code, VALIDATION_ERROR)
+        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
     }))
 })
 

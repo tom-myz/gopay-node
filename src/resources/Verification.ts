@@ -1,4 +1,4 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
 import { PhoneNumber } from "./common/PhoneNumber"
@@ -49,12 +49,12 @@ export class Verification extends CRUDResource {
     }
 
     public get(data?: AuthParams, callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
-        return this.defineRoute("GET", this._routeBase)(data, callback)
+        return this.defineRoute(HTTPMethod.GET, this._routeBase)(data, callback)
     }
 
     public update(data?: VerificationUpdateParams,
                   callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
-        return this.defineRoute("PATCH", this._routeBase)(data, callback)
+        return this.defineRoute(HTTPMethod.PATCH, this._routeBase)(data, callback)
     }
 
 }

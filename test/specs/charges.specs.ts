@@ -3,11 +3,11 @@ import { test, TestContext } from "ava"
 import { expect } from "chai"
 import * as sinon from "sinon"
 import { SinonSandbox } from "sinon"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
+import { ResponseErrorCode } from "../../src/errors/APIError"
 import { Charges, ChargeItem } from "../../src/resources/Charges"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 import { POLLING_INTERVAL } from "../../src/constants"
 
 let api: RestAPI
@@ -62,7 +62,7 @@ test("route POST /charges # should return validation error if data is invalid", 
 
     return Promise.all(asserts.map(async (a: any) => {
         const e: ErrorResponse = await t.throws(charges.create(a))
-        t.deepEqual(e.code, VALIDATION_ERROR)
+        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
     }))
 })
 

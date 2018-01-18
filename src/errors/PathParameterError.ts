@@ -1,6 +1,6 @@
-import { GenericError } from "./GenericError"
+import ExtendableError from "es6-error"
 
-export class PathParameterError extends GenericError {
+export class PathParameterError extends ExtendableError {
 
     public parameter: string
 

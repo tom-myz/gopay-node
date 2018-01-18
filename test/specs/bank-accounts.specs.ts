@@ -1,10 +1,10 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
+import { ResponseErrorCode } from "../../src/errors/APIError"
 import { BankAccounts, BankAccountType } from "../../src/resources/BankAccounts"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
 let accounts: BankAccounts
@@ -56,7 +56,7 @@ test("route POST /bank_accounts # should return validation error if data is inva
 
     return Promise.all(asserts.map(async (a: any) => {
         const e: ErrorResponse = await t.throws(accounts.create(a))
-        t.deepEqual(e.code, VALIDATION_ERROR)
+        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
     }))
 })
 

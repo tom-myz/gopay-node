@@ -1,4 +1,4 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/Metadata"
 
@@ -65,7 +65,7 @@ export class Transfers extends CRUDResource {
     public statusChanges(id: string,
                          data?: AuthParams,
                          callback?: ResponseCallback<ResponseTransferStatusChanges>): Promise<ResponseTransferStatusChanges> {
-        return this.defineRoute("GET", `${Transfers.routeBase}/:id/status_changes`)(data, callback, ["id"], id)
+        return this.defineRoute(HTTPMethod.GET, `${Transfers.routeBase}/:id/status_changes`)(data, callback, ["id"], id)
     }
 
 }

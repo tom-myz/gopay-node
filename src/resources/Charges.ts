@@ -1,4 +1,4 @@
-import {ResponseCallback, AuthParams, PollParams} from "../api/RestAPI"
+import { ResponseCallback, AuthParams, PollParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError } from "./common/PaymentError"
 import { Metadata } from "./common/Metadata"
@@ -62,7 +62,7 @@ export class Charges extends CRUDResource {
     }
 
     public create(data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
-        return this.defineRoute("POST", "/charges", Charges.requiredParams)(data, callback)
+        return this.defineRoute(HTTPMethod.POST, "/charges", Charges.requiredParams)(data, callback)
     }
 
     public get(storeId: string,

@@ -1,10 +1,9 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { Ledgers } from "../../src/resources/Ledgers"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
 let ledgers: Ledgers

@@ -1,10 +1,10 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import * as nock from "nock"
+import nock from "nock"
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
+import { ResponseErrorCode } from "../../src/errors/APIError"
 import { WebHooks, WebHookTrigger } from "../../src/resources/WebHooks"
-import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 let api: RestAPI
 let webHooks: WebHooks
@@ -52,7 +52,7 @@ test("route POST /stores/:storeId/webhooks # should return validation error if d
 
     return Promise.all(asserts.map(async (a: any) => {
         const e: ErrorResponse = await t.throws(webHooks.create(a))
-        t.deepEqual(e.code, VALIDATION_ERROR)
+        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
     }))
 })
 

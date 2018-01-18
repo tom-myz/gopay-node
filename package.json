@@ -12,26 +12,7 @@
     "lib/"
   ],
   "devDependencies": {
-    "ava": "^0.22.0",
-    "chai": "~4.1.2",
-    "chai-as-promised": "~7.1.1",
-    "jsdom": "~11.3.0",
-    "jsdom-global": "~3.0.2",
-    "nock": "~9.0.24",
-    "nyc": "^11.2.1",
-    "path": "~0.12.7",
-    "preprocess": "^3.1.0",
-    "preprocess-cli": "^0.1.0",
-    "rimraf": "^2.6.2",
-    "sinon": "~4.0.1",
-    "sinon-chai": "~2.14.0",
-    "tap-nyan": "^1.1.0",
-    "ts-node": "~3.3.0",
-    "tslint": "~5.8.0",
-    "typescript": "^2.5.3",
-    "url-search-params": "^0.10.0"
-  },
-  "dependencies": {
+    "@types/camelcase": "^4.1.0",
     "@types/chai": "^4.0.4",
     "@types/chai-as-promised": "^7.1.0",
     "@types/decamelize": "^1.2.0",
@@ -41,13 +22,48 @@
     "@types/query-string": "^5.0.0",
     "@types/sinon": "^2.3.6",
     "@types/sinon-chai": "^2.7.29",
-    "camel-case": "^3.0.0",
-    "decamelize": "^1.2.0",
-    "es6-error": "^4.0.2",
+    "ava": "^0.24.0",
+    "babel-preset-env": "^1.6.1",
+    "chai": "~4.1.2",
+    "chai-as-promised": "~7.1.1",
+    "jsdom": "~11.5.1",
+    "jsdom-global": "~3.0.2",
+    "nock": "~9.1.6",
+    "nyc": "^11.4.1",
+    "path": "~0.12.7",
+    "preprocess": "^3.1.0",
+    "preprocess-cli": "^0.1.0",
+    "rimraf": "^2.6.2",
+    "sinon": "~4.1.6",
+    "sinon-chai": "~2.14.0",
+    "tap-nyan": "^1.1.0",
+    "ts-node": "^4.1.0",
+    "tslint": "~5.9.1",
+    "type-zoo": "^1.1.0",
+    "typescript": "^2.6.2",
+    "url-search-params": "^0.10.0"
+  },
+  "dependencies": {
+    "camelcase": "^4.1.0",
+    "decamelize": "^2.0.0",
+    "es6-error": "^4.1.1",
     "isomorphic-fetch": "^2.2.1",
     "node-fetch": "^1.7.3",
     "process": "^0.11.10",
-    "query-string": "^5.0.0"
+    "query-string": "^5.0.1"
+  },
+  "optionalDependencies": {
+    "@types/camelcase": "^4.1",
+    "@types/chai": "^4.1",
+    "@types/chai-as-promised": "^7.1",
+    "@types/decamelize": "^1.2",
+    "@types/form-data": "^2.2",
+    "@types/nock": "^9.1",
+    "@types/node": "^9.3",
+    "@types/query-string": "^5.0",
+    "@types/sinon": "^4.1",
+    "@types/sinon-chai": "^2.7",
+    "type-zoo": "^1.1.0"
   },
   "scripts": {
     "linter": "tslint src/**/*.ts",
@@ -62,6 +78,8 @@
     "files": [
       "test/**/*.specs.js"
     ],
+    "require": ["babel-register"],
+    "babel": "inherit",
     "tap": true
   }
 }

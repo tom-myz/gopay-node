@@ -1,18 +1,39 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "lib": ["dom", "es6", "scripthost"],
+        "allowSyntheticDefaultImports": true,
         "outDir": "lib",
-        "module": "commonjs",
+        "target": "es5",
+        "downlevelIteration": true,
+        "importHelpers": true,
+        "sourceMap": true,
+        "module": "esnext",
         "moduleResolution": "node",
-        "declaration": true,
-        "sourceMap": false,
+        "allowJs": true,
+        "checkJs": false,
+        "lib": [
+            "dom",
+            "es2015",
+            "es2016",
+            "es2017",
+            "esnext",
+            "esnext.asynciterable"
+        ],
+        "preserveConstEnums": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
         "noImplicitAny": false,
-        "suppressImplicitAnyIndexErrors": true
+        "noUnusedParameters": false,
+        "noImplicitReturns": false,
+        "noImplicitThis": false,
+        "noUnusedLocals": false,
+        "skipLibCheck": true,
+        "strictNullChecks": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": ["types/*"]
+        }
     },
-    "files": [
-        "src/types.d.ts"
-    ],
     "include": [
         "src/**/*.ts"
     ],

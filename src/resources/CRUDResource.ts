@@ -1,4 +1,4 @@
-import { RestAPI } from "../api/RestAPI"
+import { RestAPI, HTTPMethod } from "../api/RestAPI"
 import { Resource, DefinedRoute } from "./Resource"
 
 export const enum CursorDirection {
@@ -33,23 +33,23 @@ export abstract class CRUDResource extends Resource {
     }
 
     public _listRoute(required?: Array<string>): DefinedRoute {
-        return this.defineRoute("GET", this._routeBase, required)
+        return this.defineRoute(HTTPMethod.GET, this._routeBase, required)
     }
 
     public _createRoute(required?: Array<string>): DefinedRoute {
-        return this.defineRoute("POST", this._routeBase, required)
+        return this.defineRoute(HTTPMethod.POST, this._routeBase, required)
     }
 
     public _getRoute(required?: Array<string>): DefinedRoute {
-        return this.defineRoute("GET", `${this._routeBase}/:id`, required)
+        return this.defineRoute(HTTPMethod.GET, `${this._routeBase}/:id`, required)
     }
 
     public _updateRoute(required?: Array<string>): DefinedRoute {
-        return this.defineRoute("PATCH", `${this._routeBase}/:id`, required)
+        return this.defineRoute(HTTPMethod.PATCH, `${this._routeBase}/:id`, required)
     }
 
     public _deleteRoute(required?: Array<string>): DefinedRoute {
-        return this.defineRoute("DELETE", `${this._routeBase}/:id`, required)
+        return this.defineRoute(HTTPMethod.DELETE, `${this._routeBase}/:id`, required)
     }
 
 }
