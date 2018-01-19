@@ -1,10 +1,10 @@
 import ExtendableError = require("es6-error")
 
-export const enum RequestErrorCode {
+export enum RequestErrorCode {
     RequestError = "REQUEST_ERROR"
 }
 
-export const enum ResponseErrorCode {
+export enum ResponseErrorCode {
     /* generic */
     BadRequest                                 = "BAD_REQUEST",
     Forbidden                                  = "FORBIDDEN",

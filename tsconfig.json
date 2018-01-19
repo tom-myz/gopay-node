@@ -18,7 +18,6 @@
             "esnext",
             "esnext.asynciterable"
         ],
-        "preserveConstEnums": true,
         "forceConsistentCasingInFileNames": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
