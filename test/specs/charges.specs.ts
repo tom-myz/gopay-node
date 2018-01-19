@@ -3,7 +3,7 @@ import { test, TestContext } from "ava"
 import { expect } from "chai"
 import * as sinon from "sinon"
 import { SinonSandbox } from "sinon"
-import nock from "nock"
+import nock = require("nock")
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { ResponseErrorCode } from "../../src/errors/APIError"

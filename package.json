@@ -75,7 +75,7 @@
   },
   "ava": {
     "files": [
-      "test/**/*.specs.js"
+      "test/**/api.specs.js"
     ],
     "require": [
       "babel-register"

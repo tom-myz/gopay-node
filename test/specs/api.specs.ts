@@ -2,7 +2,7 @@ import "../utils"
 import { test, TestContext } from "ava"
 import * as sinon from "sinon"
 import { SinonSandbox } from "sinon"
-import nock from "nock"
+import nock = require("nock")
 import { Scope } from "nock"
 import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
 import { ResponseErrorCode, RequestErrorCode } from "../../src/errors/APIError"

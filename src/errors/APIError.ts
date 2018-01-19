@@ -1,4 +1,4 @@
-import ExtendableError from "es6-error"
+import ExtendableError = require("es6-error")
 
 export const enum RequestErrorCode {
     RequestError = "REQUEST_ERROR"

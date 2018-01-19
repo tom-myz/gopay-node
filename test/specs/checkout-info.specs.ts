@@ -1,6 +1,6 @@
 import "../utils"
 import { test, TestContext } from "ava"
-import nock from "nock"
+import nock = require("nock")
 import { Scope } from "nock"
 import { RestAPI } from "../../src/api/RestAPI"
 import { CheckoutInfo } from "../../src/resources/CheckoutInfo"

@@ -1,6 +1,6 @@
 import "isomorphic-fetch"
-import process from "process"
-import decamelize from "decamelize"
+import process = require("process")
+import decamelize = require("decamelize")
 import {
     DEFAULT_ENDPOINT,
     ENV_KEY_ENDPOINT,

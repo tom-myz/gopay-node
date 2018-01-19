@@ -1,7 +1,7 @@
 import "../utils"
 import { test, TestContext } from "ava"
 import { expect } from "chai"
-import nock from "nock"
+import nock = require("nock")
 import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { ResponseErrorCode } from "../../src/errors/APIError"
