@@ -1,5 +1,3 @@
-import ExtendableError = require("es6-error")
-
 export enum RequestErrorCode {
     RequestError = "REQUEST_ERROR"
 }
@@ -236,7 +234,7 @@ export enum ResponseErrorCode {
     InvalidSqsEndpointKey                      = "INVALID_SQS_ENDPOINT_KEY"
 }
 
-export class APIError extends ExtendableError {
+export class APIError extends Error {
 
     public status: number
     public response: any
@@ -245,6 +243,7 @@ export class APIError extends ExtendableError {
         super()
         this.status = status
         this.response = Object.keys(response).length !== 0 ? response : null
+        Object.setPrototypeOf(this, APIError.prototype)
     }
 
 }

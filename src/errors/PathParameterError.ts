@@ -1,12 +1,11 @@
-import ExtendableError = require("es6-error")
-
-export class PathParameterError extends ExtendableError {
+export class PathParameterError extends Error {
 
     public parameter: string
 
     constructor(parameter: string) {
         super()
         this.parameter = parameter
+        Object.setPrototypeOf(this, PathParameterError.prototype)
     }
 
 }
