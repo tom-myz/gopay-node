@@ -23,6 +23,8 @@ export interface ChargeCreateParams extends AuthParams, WithIdempotentKey {
     transactionTokenId: string
     amount: number
     currency: string
+    captureAt?: string | number
+    capture?: boolean
     metadata?: Metadata
 }
 
