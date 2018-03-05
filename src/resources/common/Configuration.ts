@@ -16,6 +16,12 @@ export interface CardBrandPercentFeesItem {
     visa: number
 }
 
+export interface InstallmentsConfiguration {
+    minChargeAmount?: number
+    maxPayoutPeriod?: string
+    failedCyclesToCancel?: number
+}
+
 export interface CardConfigurationMonthlyLimit extends AmountWithCurrency { }
 
 export interface CardConfigurationItem extends PaymentTypeConfiguration {
@@ -33,6 +39,8 @@ export type QRScanConfigurationItem = PaymentTypeConfiguration
 
 export type ConvenienceConfigurationItem = PaymentTypeConfiguration
 
+export interface InstallmentsConfigurationItem extends PaymentTypeConfiguration, InstallmentsConfiguration { }
+
 export interface SecurityConfiguration {
     inspectSuspiciousLoginAfter?: string
     limitChargeByCardConfiguration?: {
@@ -47,6 +55,7 @@ export interface ConfigurationItem {
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
     convenienceConfiguration: ConvenienceConfigurationItem
+    installmentsConfiguration: InstallmentsConfigurationItem
     flatFees: Array<AmountWithCurrency>
     percentFee: number
     logoUrl?: string
@@ -58,6 +67,7 @@ export interface ConfigurationParams {
     cardConfiguration?: Partial<CardConfigurationItem>
     qrScanConfiguration?: Partial<QRScanConfigurationItem>
     convenienceConfiguration?: Partial<ConvenienceConfigurationItem>
+    installmentsConfiguration?: Partial<InstallmentsConfigurationItem>
 }
 
 export type ConfigurationCreateParams = ConfigurationParams

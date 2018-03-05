@@ -1,5 +1,5 @@
 import { WithCreatedOn, AmountWithCurrency } from "./Common"
-import { CardBrandPercentFeesItem } from "./Configuration"
+import { CardBrandPercentFeesItem, InstallmentsConfiguration } from "./Configuration"
 import { TransferSchedule } from "./TransferSchedule"
 import { InvoiceChargeFee } from "./Invoice"
 
@@ -9,7 +9,8 @@ export interface PlatformUserDefaults {
     flatFees: Array<AmountWithCurrency>
     waitPeriod: string
     cardBrandPercentFees: Partial<CardBrandPercentFeesItem>
-    minTransferPayout: AmountWithCurrency;
+    minTransferPayout: AmountWithCurrency
+    installmentsConfiguration: Partial<InstallmentsConfiguration>
 }
 
 export interface PlatformPaymentDefaults {
@@ -18,6 +19,7 @@ export interface PlatformPaymentDefaults {
     prepaidEnabled: boolean
     debitEnabled: boolean
     convenienceEnabled: boolean
+    installmentsEnabled: boolean
 }
 
 export interface PlatformItem extends WithCreatedOn {
