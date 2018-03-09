@@ -2,7 +2,7 @@
  *  @module Resources/Platforms
  */
 
-import { ResponseCallback, HTTPMethod } from "../api/RestAPI"
+import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { CardBrand } from "./common/enums"
 import { PlatformItem, PlatformConfiguration as PlatformConfig } from "./common/Platform"
@@ -22,9 +22,10 @@ export type ResponsePlatformConfiguration = Readonly<PlatformConfigurationItem>
 export class Platforms extends CRUDResource {
 
     getConfiguration(
+        data?: SendData<void>,
         callback?: ResponseCallback<ResponsePlatformConfiguration>
     ): Promise<ResponsePlatformConfiguration> {
-        return this.defineRoute(HTTPMethod.GET, "/platform")(null, callback)
+        return this.defineRoute(HTTPMethod.GET, "/platform")(data, callback);
     }
 
 }

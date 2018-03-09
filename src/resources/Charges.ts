@@ -2,9 +2,9 @@
  *  @module Resources/Charges
  */
 
-import { ResponseCallback, AuthParams, PollParams, HTTPMethod } from "../api/RestAPI"
+import {ResponseCallback, PollParams, HTTPMethod, SendData} from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { PaymentError, Metadata, WithIdempotentKey } from "./common/types"
+import { PaymentError, Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
 
 export const enum ChargeStatus {
@@ -18,9 +18,9 @@ export const enum ChargeStatus {
 }
 
 /* Request */
-export interface ChargesListParams extends CRUDPaginationParams, AuthParams {}
+export type ChargesListParams = CRUDPaginationParams;
 
-export interface ChargeCreateParams extends AuthParams, WithIdempotentKey {
+export interface ChargeCreateParams {
     transactionTokenId: string
     amount: number
     currency: string
@@ -60,27 +60,27 @@ export class Charges extends CRUDResource {
 
     static routeBase: string = "/stores/:storeId/charges";
 
-    list(data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>, storeId?: string): Promise<ResponseCharges> {
+    list(data?: SendData<ChargesListParams>, callback?: ResponseCallback<ResponseCharges>, storeId?: string): Promise<ResponseCharges> {
         return this.defineRoute(HTTPMethod.GET, "(/stores/:storeId)/charges")(data, callback, ["storeId"], storeId)
     }
 
-    create(data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    create(data: SendData<ChargeCreateParams>, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this.defineRoute(HTTPMethod.POST, "/charges", Charges.requiredParams)(data, callback)
     }
 
     get(storeId: string,
         id: string,
-        data?: AuthParams & Partial<PollParams>,
+        data?: SendData<PollParams>,
         callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    poll(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    poll(storeId: string, id: string, data?: SendData<void>, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         const promise: () => Promise<ResponseCharge> = () => this.get(
             storeId,
             id,
-            { ...data, poll : true }
-        )
+            { ...(data as object), poll : true }
+        );
         return this.api.longPolling(
             promise,
             (response: ResponseCharge) => response.status !== ChargeStatus.PENDING,

@@ -2,7 +2,7 @@
  *  @module Resources/Ledgers
  */
 
-import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI";
+import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI";
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
 
 export const enum LedgerOrigin {
@@ -12,40 +12,40 @@ export const enum LedgerOrigin {
 }
 
 /* Request */
-export interface LedgersListParams extends CRUDPaginationParams, AuthParams {
-    all?: boolean
-    from?: number | string
-    to?: number | string
-    min?: number
-    max?: number
-    currency?: string
+export interface LedgersListParams extends CRUDPaginationParams {
+    all?: boolean;
+    from?: number | string;
+    to?: number | string;
+    min?: number;
+    max?: number;
+    currency?: string;
 }
 
 /* Response */
 export interface LedgerItem {
-    id: string
-    merchantId: string
-    storeId?: string
-    transferId?: string
-    amount: number
-    currency: string
-    amountFormatted: number
-    percentFee: number
-    flatFee: number
-    flatFeeCurrency: string
-    flatFeeFormatted: number
-    exchangeRate: number
-    origin: LedgerOrigin
-    note?: string
-    createdOn: string
+    id: string;
+    merchantId: string;
+    storeId?: string;
+    transferId?: string;
+    amount: number;
+    currency: string;
+    amountFormatted: number;
+    percentFee: number;
+    flatFee: number;
+    flatFeeCurrency: string;
+    flatFeeFormatted: number;
+    exchangeRate: number;
+    origin: LedgerOrigin;
+    note?: string;
+    createdOn: string;
 }
 
-export type ResponseLedgers = CRUDItemsResponse<LedgerItem>
-export type ResponseLedger = LedgerItem
+export type ResponseLedgers = CRUDItemsResponse<LedgerItem>;
+export type ResponseLedger = LedgerItem;
 
 export class Ledgers extends CRUDResource {
 
-    static routeBase: string = "/transfers/:transferId/ledgers"
+    static routeBase: string = "/transfers/:transferId/ledgers";
 
     list(transferId: string,
          data?: LedgersListParams,
@@ -54,7 +54,7 @@ export class Ledgers extends CRUDResource {
         return this._listRoute()(data, callback, ["transferId"], transferId)
     }
 
-    get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseLedger>): Promise<ResponseLedger> {
+    get(id: string, data?: SendData<void>, callback?: ResponseCallback<ResponseLedger>): Promise<ResponseLedger> {
         return this.defineRoute(HTTPMethod.GET, "/ledgers/:id")(data, callback, ["id"], id)
     }
 

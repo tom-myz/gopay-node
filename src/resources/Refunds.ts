@@ -2,7 +2,7 @@
  *  @module Resources/Refunds
  */
 
-import { ResponseCallback, AuthParams } from "../api/RestAPI";
+import {PollParams, ResponseCallback, SendData} from "../api/RestAPI";
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
 import { PaymentError, Metadata } from "./common/types";
 import { ProcessingMode } from "./common/enums";
@@ -22,52 +22,52 @@ export const enum RefundReason {
 }
 
 /* Request */
-export interface RefundsListParams extends CRUDPaginationParams, AuthParams {}
+export type RefundsListParams = CRUDPaginationParams;
 
-export interface RefundCreateParams extends AuthParams {
-    amount: number
-    currency: string
-    reason?: RefundReason
-    message?: string
-    metadata?: Metadata
+export interface RefundCreateParams {
+    amount: number;
+    currency: string;
+    reason?: RefundReason;
+    message?: string;
+    metadata?: Metadata;
 }
 
-export interface RefundUpdateParams extends AuthParams {
-    status?: RefundStatus
-    reason?: RefundReason
-    message?: string
-    metadata?: Metadata
+export interface RefundUpdateParams {
+    status?: RefundStatus;
+    reason?: RefundReason;
+    message?: string;
+    metadata?: Metadata;
 }
 
 /* Response */
 export interface RefundItem {
-    id: string
-    chargeId: string
-    ledgerId?: string
-    status: RefundStatus
-    amount: number
-    currency: string
-    amountFormatted: number
-    reason?: RefundReason
-    message?: string
-    error?: PaymentError
-    metadata?: Metadata
-    mode: ProcessingMode
-    createdOn: string
+    id: string;
+    chargeId: string;
+    ledgerId?: string;
+    status: RefundStatus;
+    amount: number;
+    currency: string;
+    amountFormatted: number;
+    reason?: RefundReason;
+    message?: string;
+    error?: PaymentError;
+    metadata?: Metadata;
+    mode: ProcessingMode;
+    createdOn: string;
 }
 
-export type ResponseRefund = RefundItem
-export type ResponseRefunds = CRUDItemsResponse<RefundItem>
+export type ResponseRefund = RefundItem;
+export type ResponseRefunds = CRUDItemsResponse<RefundItem>;
 
 export class Refunds extends CRUDResource {
 
-    static requiredParams: string[] = ["amount", "currency"]
+    static requiredParams: string[] = ["amount", "currency"];
 
-    static routeBase: string = "/stores/:storeId/charges/:chargeId/refunds"
+    static routeBase: string = "/stores/:storeId/charges/:chargeId/refunds";
 
     list(storeId: string,
          chargeId: string,
-         data?: RefundsListParams,
+         data?: SendData<RefundsListParams>,
          callback?: ResponseCallback<ResponseRefunds>): Promise<ResponseRefunds> {
 
         return this._listRoute()(data, callback, ["storeId", "chargeId"], storeId, chargeId)
@@ -75,7 +75,7 @@ export class Refunds extends CRUDResource {
 
     create(storeId: string,
            chargeId: string,
-           data: RefundCreateParams,
+           data: SendData<RefundCreateParams>,
            callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._createRoute(Refunds.requiredParams)(data, callback, ["storeId", "chargeId"], storeId, chargeId)
@@ -84,7 +84,7 @@ export class Refunds extends CRUDResource {
     get(storeId: string,
         chargeId: string,
         id: string,
-        data?: AuthParams,
+        data?: SendData<PollParams>,
         callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
@@ -93,7 +93,7 @@ export class Refunds extends CRUDResource {
     update(storeId: string,
            chargeId: string,
            id: string,
-           data?: RefundUpdateParams,
+           data?: SendData<RefundUpdateParams>,
            callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._updateRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
@@ -102,15 +102,19 @@ export class Refunds extends CRUDResource {
     poll(storeId: string,
          chargeId: string,
          id: string,
-         data?: AuthParams,
+         data?: SendData<void>,
          callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
-        const promise: () => Promise<ResponseRefund> = () => this._getRoute()(
-            { ...data, poll : true }, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
-        )
+
+        const promise: () => Promise<ResponseRefund> = () => this.get(
+            storeId,
+            chargeId,
+            id,
+            { ...(data as object), poll : true }
+        );
 
         return this.api.longPolling(
             promise,
-            (response: ResponseRefund) => response.status !== "pending",
+            (response: ResponseRefund) => response.status !== RefundStatus.PENDING,
             callback
         )
     }

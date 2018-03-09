@@ -2,14 +2,14 @@
  *  @module Resources/CheckoutInfo
  */
 
-import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
+import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/enums"
 import { RecurringTokenPrivilege } from "./Verification"
 import { CardConfigurationItem, ConvenienceConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
 
 /* Request */
-export interface CheckoutInfoParams extends AuthParams {
+export interface CheckoutInfoParams {
     origin: string
 }
 
@@ -41,7 +41,7 @@ export type ResponseCheckoutInfo = CheckoutInfoItem
 
 export class CheckoutInfo extends Resource {
 
-    get(data: CheckoutInfoParams, callback?: ResponseCallback<ResponseCheckoutInfo>): Promise<ResponseCheckoutInfo> {
+    get(data: SendData<CheckoutInfoParams>, callback?: ResponseCallback<ResponseCheckoutInfo>): Promise<ResponseCheckoutInfo> {
         return this.defineRoute(HTTPMethod.GET, "/checkout_info", ["origin"])(data, callback)
     }
 

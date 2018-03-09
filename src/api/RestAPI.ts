@@ -76,7 +76,7 @@ export interface AuthParams {
 }
 
 export interface PollParams {
-    poll: boolean;
+    poll?: boolean;
 }
 
 export interface IdempotentParams {

@@ -2,7 +2,7 @@
  *  @module Resources/WebHooks
  */
 
-import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
+import { ResponseCallback, ErrorResponse, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
 export const enum WebHookTrigger {
@@ -20,13 +20,13 @@ export const enum WebHookTrigger {
 }
 
 /* Request */
-export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
+export type WebHooksListParams = CRUDPaginationParams;
 
-export interface WebHookCreateParams extends AuthParams {
+export interface WebHookCreateParams {
     triggers: WebHookTrigger[]
     url: string
 }
-export interface WebHookUpdateParams extends AuthParams {
+export interface WebHookUpdateParams {
     triggers?: WebHookTrigger[]
     url?: string
 }
@@ -46,18 +46,18 @@ export type ResponseWebHooks = CRUDItemsResponse<WebHookItem>
 
 export class WebHooks extends CRUDResource {
 
-    static requiredParams: string[] = ["triggers", "url"]
+    static requiredParams: string[] = ["triggers", "url"];
 
-    static routeBase: string = "(/stores/:storeId)/webhooks"
+    static routeBase: string = "(/stores/:storeId)/webhooks";
 
-    list(data?: WebHooksListParams,
+    list(data?: SendData<WebHooksListParams>,
          callback?: ResponseCallback<ResponseWebHooks>,
          storeId?: string): Promise<ResponseWebHooks> {
 
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
-    create(data: WebHookCreateParams,
+    create(data: SendData<WebHookCreateParams>,
            callback?: ResponseCallback<ResponseWebHook>,
            storeId?: string): Promise<ResponseWebHook> {
 
@@ -65,7 +65,7 @@ export class WebHooks extends CRUDResource {
     }
 
     get(id: string,
-        data?: AuthParams,
+        data?: SendData<void>,
         callback?: ResponseCallback<ResponseWebHook>,
         storeId?: string): Promise<ResponseWebHook> {
 
@@ -73,7 +73,7 @@ export class WebHooks extends CRUDResource {
     }
 
     update(id: string,
-           data?: WebHookUpdateParams,
+           data?: SendData<WebHookUpdateParams>,
            callback?: ResponseCallback<ResponseWebHook>,
            storeId?: string): Promise<ResponseWebHook> {
 
@@ -81,7 +81,7 @@ export class WebHooks extends CRUDResource {
     }
 
     delete(id: string,
-           data?: AuthParams,
+           data?: SendData<void>,
            callback?: ResponseCallback<ErrorResponse>,
            storeId?: string): Promise<ErrorResponse> {
 

@@ -2,9 +2,9 @@
  *  @module Resources/Subscriptions
  */
 
-import { ResponseCallback, AuthParams, ErrorResponse, PollParams, HTTPMethod } from "../api/RestAPI"
+import { ResponseCallback, ErrorResponse, PollParams, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { Metadata, WithIdempotentKey } from "./common/types"
+import { Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
 import { ResponseCharges, ChargesListParams } from "./Charges"
 
@@ -28,13 +28,13 @@ export const enum SubscriptionStatus {
 }
 
 /* Request */
-export interface SubscriptionsListParams extends CRUDPaginationParams, AuthParams {
+export interface SubscriptionsListParams extends CRUDPaginationParams {
     search?: string
     status?: SubscriptionStatus
     mode?: ProcessingMode
 }
 
-export interface SubscriptionCreateParams extends AuthParams, WithIdempotentKey {
+export interface SubscriptionCreateParams {
     transactionTokenId: string
     amount: number
     currency: string
@@ -42,7 +42,7 @@ export interface SubscriptionCreateParams extends AuthParams, WithIdempotentKey 
     metadata?: Metadata
 }
 
-export interface SubscriptionUpdateParams extends AuthParams, WithIdempotentKey {
+export interface SubscriptionUpdateParams {
     transactionTokenId?: string
     amount?: number
     metadata?: Metadata
@@ -73,7 +73,7 @@ export class Subscriptions extends CRUDResource {
 
     static routeBase: string = "/stores/:storeId/subscriptions";
 
-    list(data?: SubscriptionsListParams,
+    list(data?: SendData<SubscriptionsListParams>,
          callback?: ResponseCallback<ResponseSubscriptions>,
          storeId?: string): Promise<ResponseSubscriptions> {
 
@@ -88,7 +88,7 @@ export class Subscriptions extends CRUDResource {
 
     get(storeId: string,
         id: string,
-        data?: AuthParams & Partial<PollParams>,
+        data?: SendData<PollParams>,
         callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
@@ -96,7 +96,7 @@ export class Subscriptions extends CRUDResource {
 
     update(storeId: string,
            id: string,
-           data?: SubscriptionUpdateParams,
+           data?: SendData<SubscriptionUpdateParams>,
            callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
@@ -104,7 +104,7 @@ export class Subscriptions extends CRUDResource {
 
     delete(storeId: string,
            id: string,
-           data?: AuthParams,
+           data?: SendData<void>,
            callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
 
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
@@ -112,7 +112,7 @@ export class Subscriptions extends CRUDResource {
 
     charges(storeId: string,
             id: string,
-            data?: ChargesListParams,
+            data?: SendData<ChargesListParams>,
             callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
 
         return this.defineRoute(HTTPMethod.GET, `${Subscriptions.routeBase}/:id/charges`)(
@@ -122,18 +122,18 @@ export class Subscriptions extends CRUDResource {
 
     poll(storeId: string,
          id: string,
-         data?: AuthParams,
+         data?: SendData<void>,
          callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
         const promise: () => Promise<ResponseSubscription> = () => this.get(
             storeId,
             id,
-            { ...data, poll : true }
-        )
+            { ...(data as object), poll : true }
+        );
         return this.api.longPolling(
             promise,
             (response: ResponseSubscription) => response.status !== SubscriptionStatus.UNVERIFIED,
             callback
-        )
+        );
     }
 
 }

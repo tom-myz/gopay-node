@@ -2,7 +2,7 @@
  *  @module Resources/Verification
  */
 
-import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
+import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
 import { PhoneNumber } from "./common/types"
@@ -13,7 +13,7 @@ export const enum RecurringTokenPrivilege {
     INFINITE = "infinite"
 }
 
-export interface BaseVerification<T> extends AuthParams {
+export interface BaseVerification<T> {
     homepageUrl: string
     companyDescription: string
     companyContactInfo: T
@@ -46,17 +46,17 @@ export class Verification extends CRUDResource {
 
     static routeBase: string = "/verification"
 
-    create(data: VerificationCreateParams,
+    create(data: SendData<VerificationCreateParams>,
            callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
 
         return this._createRoute(Verification.requiredParams)(data, callback)
     }
 
-    get(data?: AuthParams, callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
+    get(data?: SendData<void>, callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
         return this.defineRoute(HTTPMethod.GET, this._routeBase)(data, callback)
     }
 
-    update(data?: VerificationUpdateParams,
+    update(data?: SendData<VerificationUpdateParams>,
            callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
         return this.defineRoute(HTTPMethod.PATCH, this._routeBase)(data, callback)
     }
