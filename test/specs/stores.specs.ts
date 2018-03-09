@@ -1,93 +1,150 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
-import { Stores } from "../../src/resources/Stores"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
+import {
+    Stores,
+    StoreCreateParams,
+    StoreUpdateParams
+} from "../../src/resources/Stores";
+import { RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateStore } from "../fixtures/store";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
 
-let api: RestAPI
-let stores: Stores
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Stores", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    stores = new Stores(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let stores: Stores;
 
-test("route GET /stores # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const okScope = scope
-        .get("/stores")
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const recordBasePathMatcher = pathToRegexMatcher(`${testEndpoint}/stores`);
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/stores/:id`);
+    const recordData = generateStore();
 
-    const r: any = await stores.list()
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        stores = new Stores(api);
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+    });
 
-test("route POST /stores # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post("/stores")
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-    const data = {
-        name : "test"
-    }
+    context("POST /stores", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                recordBasePathMatcher,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await stores.create(data)
+            const data: StoreCreateParams = {
+                name : "Store"
+            };
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(stores.create(data)).to.eventually.eql(recordData);
+        });
 
-test("route POST /stores # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<StoreCreateParams>, RequestError]> = [
+                [{ }, createRequestError(["name"])],
+            ];
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(stores.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+            for (const [data, error] of asserts) {
+                await expect(stores.create(data as StoreCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-test("route GET /stores/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    context("GET /stores", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateStore
+            });
 
-    const r: any = await stores.get("1")
+            fetchMock.getOnce(
+                recordBasePathMatcher,
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(stores.list(),).to.eventually.eql(listData);
+        });
+    });
 
-test("route PATCH /stores/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "update" }
-    const okScope = scope
-        .patch(/\/stores\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
-    const data = { name : "test" }
+    context("GET /stores/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await stores.update("1", data)
+            await expect(stores.get(uuid())).to.eventually.eql(recordData);
+        });
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    context("PATCH /stores/:id", function () {
+        it("should get response", async function () {
+            fetchMock.patchOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-test("route DELETE /stores/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .delete(/\/stores\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(204, okResponse, { "Content-Type" : "application/json" })
+            const data: StoreUpdateParams = {
+                name : "Store"
+            };
 
-    const r: any = await stores.delete("1")
+            await expect(stores.update(uuid(), data),).to.eventually.eql(recordData);
+        });
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    context("DELETE /stores/:id", function () {
+        it("should get response", async function () {
+            fetchMock.deleteOnce(
+                recordPathMatcher,
+                {
+                    status  : 204,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(stores.delete(uuid())).to.eventually.be.empty;
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [stores.get(null), errorId],
+            [stores.update(null), errorId],
+            [stores.delete(null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

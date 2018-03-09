@@ -1,53 +1,58 @@
-import { CardBrand } from "./CardBrand"
-import { AmountWithCurrency } from "./Common"
+/**
+ *  @internal
+ *  @module Types
+ */
+
+import { CardBrand } from "./enums";
+import { AmountWithCurrency } from "./types";
 
 export interface PaymentTypeConfiguration {
-    enabled?: boolean
+    enabled?: boolean;
 }
 
 export interface CardBrandPercentFeesItem {
-    americanExpress: number
-    dinersClub: number
-    discover: number
-    jcb: number
-    maestro: number
-    mastercard: number
-    unionPay: number
-    visa: number
-}
-
-export interface InstallmentsConfiguration {
-    minChargeAmount?: number
-    maxPayoutPeriod?: string
-    failedCyclesToCancel?: number
+    americanExpress?: number;
+    dinersClub?: number;
+    discover?: number;
+    jcb?: number;
+    maestro?: number;
+    mastercard?: number;
+    unionPay?: number;
+    visa?: number;
 }
 
 export interface CardConfigurationMonthlyLimit extends AmountWithCurrency { }
 
 export interface CardConfigurationItem extends PaymentTypeConfiguration {
-    debitEnabled: boolean
-    prepaidEnabled: boolean
-    forbiddenCardBrands: Array<CardBrand>
-    foreignCardsAllowed: boolean
-    failOnNewEmail: boolean
-    allowedCountriesByIp: Array<string>
-    cardLimit: CardConfigurationMonthlyLimit
-    allowEmptyCvv: boolean
+    debitEnabled: boolean;
+    prepaidEnabled: boolean;
+    forbiddenCardBrands: Array<CardBrand>;
+    foreignCardsAllowed: boolean;
+    failOnNewEmail: boolean;
+    allowedCountriesByIp: Array<string>;
+    cardLimit: CardConfigurationMonthlyLimit;
+    allowEmptyCvv: boolean;
 }
 
-export type QRScanConfigurationItem = PaymentTypeConfiguration
+export type QRScanConfigurationItem = PaymentTypeConfiguration;
 
-export type ConvenienceConfigurationItem = PaymentTypeConfiguration
+export type ConvenienceConfigurationItem = PaymentTypeConfiguration;
+
+export interface InstallmentsConfiguration {
+    minChargeAmount?: number;
+    maxPayoutPeriod?: string;
+    failedCyclesToCancel?: number;
+}
 
 export interface InstallmentsConfigurationItem extends PaymentTypeConfiguration, InstallmentsConfiguration { }
 
 export interface SecurityConfiguration {
-    inspectSuspiciousLoginAfter?: string
+    inspectSuspiciousLoginAfter?: string;
     limitChargeByCardConfiguration?: {
-        quantityOfCharges: number
-        durationWindow: string
+        quantityOfCharges: number;
+        durationWindow: string;
     }
-    refundPercentLimit?: number
+    refundPercentLimit?: number;
 }
 
 export interface ConfigurationItem {
@@ -70,5 +75,5 @@ export interface ConfigurationParams {
     installmentsConfiguration?: Partial<InstallmentsConfigurationItem>
 }
 
-export type ConfigurationCreateParams = ConfigurationParams
-export type ConfigurationUpdateParams = ConfigurationParams
+export type ConfigurationCreateParams = ConfigurationParams;
+export type ConfigurationUpdateParams = ConfigurationParams;

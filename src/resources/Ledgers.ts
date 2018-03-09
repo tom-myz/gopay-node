@@ -1,8 +1,9 @@
-import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { PaymentError } from "./common/PaymentError"
-import { Metadata } from "./common/Metadata"
-import { ProcessingMode } from "./common/ProcessingMode"
+/**
+ *  @module Resources/Ledgers
+ */
+
+import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI";
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
 
 export const enum LedgerOrigin {
     CHARGE = "charge",
@@ -44,16 +45,16 @@ export type ResponseLedger = LedgerItem
 
 export class Ledgers extends CRUDResource {
 
-    public static routeBase: string = "/transfers/:transferId/ledgers"
+    static routeBase: string = "/transfers/:transferId/ledgers"
 
-    public list(transferId: string,
-                data?: LedgersListParams,
-                callback?: ResponseCallback<ResponseLedgers>): Promise<ResponseLedgers> {
+    list(transferId: string,
+         data?: LedgersListParams,
+         callback?: ResponseCallback<ResponseLedgers>): Promise<ResponseLedgers> {
 
         return this._listRoute()(data, callback, ["transferId"], transferId)
     }
 
-    public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseLedger>): Promise<ResponseLedger> {
+    get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseLedger>): Promise<ResponseLedger> {
         return this.defineRoute(HTTPMethod.GET, "/ledgers/:id")(data, callback, ["id"], id)
     }
 

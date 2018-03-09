@@ -1,8 +1,12 @@
+/**
+ *  @module Resources/Transfers
+ */
+
 import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { Metadata } from "./common/Metadata"
+import { Metadata } from "./common/types"
 
-export const enum TransferStatus {
+export enum TransferStatus {
     CREATED    = "created",
     APPROVED   = "approved",
     CANCELED   = "canceled",
@@ -52,19 +56,19 @@ export type ResponseTransferStatusChanges = CRUDItemsResponse<TransferStatusChan
 
 export class Transfers extends CRUDResource {
 
-    public static routeBase: string = "/transfers"
+    static routeBase: string = "/transfers"
 
-    public list(data?: TransfersListParams, callback?: ResponseCallback<ResponseTransfers>): Promise<ResponseTransfers> {
+    list(data?: TransfersListParams, callback?: ResponseCallback<ResponseTransfers>): Promise<ResponseTransfers> {
         return this._listRoute()(data, callback)
     }
 
-    public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransfer>): Promise<ResponseTransfer> {
+    get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransfer>): Promise<ResponseTransfer> {
         return this._getRoute()(data, callback, ["id"], id)
     }
 
-    public statusChanges(id: string,
-                         data?: AuthParams,
-                         callback?: ResponseCallback<ResponseTransferStatusChanges>): Promise<ResponseTransferStatusChanges> {
+    statusChanges(id: string,
+                  data?: AuthParams,
+                  callback?: ResponseCallback<ResponseTransferStatusChanges>): Promise<ResponseTransferStatusChanges> {
         return this.defineRoute(HTTPMethod.GET, `${Transfers.routeBase}/:id/status_changes`)(data, callback, ["id"], id)
     }
 

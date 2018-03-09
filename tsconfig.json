@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "outDir": "lib",
         "allowSyntheticDefaultImports": false,
         "target": "es5",
         "downlevelIteration": true,
@@ -21,10 +22,10 @@
         "forceConsistentCasingInFileNames": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
-        "noUnusedParameters": false,
-        "noImplicitReturns": false,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
         "noImplicitThis": false,
-        "noUnusedLocals": false,
+        "noUnusedLocals": true,
         "skipLibCheck": true,
         "strictNullChecks": false,
         "suppressImplicitAnyIndexErrors": true,

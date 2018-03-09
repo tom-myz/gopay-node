@@ -1,97 +1,188 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import { expect } from "chai"
-import * as sinon from "sinon"
-import { SinonSandbox } from "sinon"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
-import { Charges, ChargeItem } from "../../src/resources/Charges"
-import { POLLING_INTERVAL } from "../../src/constants"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import * as sinon from "sinon";
+import { SinonSandbox } from "sinon";
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
+import {
+    ChargeCreateParams,
+    ChargeStatus,
+    Charges
+} from "../../src/resources/Charges";
+import {HTTPMethod, RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateCharge } from "../fixtures/charge";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
+import { POLLING_TIMEOUT } from "../../src/constants"
+import { TimeoutError } from "../../src/errors/TimeoutError";
 
-let api: RestAPI
-let charges: Charges
-let scope: Scope
-const testEndpoint = "http://localhost:80"
-let sandbox: SinonSandbox
+describe("Charges", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    charges = new Charges(api)
-    scope = nock(testEndpoint)
-    sandbox = sinon.sandbox.create({
-        properties: ["spy", "clock"],
-        useFakeTimers: true
-    })
-})
+    let api: RestAPI;
+    let charges: Charges;
+    let sandbox: SinonSandbox;
 
-test("route GET /stores/:storeId/charges # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const okScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/charges$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/stores/:storeId/charges/:id`);
+    const recordData = generateCharge();
 
-    const r: any = await charges.list(null, null, "1")
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        charges = new Charges(api);
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"],
+            useFakeTimers: true
+        });
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+        sandbox.restore();
+    });
 
-test("route POST /charges # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post("/charges")
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-    const data = {
-        transactionTokenId : "test",
-        amount             : 1,
-        currency           : "usd"
-    }
+    context("POST /subscriptions", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                `${testEndpoint}/charges`,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await charges.create(data)
+            const data: ChargeCreateParams = {
+                transactionTokenId : uuid(),
+                amount             : 1000,
+                currency           : "JPY"
+            };
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(charges.create(data)).to.eventually.eql(recordData);
+        });
 
-test("route POST /charges # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<ChargeCreateParams>, RequestError]> = [
+                [{}, createRequestError(["transactionTokenId"])],
+                [{ transactionTokenId : uuid() }, createRequestError(["amount"])],
+                [{ transactionTokenId : uuid(), amount : 1000 }, createRequestError(["currency"])]
+            ];
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(charges.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+            for (const [data, error] of asserts) {
+                await expect(charges.create(data as ChargeCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-test("route GET /stores/:storeId/charges/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    context("GET [/stores/:storeId]/charges", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateCharge
+            });
 
-    const r: any = await charges.get("1", "1")
+            fetchMock.get(
+                pathToRegexMatcher(`${testEndpoint}/:storesPart(stores/[^/]+)?/charges`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            const asserts = [
+                charges.list(null, null),
+                charges.list(null, null, uuid())
+            ];
 
-test("route GET /stores/:storeId/charges/:id # should perform long polling until charge is processed", async (t: TestContext) => {
-    const spy = sandbox.spy(global as NodeJS.Global & GlobalFetch, "fetch")
-    const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/charges\/[a-f-0-9\-]+(.*)$/i)
-        .once()
-        .reply(200, () => ({ status : "success" }), { "Content-Type" : "application/json" })
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(listData);
+            }
+        });
+    });
 
-    const promise = charges.poll("1", "1")
+    context("GET /stores/:storeId/charges/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    sandbox.clock.tick(POLLING_INTERVAL)
+            await expect(charges.get(uuid(), uuid())).to.eventually.eql(recordData);
+        });
 
-    const result = await promise
+        it("should perform long polling", async function () {
+            const recordPendingData = { ...recordData, status : ChargeStatus.PENDING };
 
-    t.deepEqual(result, { status : "success" })
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordPendingData,
+                    headers : { "Content-Type" : "application/json" }
+                }, {
+                    method : HTTPMethod.GET,
+                    name   : "pending"
+                }
+            );
 
-    expect(spy).to.have.been.calledOnce
-})
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                },
+                {
+                    method : HTTPMethod.GET,
+                    name   : "success"
+                }
+            );
+
+            await expect(charges.poll(uuid(), uuid())).to.eventually.eql(recordData);
+        });
+
+        it("should timeout polling", async function () {
+            const recordPendingData = { ...recordData, status : ChargeStatus.PENDING };
+
+            fetchMock.get(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordPendingData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const request = charges.poll(uuid(), uuid());
+
+            sandbox.clock.tick(POLLING_TIMEOUT);
+
+            await expect(request).to.eventually.be.rejectedWith(TimeoutError);
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+        const errorStoreId = createRequestError(["storeId"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [charges.get(null, null), errorStoreId],
+            [charges.get(null, uuid()), errorStoreId],
+            [charges.get(uuid(), null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

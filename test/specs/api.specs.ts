@@ -1,209 +1,267 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import * as sinon from "sinon"
+import { expect } from "chai";
+import sinon = require("sinon");
 import { SinonSandbox } from "sinon"
-import nock = require("nock")
-import { Scope } from "nock"
-import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
-import { ResponseErrorCode, RequestErrorCode } from "../../src/errors/APIError"
-import { RestAPI, ErrorResponse, HTTPMethod } from "../../src/api/RestAPI"
+import fetchMock = require("fetch-mock");
+import { FetchMockStatic } from "fetch-mock";
+import jwt = require("jsonwebtoken");
+import { parseUrl } from "query-string";
+import { HTTPMethod, RestAPI, RestAPIOptions} from "../../src/api/RestAPI";
+import { testEndpoint } from "../utils";
+import { ENV_KEY_APP_ID, ENV_KEY_SECRET, IDEMPOTENCY_KEY_HEADER } from "../../src/constants";
+import { ResponseErrorCode } from "../../src/errors/APIError";
+import { ResponseError } from "../../src/errors/RequestResponseError";
 
-let mockOk: Scope
-let mockError: Scope
-let mockValidationError: Scope
-const testEndpoint = "http://localhost:80"
-let scope: Scope
-let sandbox: SinonSandbox
+describe("API", function () {
+    const okResponse = { ok : true }
 
-test.beforeEach(() => {
-    const REPEATS = 100
-    scope = nock(testEndpoint).persist()
-    mockOk = scope
-        .get("/ok")
-        .times(REPEATS)
-        .reply(200, { ok : true }, { "Content-Type" : "application/json" })
+    let sandbox: SinonSandbox;
 
-    mockError = scope
-        .get("/error")
-        .times(REPEATS)
-        .reply(400, {}, { "Content-Type" : "application/json" })
+    beforeEach(function () {
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"]
+        });
+    });
 
-    mockValidationError = scope
-        .get("/validation-error")
-        .times(REPEATS)
-        .reply(400,
-            {
-                status : "error",
-                code : ResponseErrorCode.ValidationError,
-                errors : [
-                    { field : "currency", reason : ResponseErrorCode.UnsupportedCurrency }
-                ]
-            },
-            { "Content-Type" : "application/json" }
-        )
+    afterEach(function () {
+        fetchMock.restore();
+        sandbox.restore();
+    });
 
-    sandbox = sinon.sandbox.create({
-        properties: ["spy", "clock"]
-    })
-})
+    it("should create instance with proper parameters", function () {
+        const jwtToken = jwt.sign({ foo : "bar" }, "foo");
 
-test("should create instance with proper parameters", (t: TestContext) => {
-    const asserts = [
-        [{ endpoint : "/" }, "/", undefined, undefined],
-        [{ endpoint : "/", appId: "id" }, "/", "id", undefined],
-        [{ endpoint : "/", appId: "id", secret : "secret" }, "/", "id", "secret"],
-        [{ endpoint : "/" }, "/", undefined, undefined]
-    ]
+        const asserts: Array<[RestAPIOptions, string, string, string, string, string]> = [
+            [{ endpoint : "/" }, "/", undefined, undefined, undefined, undefined],
+            [{ endpoint : "/", appId: "id" }, "/", "id", undefined, undefined, undefined],
+            [{ endpoint : "/", appId: "id", secret : "secret" }, "/", "id", "secret", undefined, undefined],
+            [{ endpoint : "/", authToken : "token" }, "/", undefined, undefined, "token", undefined],
+            [{ endpoint : "/", jwt : jwtToken }, "/", undefined, undefined, undefined, jwtToken]
+        ];
 
-    asserts.forEach((a: any) => {
-        const api: RestAPI = new RestAPI(a[0])
-        t.is(api.endpoint, a[1])
-        t.is(api.appId, a[2])
-        t.is(api.secret, a[3])
-    })
-})
+        for (const [options, endpoint, appId, secret, authToken, jwt] of asserts) {
+            const api: RestAPI = new RestAPI(options);
 
-test("should take appId and secret from environment variable", (t: TestContext) => {
-    process.env[ENV_KEY_APP_ID] = "envId"
-    process.env[ENV_KEY_SECRET] = "envSecret"
-
-    const api: RestAPI = new RestAPI({ endpoint : "/" })
-    t.is(api.appId, "envId")
-    t.is(api.secret, "envSecret")
-
-    delete process.env[ENV_KEY_APP_ID]
-    delete process.env[ENV_KEY_SECRET]
-})
-
-test("should send request to the api", async (t: TestContext) => {
-    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    const r: any = await api.send(HTTPMethod.GET, "/ok")
-    t.deepEqual(r, { ok : true })
-})
-
-test("should return error response", async (t: TestContext) => {
-    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    const spy = sinon.spy()
-    const error: ErrorResponse = { code : ResponseErrorCode.BadRequest, errors : [], status : "error", httpCode : 400 }
-    const e = await t.throws(api.send(HTTPMethod.GET, "/error", null, spy))
-
-    t.deepEqual(e, error)
-    t.true(spy.calledOnce)
-    t.true(spy.calledWith(error))
-})
-
-test("should return validation error response", async (t: TestContext) => {
-    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    const spy = sinon.spy()
-    const error: ErrorResponse = {
-        httpCode : 400,
-        status : "error",
-        code : ResponseErrorCode.ValidationError,
-        errors : [
-            { field : "currency", reason : ResponseErrorCode.UnsupportedCurrency }
-        ]
-    }
-    const e = await t.throws(api.send(HTTPMethod.GET, "/validation-error", null, spy))
-    t.deepEqual(e, error)
-    t.true(spy.calledOnce)
-    t.true(spy.calledWith(error))
-})
-
-test.serial("should send request with authorization header", async (t: TestContext) => {
-    const asserts = [
-        [{}, null, null],
-        [{ appId : "id" }, null, "ApplicationToken id|"],
-        [{ appId : "id", secret : "secret" }, null, "ApplicationToken id|secret"],
-        [{ appId : "id", secret : "secret" }, { appId : "id1" }, "ApplicationToken id1|secret"],
-        [{ appId : "id", secret : "secret" }, { secret : "secret1" }, "ApplicationToken id|secret1"]
-    ]
-    let mock: Scope
-
-    const spy = sandbox.spy(global as NodeJS.Global & GlobalFetch, "fetch")
-
-    for (const a of asserts) {
-        const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...a[0] })
-
-        mock = scope
-            .get("/header")
-            .once()
-            .reply(200, { ok : true }, Object.assign(
-                { "Content-Type" : "application/json" },
-                a[2] ? { Authorization : a[2] } : null
-            ))
-
-        const r: any = await api.send(HTTPMethod.GET, "/header", a[1])
-
-        if (!a[2]) {
-            t.false((spy.getCall(spy.callCount - 1).args[0].headers as Headers).has("Authorization"))
-        } else {
-            t.is((spy.getCall(spy.callCount - 1).args[0].headers as Headers).get("Authorization"), a[2])
+            expect(api.endpoint).to.equal(endpoint);
+            expect(api.appId).to.equal(appId);
+            expect(api.secret).to.equal(secret);
+            expect(api.authToken).to.equal(authToken);
+            expect(api.jwtRaw).to.equal(jwt);
         }
-        t.deepEqual(r, { ok : true })
-    }
+    });
 
-    (global as any).fetch.restore()
-})
+    it("should take appId and secret from environment variable", function () {
+        process.env[ENV_KEY_APP_ID] = "envId";
+        process.env[ENV_KEY_SECRET] = "envSecret";
 
-test.serial("should send request with idempotent key", async (t: TestContext) => {
-    let mock: Scope
+        const api: RestAPI = new RestAPI({ endpoint : "/" });
 
-    const spy = sandbox.spy(global as NodeJS.Global & GlobalFetch, "fetch")
+        expect(api.appId).to.equal("envId")
+        expect(api.secret).to.equal("envSecret");
 
-    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+        delete process.env[ENV_KEY_APP_ID];
+        delete process.env[ENV_KEY_SECRET];
+    });
 
-    mock = scope
-        .get("/header")
-        .once()
-        .reply(200, { ok : true }, Object.assign(
-            { "Content-Type" : "application/json" }
-        ))
+    it("should send request to the api", async function () {
+        fetchMock.getOnce(
+            `${testEndpoint}/ok`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : { "Content-Type" : "application/json" }
+            }
+        );
 
-    const r: any = await api.send(HTTPMethod.GET, "/header", { idempotentKey : "test" })
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+        const response = await api.send(HTTPMethod.GET, "/ok");
 
-    t.is((spy.getCall(0).args[0].headers as Headers).get("Idempotency-Key"), "test")
-    t.deepEqual(r, { ok : true });
-    (global as any).fetch.restore()
-})
+        expect(response).to.eql(okResponse);
+    });
 
-test("should convert all params to underscore", (t: TestContext) => {
-    const expectation = { foo: "bar", fizz_buzz: true }
-    const asserts = [
-        { foo: "bar", fizz_buzz: true },
-        { foo: "bar", fizzBuzz: true }
-    ]
+    it("should return error response", async function () {
+        fetchMock.getOnce(
+            `${testEndpoint}/error`,
+            { status : 400 }
+        );
 
-    asserts.forEach((a: any) => {
-        t.deepEqual(RestAPI.requestParams(a), expectation)
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+        const spy = sinon.spy()
+        const error = new ResponseError({
+            code     : ResponseErrorCode.BadRequest,
+            errors   : [],
+            httpCode : 400
+        });
+
+        const resError = await expect(api.send(HTTPMethod.GET, "/error", null, spy)).to.eventually.be.rejected;
+
+        expect(resError).to.be.instanceOf(ResponseError);
+        expect(resError.errorResponse).to.eql(error.errorResponse);
+        expect(spy).calledOnce.calledWith(resError);
+    });
+
+    it("should send request with authorization header", async function () {
+        const jwtTokenPayload = { foo : "bar" };
+        const jwtToken = jwt.sign(jwtTokenPayload, "foo");
+        const jwtToken1 = jwt.sign(jwtTokenPayload, "foo1");
+
+        const asserts: Array<[object, object, string]> = [
+            [{}, null, null],
+            [{ appId : "id" }, null, "ApplicationToken id|"],
+            [{ appId : "id", secret : "secret" }, null, "ApplicationToken id|secret"],
+            [{ appId : "id", secret : "secret" }, { appId : "id1" }, "ApplicationToken id1|secret"],
+            [{ appId : "id", secret : "secret" }, { secret : "secret1" }, "ApplicationToken id|secret1"],
+            [null, { appId : "id" }, "ApplicationToken id|"],
+            [null, { appId : "id", secret : "secret" }, "ApplicationToken id|secret"],
+            [{ authToken : "token" }, null, "Token token"],
+            [{ authToken : "token" }, { authToken : "token1" }, "Token token1"],
+            [null, { authToken : "token1" }, "Token token1"],
+            [{ jwt : jwtToken }, null, `Bearer ${jwtToken}`],
+            [{ jwt : jwtToken }, { jwt : jwtToken1 }, `Bearer ${jwtToken1}`],
+            [null, { jwt : jwtToken1 }, `Bearer ${jwtToken1}`],
+        ];
+
+        const mock: FetchMockStatic = fetchMock.get(
+            `${testEndpoint}/header`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : { "Content-Type" : "application/json" }
+            }, {
+                method : HTTPMethod.GET,
+                repeat : asserts.length
+            }
+        );
+
+        for (const [initParams, sendParams, authHeader] of asserts) {
+            const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...initParams })
+            const response = await api.send(HTTPMethod.GET, "/header", sendParams);
+            const { headers }  = mock.lastCall()[1];
+            const reqAuthHeader = (headers as Headers).get("Authorization");
+
+            expect(reqAuthHeader).to.be.equal(authHeader ? authHeader : null);
+            expect(response).to.eql(okResponse);
+        }
+    });
+
+    it("should update token if it comes back in the response", async function () {
+        const jwtTokenPayload = { foo : "bar" };
+        const jwtToken = jwt.sign(jwtTokenPayload, "foo");
+
+        fetchMock.getOnce(
+            `${testEndpoint}/header`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : {
+                    "Content-Type"  : "application/json",
+                    "Authorization" : `Bearer ${jwtToken}`
+                }
+            }
+        );
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+
+        expect(api.jwtRaw).to.be.undefined;
+        expect(api.jwt).to.be.null;
+
+        await api.send(HTTPMethod.GET, "/header");
+
+        expect(api.jwtRaw).to.equal(jwtToken);
+        expect(api.jwt).to.contain(jwtTokenPayload);
+    });
+
+    it("should fire callback with new token if it was updated", async function () {
+        const jwtToken = jwt.sign({ foo : "bar" }, "foo");
+
+        fetchMock.getOnce(
+            `${testEndpoint}/header`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : {
+                    "Content-Type"  : "application/json",
+                    "Authorization" : `Bearer ${jwtToken}`
+                }
+            }
+        );
+
+        const handleToken = sandbox.spy();
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint, handleUpdateJWT : handleToken });
+
+        await api.send(HTTPMethod.GET, "/header");
+
+        expect(handleToken).to.have.been.calledOnce.calledWith(jwtToken);
+    });
+
+    it("should send request with idempotent key", async function () {
+        const mock: FetchMockStatic = fetchMock.getOnce(
+            `${testEndpoint}/header`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : { "Content-Type" : "application/json" }
+            }
+        );
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+        await api.send(HTTPMethod.GET, "/header", { idempotentKey : "test" });
+
+        const { headers } = mock.lastCall()[1];
+        const keyHeader = (headers as Headers).get(IDEMPOTENCY_KEY_HEADER);
+
+        expect(keyHeader).to.equal("test");
+    });
+
+    it("should convert all params to underscore", async function () {
+        const mock: FetchMockStatic = fetchMock.mock(
+            `begin:${testEndpoint}/camel`,
+            {
+                status  : 200,
+                headers : { "Content-Type" : "application/json" }
+            }
+        );
+
+        const expectationPost = { foo: "bar", fizz_buzz: true };
+        const expectationGet = { foo: "bar", fizz_buzz: "true" };
+
+        const asserts = [
+            { foo: "bar", fizz_buzz: true },
+            { foo: "bar", fizzBuzz: true }
+        ];
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+
+        // For request with payload
+        for (const assert of asserts) {
+            await api.send(HTTPMethod.POST, "/camel", assert);
+            const [ url, init ]  = mock.lastCall();
+            const req = new Request(url, init);
+            await expect(req.json()).to.eventually.eql(expectationPost);
+        }
+
+        // For request without payload
+        for (const assert of asserts) {
+            await api.send(HTTPMethod.GET, "/camel", assert);
+            const [ url ]  = mock.lastCall();
+            const { query } = parseUrl(url);
+            expect(query).to.eql(expectationGet);
+        }
+    });
+
+    it("should return response with camel case properties names", async function () {
+        fetchMock.getOnce(
+            `${testEndpoint}/camel`,
+            {
+                status  : 200,
+                body    : { foo_bar : true },
+                headers : { "Content-Type" : "application/json" }
+            }
+        );
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+        const response = await api.send(HTTPMethod.GET, "/camel");
+
+        expect(response).to.eql({ fooBar : true });
     })
-})
 
-test("should return response with camel case properties names", async (t: TestContext) => {
-    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    nock(testEndpoint)
-        .get("/camel")
-        .once()
-        .reply(200, { foo_bar : true }, { "Content-Type" : "application/json" })
-
-    const r: any = await api.send(HTTPMethod.GET, "/camel")
-
-    t.deepEqual(r, { fooBar : true })
-})
-
-test("should do long polling until condition is met", async (t: TestContext) => {
-    const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-    let repeats = 3
-
-    const promise: () => Promise<boolean> = () => new Promise((resolve: Function) => resolve(--repeats === 0))
-    const spy = sandbox.spy(promise)
-
-    const result = await api.longPolling(
-        spy,
-        (result: boolean) => result === true,
-        null,
-        10
-    )
-
-    t.true(result)
-    t.true(spy.calledThrice)
-})
+});

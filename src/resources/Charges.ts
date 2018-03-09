@@ -1,10 +1,11 @@
+/**
+ *  @module Resources/Charges
+ */
+
 import { ResponseCallback, AuthParams, PollParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { PaymentError } from "./common/PaymentError"
-import { Metadata } from "./common/Metadata"
-import { ProcessingMode } from "./common/ProcessingMode"
-import { Resource } from "./Resource"
-import { WithIdempotentKey } from "./common/Common"
+import { PaymentError, Metadata, WithIdempotentKey } from "./common/types"
+import { ProcessingMode } from "./common/enums"
 
 export const enum ChargeStatus {
     PENDING    = "pending",
@@ -55,26 +56,26 @@ export type ResponseCharges = CRUDItemsResponse<ChargeItem>
 
 export class Charges extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["transactionTokenId", "amount", "currency"]
+    static requiredParams: string[] = ["transactionTokenId", "amount", "currency"];
 
-    public static routeBase: string = "(/stores/:storeId)/charges"
+    static routeBase: string = "/stores/:storeId/charges";
 
-    public list(data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>, storeId?: string): Promise<ResponseCharges> {
-        return this._listRoute()(data, callback, ["storeId"], storeId)
+    list(data?: ChargesListParams, callback?: ResponseCallback<ResponseCharges>, storeId?: string): Promise<ResponseCharges> {
+        return this.defineRoute(HTTPMethod.GET, "(/stores/:storeId)/charges")(data, callback, ["storeId"], storeId)
     }
 
-    public create(data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    create(data: ChargeCreateParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this.defineRoute(HTTPMethod.POST, "/charges", Charges.requiredParams)(data, callback)
     }
 
-    public get(storeId: string,
-               id: string,
-               data?: AuthParams & Partial<PollParams>,
-               callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    get(storeId: string,
+        id: string,
+        data?: AuthParams & Partial<PollParams>,
+        callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public poll(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
+    poll(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseCharge>): Promise<ResponseCharge> {
         const promise: () => Promise<ResponseCharge> = () => this.get(
             storeId,
             id,

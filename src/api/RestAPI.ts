@@ -1,23 +1,31 @@
-import "isomorphic-fetch"
-import process = require("process")
-import decamelize = require("decamelize")
+/**
+ *  @module SDK/API
+ */
+
+import "isomorphic-fetch";
+import "isomorphic-form-data";
+import process = require("process");
+import decamelize = require("decamelize");
 import {
     DEFAULT_ENDPOINT,
     ENV_KEY_ENDPOINT,
     ENV_KEY_APP_ID,
     ENV_KEY_SECRET,
     POLLING_TIMEOUT,
-    POLLING_INTERVAL
-} from "../constants"
-import { transformKeys, partitionKeys } from "../utils/object"
-import { checkStatus, parseJSON } from "../utils/fetch"
-import { TimeoutError } from "../errors/TimeoutError"
-import { fromError } from "../errors/parser"
-import { stringify as stringifyQuery } from "query-string"
-import { Omit } from "type-zoo"
-import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError"
+    IDEMPOTENCY_KEY_HEADER
+} from "../constants";
+import { transformKeys } from "../utils/object";
+import { checkStatus, parseJSON } from "../utils/fetch";
+import { TimeoutError } from "../errors/TimeoutError";
+import { fromError } from "../errors/parser";
+import { stringify as stringifyQuery } from "query-string";
+import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
+import {extractJWT, JWTPayload, parseJWT} from "./utils/JWT";
+import { get, omit } from "lodash";
+import pTimeout = require("p-timeout");
+import pDoWhilst = require("p-do-whilst");
 
-export const enum HTTPMethod {
+export enum HTTPMethod {
     GET    = "GET",
     POST   = "POST",
     PATCH  = "PATCH",
@@ -28,9 +36,14 @@ export const enum HTTPMethod {
 }
 
 export interface RestAPIOptions {
-    endpoint?: string
-    appId?: string
-    secret?: string
+    endpoint?: string;
+    jwt?: string;
+    handleUpdateJWT?(jwt: string): void;
+
+    // Deprecated
+    authToken?: string;
+    appId?: string;
+    secret?: string;
 }
 
 export interface SubError {
@@ -48,175 +61,228 @@ export interface ErrorResponse {
     errors: Array<SubError | ValidationError>
 }
 
-export type ResponseCallback<A> = (response: A | ErrorResponse) => void
+export type ResponseCallback<A> = (response: A | Error) => void
 
 export type PromiseResolve<A> = (value?: A | PromiseLike<A>) => void
 export type PromiseReject = (reason?: any) => void
 
-export const IDEMPOTENCY_KEY_HEADER: string = "Idempotency-Key"
-
 export interface AuthParams {
-    appId?: string
-    secret?: string
+    jwt?: string;
+
+    // Deprecated
+    authToken?: string;
+    appId?: string;
+    secret?: string;
 }
 
 export interface PollParams {
-    poll: boolean
+    poll: boolean;
 }
 
 export interface IdempotentParams {
-    idempotentKey?: string
+    idempotentKey?: string;
 }
 
-export type DataParams<T> = T & AuthParams & IdempotentParams
-
-export interface RestAPIStatic extends Function {
-    getData: typeof RestAPI.getData
-}
+const internalParams: Array<keyof AuthParams | keyof IdempotentParams> = ["appId", "secret", "authToken", "jwt", "idempotentKey"];
 
 export type PromiseCreator<A> = () => Promise<A>
 
+export type SendData<Data> = Data & AuthParams & IdempotentParams;
+
+function getData<Data extends object>(data: SendData<Data>): Data {
+    // TODO: make extraction from FormData
+    return data instanceof FormData
+        ? {} as any
+        : omit(data, internalParams);
+}
+
+function getRequestBody<Data>(data: SendData<Data>): string | FormData {
+    return data instanceof FormData
+        ? data
+        : JSON.stringify(transformKeys(omit(data, internalParams), decamelize));
+}
+
+function getIdempotencyKey<Data>(data: SendData<Data>): string | null {
+    // TODO: make extraction from FormData
+    return data instanceof FormData
+        ? null
+        : get(data, "idempotentKey");
+}
+
+function stringifyParams<Data extends object>(data: Data): string {
+    const query = stringifyQuery(transformKeys(data, decamelize), { arrayFormat : "bracket" });
+    return query ? `?${query}` : "";
+}
+
+async function execRequest<A>(executor: () => Promise<A>, callback?: ResponseCallback<A>): Promise<A> {
+    try {
+        const response = await executor();
+        if (typeof callback === "function") {
+            callback(response);
+        }
+        return response;
+    } catch (error) {
+        const err: Error = error instanceof TimeoutError
+            ? error
+            : fromError(error);
+        if (typeof callback === "function") {
+            callback(err);
+        }
+        throw err;
+    }
+}
+
 export class RestAPI {
 
-    public static requestParams(params: any): any {
-        return transformKeys(params, decamelize)
-    }
+    endpoint: string;
+    jwt: JWTPayload<any>;
+    protected handleUpdateJWT: (jwt: string) => void = () => undefined;
 
-    public static requestUrl(url: string, data: any, isQueryString: boolean): string {
-        const _data: any = data || {}
+    /**
+     *  @deprecated
+     */
+    appId: string;
 
-        return (isQueryString && Object.getOwnPropertyNames(_data).length !== 0)
-            ? `${url}?${stringifyQuery(_data, { arrayFormat : "bracket" } )}`
-            : url
-    }
+    /**
+     *  @deprecated
+     */
+    secret: string;
 
-    public static handleSuccess<A>(response: A, resolve: PromiseResolve<A>, callback?: ResponseCallback<A>): void {
-        if (typeof callback === "function") {
-            callback(response)
-        }
-        resolve(response)
-    }
+    /**
+     *  @deprecated
+     */
+    authToken: string;
 
-    public static handleError<A>(error: Error, reject: PromiseReject, callback?: ResponseCallback<A>): void {
-        const err: ErrorResponse = fromError(error)
-        if (typeof callback === "function") {
-            callback(err)
-        }
-        reject(err)
-    }
-
-    public static getData<Data = any>(
-        data: DataParams<Data>
-    ): [Pick<DataParams<Data>, "appId" | "secret" | "idempotentKey">, Omit<DataParams<Data>, "appId" | "secret" | "idempotentKey">] {
-        return partitionKeys(data, "appId", "secret", "idempotentKey")
-    }
-
-    public appId: string
-    public secret: string
-    public endpoint: string
+    private _jwtRaw: string = null;
 
     constructor(options: RestAPIOptions = {}) {
-        this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT
-        this.appId = options.appId || process.env[ENV_KEY_APP_ID]
-        this.secret = options.secret || process.env[ENV_KEY_SECRET]
-    }
+        this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT;
+        this.jwtRaw = options.jwt;
 
-    public getBody(data: any, payload: boolean): any {
-        const [_, _data]: Array<any> = RestAPI.getData(data)
-        return !payload ? JSON.stringify(RestAPI.requestParams(_data)) : null
-    }
-
-    public getHeaders(data?: any, body?: any): Headers {
-        const [{appId, secret}, _]: Array<any> = RestAPI.getData(data)
-        const headers: Headers = new Headers()
-
-        headers.append("Accept", "application/json")
-        headers.append("Content-Type", "application/json")
-        if (appId || this.appId) {
-            headers.append("Authorization", `ApplicationToken ${appId || this.appId}|${secret || this.secret || ""}`)
+        if (options.handleUpdateJWT && typeof options.handleUpdateJWT === "function") {
+            this.handleUpdateJWT = options.handleUpdateJWT;
         }
 
-        return headers
+        this.appId = options.appId || process.env[ENV_KEY_APP_ID];
+        this.secret = options.secret || process.env[ENV_KEY_SECRET];
+        this.authToken = options.authToken;
     }
 
-    public getWebSocketUrl(path: string): string {
-        const auth: string = `ApplicationToken:${this.appId || ""}@`
-        return `${this.endpoint.replace(/^http(s?:\/\/)(.*)/, `ws$1${auth}$2`)}${path}`
+    set jwtRaw(jwtRaw: string) {
+        this.jwt = parseJWT(jwtRaw);
+        this._jwtRaw = jwtRaw;
     }
 
-    public send<A, Data = any>(method: HTTPMethod,
-                               url: string,
-                               data?: Data & AuthParams & IdempotentParams,
-                               callback?: ResponseCallback<A>): Promise<A> {
-        const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) !== -1
-        const body: any = this.getBody(data, payload)
-        const headers: Headers = this.getHeaders(data, body)
-        const [_requestParams, _data] = ((this.constructor as RestAPIStatic).getData || RestAPI.getData)(data)
-
-        if (_requestParams.idempotentKey) {
-            headers.append(IDEMPOTENCY_KEY_HEADER, _requestParams.idempotentKey)
-        }
-
-        return new Promise((resolve: PromiseResolve<A>, reject: PromiseReject) => {
-            const params: RequestInit = {
-                body,
-                headers,
-                method,
-                mode : "cors"
-            }
-            const request: Request = new Request(
-                `${this.endpoint}${RestAPI.requestUrl(url, RestAPI.requestParams(_data), payload)}`,
-                Object.keys(params).reduce((r: RequestInit, key: string) => {
-                    if (!!params[key]) {
-                        r[key] = params[key]
-                    }
-                    return r
-                }, {})
-            )
-
-            fetch(request)
-                .then(checkStatus)
-                .then(parseJSON)
-                .then((response: A & Response) => RestAPI.handleSuccess(response, resolve, callback))
-                .catch((error: Error) => RestAPI.handleError(error, reject, callback))
-        })
+    get jwtRaw(): string | null {
+        return this._jwtRaw;
     }
 
-    public longPolling<A>(promise: PromiseCreator<A>,
-                          condition: (response: A) => boolean,
-                          callback?: ResponseCallback<A>,
-                          interval: number = POLLING_INTERVAL,
-                          timeout: number = POLLING_TIMEOUT): Promise<A> {
+    /**
+     * @internal
+     */
+    async send<A, Data = any>(method: HTTPMethod,
+                              uri: string,
+                              data?: SendData<Data>,
+                              callback?: ResponseCallback<A>): Promise<A> {
 
-        let elapsedTime: number = 0
+        const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) === -1;
 
-        function pollWait(wait: number): Promise<any> {
-            return new Promise((resolve: PromiseResolve<any>) => setTimeout(() => {
-                elapsedTime += wait
-                resolve()
-            }, wait))
-        }
+        const params: RequestInit = {
+            headers : this.getHeaders(data),
+            method
+        };
 
-        function polling(creator: PromiseCreator<A> = promise): Promise<A> {
-            if (elapsedTime >= timeout) {
-                return Promise.reject(new TimeoutError(timeout))
+        const requestData = getData(data);
+
+        /*
+        const request: Request = new Request(
+            `${this.endpoint}${uri}${payload ? "" : stringifyParams(requestData)}`,
+            payload ? { ...params, body : getRequestBody(data) } : params
+        );
+        */
+
+        return await execRequest(async () => {
+            // FIXME: Use Request when fetch-mock is fixed
+            // const response = await fetch(request);
+            const response = await fetch(
+                `${this.endpoint}${uri}${payload ? "" : stringifyParams(requestData)}`,
+                payload ? { ...params, body : getRequestBody(data) } : params
+            );
+
+            await checkStatus(response);
+
+            const jwt = await extractJWT(response);
+
+            if (!!jwt) {
+                this.jwtRaw = jwt;
+                this.handleUpdateJWT(jwt);
             }
 
-            return pollWait(interval)
-                .then(creator)
-                .then((response: A) => {
-                    if (!condition(response)) {
-                        return polling(creator)
-                    }
-                    return response
-                })
+            return await parseJSON(response);
+        }, callback);
+    }
+
+    protected getHeaders<Data extends object>(data: SendData<Data>): Headers {
+        const headers: Headers = new Headers();
+        const isFormData = data instanceof FormData;
+
+        headers.append("Accept", "application/json");
+
+        if (!isFormData) {
+            headers.append("Content-Type", "application/json");
+        } else {
+            headers.append("Content-Type", "multipart/form-data");
         }
 
-        return new Promise((resolve: PromiseResolve<A>, reject: PromiseReject) => {
-            polling()
-                .then((response: A) => RestAPI.handleSuccess(response, resolve, callback))
-                .catch((error: Error) => RestAPI.handleError(error, reject, callback))
-        })
+        const idempotentKey = getIdempotencyKey(data);
+
+        if (idempotentKey) {
+            headers.append(IDEMPOTENCY_KEY_HEADER, idempotentKey);
+        }
+
+        // Deprecated
+        const {
+            authToken = this.authToken,
+            appId = this.appId,
+            secret = this.secret,
+            jwt = this._jwtRaw
+        } = { ...(!isFormData ? data : {}) };
+
+        if (authToken) {
+            headers.append("Authorization", `Token ${authToken}`);
+        } else if (appId) {
+            headers.append("Authorization", `ApplicationToken ${appId}|${secret || ""}`);
+        } else if (jwt) {
+            headers.append("Authorization", `Bearer ${jwt}`);
+        }
+
+        return headers;
+    }
+
+    /**
+     * @internal
+     */
+    async longPolling<A>(promise: PromiseCreator<A>,
+                         condition: (response: A) => boolean,
+                         callback?: ResponseCallback<A>,
+                         timeout: number = POLLING_TIMEOUT): Promise<A> {
+
+        return await execRequest(async () => {
+            let response: A;
+            let timedOut: boolean = false;
+
+            await pTimeout(
+                pDoWhilst(async () => {
+                    response = await promise();
+                }, () => !condition(response) && !timedOut),
+                timeout,
+                () => {
+                    timedOut = true;
+                    throw new TimeoutError(timeout);
+                }
+            );
+            return response;
+        }, callback);
     }
 
 }

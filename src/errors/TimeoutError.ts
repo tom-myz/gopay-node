@@ -1,11 +1,16 @@
+/**
+ *  @module Errors
+ */
+
 export class TimeoutError extends Error {
 
-    public timeout: number
+    timeout: number;
 
     constructor(timeout: number) {
-        super()
-        this.timeout = timeout
-        Object.setPrototypeOf(this, TimeoutError.prototype)
+        super(`Timed out after ${timeout} milliseconds.`);
+        this.timeout = timeout;
+        this.name = "TimeoutError";
+        Object.setPrototypeOf(this, TimeoutError.prototype);
     }
 
 }

@@ -1,3 +1,7 @@
+/**
+ *  @module Resources/Stores
+ */
+
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { ConfigurationCreateParams, ConfigurationUpdateParams, ConfigurationItem } from "./common/Configuration"
@@ -29,27 +33,27 @@ export type ResponseStores = CRUDItemsResponse<StoreItem>
 
 export class Stores extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["name"]
+    static requiredParams: string[] = ["name"]
 
-    public static routeBase: string = "/stores"
+    static routeBase: string = "/stores"
 
-    public list(data?: StoresListParams, callback?: ResponseCallback<ResponseStores>): Promise<ResponseStores> {
+    list(data?: StoresListParams, callback?: ResponseCallback<ResponseStores>): Promise<ResponseStores> {
         return this._listRoute()(data, callback)
     }
 
-    public create(data: StoreCreateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+    create(data: StoreCreateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
         return this._createRoute(Stores.requiredParams)(data, callback)
     }
 
-    public get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+    get(id: string, data?: AuthParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
         return this._getRoute()(data, callback, ["id"], id)
     }
 
-    public update(id: string, data?: StoreUpdateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
+    update(id: string, data?: StoreUpdateParams, callback?: ResponseCallback<ResponseStore>): Promise<ResponseStore> {
         return this._updateRoute()(data, callback, ["id"], id)
     }
 
-    public delete(id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+    delete(id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
         return this._deleteRoute()(data, callback, ["id"], id)
     }
 

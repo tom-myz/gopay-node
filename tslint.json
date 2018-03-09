@@ -1,13 +1,24 @@
 {
-  "extends": ["tslint:recommended"],
-  "formatter": "tap",
+  "extends": ["tslint:recommended", "tslint-eslint-rules"],
   "rules": {
-    "array-type": false,
     "interface-name": false,
-    "max-line-length": [true, 140],
+    "max-line-length": [true, 180],
     "object-literal-sort-keys": false,
+    "object-literal-key-quotes": false,
     "only-arrow-functions": false,
     "ordered-imports": false,
+    "member-access": [true, "no-public"],
+    "member-ordering": false,
+    "no-shadowed-variable": false,
+    "max-classes-per-file": false,
+    "space-before-function-paren": [
+      true,
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
     "trailing-comma": [
       true,
       {
@@ -15,7 +26,7 @@
         "singleline": "never"
       }
     ],
-    "semicolon": [true, "never"],
+    "semicolon": false,
     "variable-name": [
       true,
       "ban-keywords",
@@ -24,6 +35,5 @@
       "allow-pascal-case"
     ],
     "no-console": false
-
   }
 }

@@ -1,9 +1,11 @@
+/**
+ *  @module Resources/TransactionTokens
+ */
+
 import { ResponseCallback, ErrorResponse, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
-import { ProcessingMode } from "./common/ProcessingMode"
-import { PhoneNumber } from "./common/PhoneNumber"
-import { WithIdempotentKey } from "./common/Common"
-import { CardBrand } from "./common/CardBrand"
+import { CardBrand, ProcessingMode } from "./common/enums"
+import { PhoneNumber, WithIdempotentKey } from "./common/types"
 
 export const enum UsageLimit {
     DAILY   = "daily",
@@ -130,39 +132,39 @@ export type ResponseTransactionTokens = CRUDItemsResponse<TransactionTokenItem>
 
 export class TransactionTokens extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["paymentType", "type", "email", "data"]
+    static requiredParams: string[] = ["paymentType", "type", "email", "data"];
 
-    public static routeBase: string = "(/stores/:storeId)/tokens"
+    static routeBase: string = "/stores/:storeId/tokens";
 
-    public create(data: TransactionTokenCreateParams,
-                  callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
+    create(data: TransactionTokenCreateParams,
+           callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this.defineRoute(HTTPMethod.POST, "/tokens", TransactionTokens.requiredParams)(data, callback)
     }
 
-    public get(id: string,
-               data?: AuthParams,
-               callback?: ResponseCallback<ResponseTransactionToken>,
-               storeId?: string): Promise<ResponseTransactionToken> {
+    get(storeId: string,
+        id: string,
+        data?: AuthParams,
+        callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public list(data?: TransactionTokenListParams,
-                callback?: ResponseCallback<ResponseTransactionTokens>,
-                storeId?: string): Promise<ResponseTransactionTokens> {
-        return this._listRoute()(data, callback, ["storeId"], storeId)
+    list(data?: TransactionTokenListParams,
+         callback?: ResponseCallback<ResponseTransactionTokens>,
+         storeId?: string): Promise<ResponseTransactionTokens> {
+        return this.defineRoute(HTTPMethod.GET, "(/stores/:storeId)/tokens")(data, callback, ["storeId"], storeId)
     }
 
-    public update(id: string,
-                  data?: TransactionTokenUpdateParams,
-                  callback?: ResponseCallback<ResponseTransactionToken>,
-                  storeId?: string): Promise<ResponseTransactionToken> {
+    update(storeId: string,
+           id: string,
+           data?: TransactionTokenUpdateParams,
+           callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public delete(id: string,
-                  data?: AuthParams,
-                  callback?: ResponseCallback<ErrorResponse>,
-                  storeId?: string): Promise<ErrorResponse> {
+    delete(storeId: string,
+           id: string,
+           data?: AuthParams,
+           callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 }

@@ -1,3 +1,7 @@
+/**
+ *  @module Errors
+ */
+
 export enum RequestErrorCode {
     RequestError = "REQUEST_ERROR"
 }
@@ -236,14 +240,14 @@ export enum ResponseErrorCode {
 
 export class APIError extends Error {
 
-    public status: number
-    public response: any
+    status: number;
+    response: any;
 
-    constructor(status: number, response?: any, route?: string) {
-        super()
-        this.status = status
-        this.response = Object.keys(response).length !== 0 ? response : null
-        Object.setPrototypeOf(this, APIError.prototype)
+    constructor(status: number, response?: any) {
+        super();
+        this.status = status;
+        this.response = Object.keys(response).length !== 0 ? response : null;
+        Object.setPrototypeOf(this, APIError.prototype);
     }
 
 }

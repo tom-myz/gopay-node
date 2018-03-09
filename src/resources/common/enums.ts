@@ -1,4 +1,9 @@
-export const enum CardBrand {
+/**
+ *  @internal
+ *  @module Enums
+ */
+
+export enum CardBrand {
     VISA       = "visa",
     MASTERCARD = "mastercard",
     MAESTRO    = "maestro",
@@ -7,4 +12,10 @@ export const enum CardBrand {
     DISCOVER   = "discover",
     JCB        = "jcb",
     UNIONPAY   = "unionpay"
+}
+
+export enum ProcessingMode {
+    TEST      = "test",
+    LIVE      = "live",
+    LIVE_TEST = "live_test"
 }

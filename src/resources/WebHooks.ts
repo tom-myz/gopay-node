@@ -1,3 +1,7 @@
+/**
+ *  @module Resources/WebHooks
+ */
+
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
@@ -19,11 +23,11 @@ export const enum WebHookTrigger {
 export interface WebHooksListParams extends CRUDPaginationParams, AuthParams {}
 
 export interface WebHookCreateParams extends AuthParams {
-    triggers: Array<WebHookTrigger>
+    triggers: WebHookTrigger[]
     url: string
 }
 export interface WebHookUpdateParams extends AuthParams {
-    triggers?: Array<WebHookTrigger>
+    triggers?: WebHookTrigger[]
     url?: string
 }
 
@@ -32,7 +36,7 @@ export interface WebHookItem {
     id: string
     merchantId: string
     storeId: string
-    triggers: Array<WebHookTrigger>
+    triggers: WebHookTrigger[]
     url: string
     createdOn: string
 }
@@ -42,44 +46,44 @@ export type ResponseWebHooks = CRUDItemsResponse<WebHookItem>
 
 export class WebHooks extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["triggers", "url"]
+    static requiredParams: string[] = ["triggers", "url"]
 
-    public static routeBase: string = "(/stores/:storeId)/webhooks"
+    static routeBase: string = "(/stores/:storeId)/webhooks"
 
-    public list(data?: WebHooksListParams,
-                callback?: ResponseCallback<ResponseWebHooks>,
-                storeId?: string): Promise<ResponseWebHooks> {
+    list(data?: WebHooksListParams,
+         callback?: ResponseCallback<ResponseWebHooks>,
+         storeId?: string): Promise<ResponseWebHooks> {
 
         return this._listRoute()(data, callback, ["storeId"], storeId)
     }
 
-    public create(data: WebHookCreateParams,
-                  callback?: ResponseCallback<ResponseWebHook>,
-                  storeId?: string): Promise<ResponseWebHook> {
+    create(data: WebHookCreateParams,
+           callback?: ResponseCallback<ResponseWebHook>,
+           storeId?: string): Promise<ResponseWebHook> {
 
         return this._createRoute(WebHooks.requiredParams)(data, callback, ["storeId"], storeId)
     }
 
-    public get(id: string,
-               data?: AuthParams,
-               callback?: ResponseCallback<ResponseWebHook>,
-               storeId?: string): Promise<ResponseWebHook> {
+    get(id: string,
+        data?: AuthParams,
+        callback?: ResponseCallback<ResponseWebHook>,
+        storeId?: string): Promise<ResponseWebHook> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public update(id: string,
-                  data?: WebHookUpdateParams,
-                  callback?: ResponseCallback<ResponseWebHook>,
-                  storeId?: string): Promise<ResponseWebHook> {
+    update(id: string,
+           data?: WebHookUpdateParams,
+           callback?: ResponseCallback<ResponseWebHook>,
+           storeId?: string): Promise<ResponseWebHook> {
 
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public delete(id: string,
-                  data?: AuthParams,
-                  callback?: ResponseCallback<ErrorResponse>,
-                  storeId?: string): Promise<ErrorResponse> {
+    delete(id: string,
+           data?: AuthParams,
+           callback?: ResponseCallback<ErrorResponse>,
+           storeId?: string): Promise<ErrorResponse> {
 
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }

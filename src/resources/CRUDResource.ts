@@ -1,3 +1,7 @@
+/**
+ *  @internal
+ *  @module Resources
+ */
 import { RestAPI, HTTPMethod } from "../api/RestAPI"
 import { Resource, DefinedRoute } from "./Resource"
 
@@ -15,8 +19,8 @@ export interface CRUDPaginationParams {
 
 /* Response */
 export interface CRUDItemsResponse<A> {
-    items: Array<A>
-    hasMore: boolean
+    items: A[];
+    hasMore: boolean;
 }
 
 interface CRUDResourceStatic extends Function {
@@ -25,30 +29,30 @@ interface CRUDResourceStatic extends Function {
 
 export abstract class CRUDResource extends Resource {
 
-    public _routeBase: string
+    protected _routeBase: string;
 
     constructor(api: RestAPI) {
         super(api)
         this._routeBase = (this.constructor as CRUDResourceStatic).routeBase
     }
 
-    public _listRoute(required?: Array<string>): DefinedRoute {
+    protected _listRoute(required?: string[]): DefinedRoute {
         return this.defineRoute(HTTPMethod.GET, this._routeBase, required)
     }
 
-    public _createRoute(required?: Array<string>): DefinedRoute {
+    protected _createRoute(required?: string[]): DefinedRoute {
         return this.defineRoute(HTTPMethod.POST, this._routeBase, required)
     }
 
-    public _getRoute(required?: Array<string>): DefinedRoute {
+    protected _getRoute(required?: string[]): DefinedRoute {
         return this.defineRoute(HTTPMethod.GET, `${this._routeBase}/:id`, required)
     }
 
-    public _updateRoute(required?: Array<string>): DefinedRoute {
+    protected _updateRoute(required?: string[]): DefinedRoute {
         return this.defineRoute(HTTPMethod.PATCH, `${this._routeBase}/:id`, required)
     }
 
-    public _deleteRoute(required?: Array<string>): DefinedRoute {
+    protected _deleteRoute(required?: string[]): DefinedRoute {
         return this.defineRoute(HTTPMethod.DELETE, `${this._routeBase}/:id`, required)
     }
 

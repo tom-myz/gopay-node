@@ -1,29 +1,41 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI } from "../../src/api/RestAPI"
-import { Merchants } from "../../src/resources/Merchants"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import { testEndpoint } from "../utils";
+import {
+    Merchants
+} from "../../src/resources/Merchants";
+import { RestAPI } from "../../src/api/RestAPI";
+import { generateFixture as generateMerchant } from "../fixtures/merchant";
 
-let api: RestAPI
-let merchants: Merchants
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Merchants", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    merchants = new Merchants(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let merchants: Merchants;
 
-test("route GET /me # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "me" }
-    const okScope = scope
-        .get("/me")
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        merchants = new Merchants(api);
+    });
 
-    const r: any = await merchants.me()
+    afterEach(function () {
+        fetchMock.restore();
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    context("GET /me", function () {
+        it("should get response", async function () {
+            const recordData = generateMerchant();
+
+            fetchMock.getOnce(
+                `${testEndpoint}/me`,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(merchants.me()).to.eventually.eql(recordData);
+        });
+    });
+
+});

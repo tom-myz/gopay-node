@@ -1,29 +1,82 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { Ledgers } from "../../src/resources/Ledgers"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
+import {
+    Ledgers
+} from "../../src/resources/Ledgers";
+import { RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateLedger } from "../fixtures/ledger";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
 
-let api: RestAPI
-let ledgers: Ledgers
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Ledgers", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({ endpoint: testEndpoint })
-    ledgers = new Ledgers(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let ledgers: Ledgers;
 
-test("route GET /transfer/:transferId/ledgers # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "get" }
-    const okScope = scope
-        .get(/\/transfers\/[a-f-0-9\-]+\/ledgers$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const recordData = generateLedger();
 
-    const r: any = await ledgers.list("1")
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        ledgers = new Ledgers(api);
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+    });
+
+    context("GET /transfers/:transferId/ledgers", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateLedger
+            });
+
+            fetchMock.get(
+                pathToRegexMatcher(`${testEndpoint}/transfers/:transferId/ledgers`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(ledgers.list(uuid()),).to.eventually.eql(listData);
+        });
+    });
+
+    context("GET /ledgers/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                pathToRegexMatcher(`${testEndpoint}/ledgers/:id`),
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(ledgers.get(uuid())).to.eventually.eql(recordData);
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+        const errorTransferId = createRequestError(["transferId"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [ledgers.list(null), errorTransferId],
+            [ledgers.get(null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

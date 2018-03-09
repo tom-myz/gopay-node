@@ -1,63 +1,183 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import * as sinon from "sinon";
+import { SinonSandbox } from "sinon";
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
 import {
-    PaymentType,
-    TransactionTokenCreateParams, TransactionTokens, TransactionTokenType
-} from "../../src/resources/TransactionTokens"
+    TransactionTokens,
+    TransactionTokenCreateParams,
+    TransactionTokenUpdateParams, PaymentType, TransactionTokenType
+} from "../../src/resources/TransactionTokens";
+import { RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateTransactionToken } from "../fixtures/transaction-tokens";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
 
-let api: RestAPI
-let tokens: TransactionTokens
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Transaction Tokens", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    tokens = new TransactionTokens(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let transactionTokens: TransactionTokens;
+    let sandbox: SinonSandbox;
 
-test("route POST /tokens # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post("/tokens")
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/stores/:storeId/tokens/:id`);
+    const recordData = generateTransactionToken();
 
-    const data: TransactionTokenCreateParams = {
-        paymentType: PaymentType.CARD,
-        email: "test",
-        type: TransactionTokenType.ONE_TIME,
-        data: {} as any
-    }
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        transactionTokens = new TransactionTokens(api);
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"],
+            useFakeTimers: true
+        });
+    });
 
-    const r: any = await tokens.create(data)
+    afterEach(function () {
+        fetchMock.restore();
+        sandbox.restore();
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    context("POST /tokens", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                `${testEndpoint}/tokens`,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-test("route POST /tokens # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+            const data: TransactionTokenCreateParams = {
+                paymentType : PaymentType.CARD,
+                type        : TransactionTokenType.ONE_TIME,
+                email       : "test@fake.com",
+                data : {
+                    cardholder : "Joe Doe",
+                    cardNumber : "4242424242424242",
+                    expMonth   : "12",
+                    expYear    : "99",
+                    cvv        : "123"
+                }
+            };
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(tokens.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+            await expect(transactionTokens.create(data)).to.eventually.eql(recordData);
+        });
 
-test("route GET /stores/:storeId/tokens/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "get" }
-    const okScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/tokens\/[a-f0-9]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<TransactionTokenCreateParams>, RequestError]> = [
+                [{ }, createRequestError(["paymentType"])],
+                [{ paymentType : PaymentType.CARD }, createRequestError(["type"])],
+                [{ paymentType : PaymentType.CARD, type : TransactionTokenType.ONE_TIME }, createRequestError(["email"])],
+                [{ paymentType : PaymentType.CARD, type : TransactionTokenType.ONE_TIME, email : "test@fake.com" }, createRequestError(["data"])]
+            ];
 
-    const r: any = await tokens.get("1", null, null, "1")
+            for (const [data, error] of asserts) {
+                await expect(transactionTokens.create(data as TransactionTokenCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    context("GET [/stores/:storeId]/tokens", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateTransactionToken
+            });
+
+            fetchMock.get(
+                pathToRegexMatcher(`${testEndpoint}/:storesPart(stores/[^/]+)?/tokens`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const asserts = [
+                transactionTokens.list(),
+                transactionTokens.list(null, null, uuid())
+            ];
+
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(listData);
+            }
+        });
+    });
+
+    context("GET /stores/:storeId/tokens/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(transactionTokens.get(uuid(), uuid())).to.eventually.eql(recordData);
+        });
+    });
+
+    context("PATCH /stores/:storeId/tokens/:id", function () {
+        it("should get response", async function () {
+            fetchMock.patchOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data: TransactionTokenUpdateParams = {
+                email : "test@fake.com"
+            };
+
+            await expect(transactionTokens.update(uuid(), uuid(), data)).to.eventually.eql(recordData);
+        });
+    });
+
+    context("DELETE /stores/:storeId/tokens/:id", function () {
+        it("should get response", async function () {
+            fetchMock.deleteOnce(
+                recordPathMatcher,
+                {
+                    status  : 204,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(transactionTokens.delete(uuid(), uuid(), null)).to.eventually.be.empty;
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+        const errorStoreId = createRequestError(["storeId"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [transactionTokens.get(null, null), errorStoreId],
+            [transactionTokens.get(null, uuid()), errorStoreId],
+            [transactionTokens.get(uuid(), null), errorId],
+            [transactionTokens.update(null, null), errorStoreId],
+            [transactionTokens.update(null, uuid()), errorStoreId],
+            [transactionTokens.update(uuid(), null), errorId],
+            [transactionTokens.delete(null, null), errorStoreId],
+            [transactionTokens.delete(null, uuid()), errorStoreId],
+            [transactionTokens.delete(uuid(), null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

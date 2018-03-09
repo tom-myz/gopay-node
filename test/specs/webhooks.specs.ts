@@ -1,97 +1,190 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
-import { WebHooks, WebHookTrigger } from "../../src/resources/WebHooks"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
+import {
+    WebHooks,
+    WebHookTrigger,
+    WebHookCreateParams,
+    WebHookUpdateParams
+} from "../../src/resources/WebHooks";
+import { RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateWebHook } from "../fixtures/webhook";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
 
-let api: RestAPI
-let webHooks: WebHooks
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Web Hooks", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    webHooks = new WebHooks(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let webHooks: WebHooks;
 
-test("route GET /stores/:storeId/webhooks # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const okScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/webhooks$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const recordBasePathMatcher = pathToRegexMatcher(`${testEndpoint}/:storesPart(stores/[^/]+)?/webhooks`);
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/:storesPart(stores/[^/]+)?/webhooks/:id`);
+    const recordData = generateWebHook();
 
-    const r: any = await webHooks.list(null, null, "1")
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        webHooks = new WebHooks(api);
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+    });
 
-test("route POST /stores/:storeId/webhooks # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post(/\/stores\/[a-f-0-9\-]+\/webhooks$/i)
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-    const data = {
-        triggers: [WebHookTrigger.CHARGE_FINISHED],
-        url: "test"
-    }
+    context("POST [/stores/:storeId]/webhooks", function () {
+        it("should get response", async function () {
+            fetchMock.post(
+                recordBasePathMatcher,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await webHooks.create(data, null, "1")
+            const data: WebHookCreateParams = {
+                triggers : [WebHookTrigger.CHARGE_FINISHED],
+                url      : "http://fake.com"
+            };
 
-    t.deepEqual(r, okResponse)
-})
+            const asserts = [
+                webHooks.create(data),
+                webHooks.create(data, null, uuid())
+            ];
 
-test("route POST /stores/:storeId/webhooks # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(recordData);
+            }
+        });
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(webHooks.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<WebHookCreateParams>, RequestError]> = [
+                [{ }, createRequestError(["triggers"])],
+                [{ triggers : [WebHookTrigger.CHARGE_FINISHED] }, createRequestError(["url"])],
+            ];
 
-test("route GET /stores/:storeId/webhooks/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+            for (const [data, error] of asserts) {
+                await expect(webHooks.create(data as WebHookCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-    const r: any = await webHooks.get("1", null, null, "1")
+    context("GET [/stores/:storeId]/webhooks", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateWebHook
+            });
 
-    t.deepEqual(r, okResponse)
-})
+            fetchMock.get(
+                recordBasePathMatcher,
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-test("route PATCH /stores/:storeId/webhooks/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "update" }
-    const okScope = scope
-        .patch(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
-    const data = {
-        triggers: [WebHookTrigger.CHARGE_FINISHED],
-        url: "test"
-    }
 
-    const r: any = await webHooks.update("1", data, null, "1")
+            const asserts = [
+                webHooks.list(),
+                webHooks.list(null, null, uuid())
+            ];
 
-    t.deepEqual(r, okResponse)
-})
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(listData);
+            }
+        });
+    });
 
-test("route DELETE /stores/:storeId/webhooks/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .delete(/\/stores\/[a-f-0-9\-]+\/webhooks\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(204, okResponse, { "Content-Type" : "application/json" })
+    context("GET [/stores/:storeId]/webhooks/:id", function () {
+        it("should get response", async function () {
+            fetchMock.get(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await webHooks.delete("1", null, null, "1")
+            const asserts = [
+                webHooks.get(uuid()),
+                webHooks.get(uuid(), null, null, uuid())
+            ];
 
-    t.deepEqual(r, okResponse)
-})
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(recordData);
+            }
+        });
+    });
+
+    context("PATCH [/stores/:storeId]/webhooks/:id", function () {
+        it("should get response", async function () {
+            fetchMock.patch(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data: WebHookUpdateParams = {
+                triggers : [WebHookTrigger.CHARGE_FINISHED],
+                url      : "http://fake.com"
+            };
+
+            const asserts = [
+                webHooks.update(uuid(), data),
+                webHooks.update(uuid(), data, null, uuid())
+            ];
+
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(recordData);
+            }
+        });
+    });
+
+    context("DELETE [/stores/:storeId]/webhooks/:id", function () {
+        it("should get response", async function () {
+            fetchMock.delete(
+                recordPathMatcher,
+                {
+                    status  : 204,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const asserts = [
+                webHooks.delete(uuid()),
+                webHooks.delete(uuid(), null, null, uuid())
+            ];
+
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.be.empty;
+            }
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [webHooks.get(null), errorId],
+            [webHooks.update(null), errorId],
+            [webHooks.delete(null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

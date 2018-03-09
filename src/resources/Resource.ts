@@ -1,37 +1,41 @@
-import {RestAPI, HTTPMethod, ResponseCallback, ErrorResponse, DataParams} from "../api/RestAPI"
+/**
+ *  @internal
+ *  @module Resources
+ */
+import { RestAPI, HTTPMethod, ResponseCallback, SendData } from "../api/RestAPI"
 import { PathParameterError } from "../errors/PathParameterError"
 import { RequestParameterError } from "../errors/RequestParameterError"
 import { fromError } from "../errors/parser"
 import { missingKeys } from "../utils/object"
 
-export type DefinedRoute = (data?: any, callback?: any, pathParams?: Array<string>, ...params: Array<string>) => Promise<any>
+export type DefinedRoute = (data?: any, callback?: any, pathParams?: string[], ...params: string[]) => Promise<any>
+
+function compilePath(path: string, pathParams: any): string {
+    return path
+        .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
+            const part: string = o.replace(/:(\w+)/ig, (s: string, p: string) => {
+                return (pathParams as any)[p] || s
+            })
+            return part.indexOf(":") === -1 ? part.replace(/\(|\)/g, "") : ""
+        })
+        .replace(/:(\w+)/ig, (s: string, p: string) => (pathParams as any)[p] || s)
+}
 
 export abstract class Resource {
 
-    public static compilePath(path: string, pathParams: any): string {
-        return path
-            .replace(/\((\w|:|\/)+\)/ig, (o: string) => {
-                const part: string = o.replace(/:(\w+)/ig, (s: string, p: string) => {
-                    return (pathParams as any)[p] || s
-                })
-                return part.indexOf(":") === -1 ? part.replace(/\(|\)/g, "") : ""
-            })
-            .replace(/:(\w+)/ig, (s: string, p: string) => (pathParams as any)[p] || s)
-    }
-
-    public api: RestAPI
+    protected api: RestAPI;
 
     constructor(api: RestAPI) {
         this.api = api
     }
 
-    public defineRoute(method: HTTPMethod, path: string, required: Array<string> = []): DefinedRoute {
-        const api: RestAPI = this.api
+    protected defineRoute(method: HTTPMethod, path: string, required: string[] = []): DefinedRoute {
+        const api: RestAPI = this.api;
 
-        return function route<A, B>(data?: DataParams<A>,
+        return function route<A, B>(data?: SendData<A>,
                                     callback?: ResponseCallback<B>,
-                                    pathParams: Array<string> = [],
-                                    ...params: Array<string>): Promise<B> {
+                                    pathParams: string[] = [],
+                                    ...params: string[]): Promise<B> {
 
             const _params: any = params.reduce((p: any, param: string, i: number) => {
                 if (pathParams && pathParams[i]) {
@@ -40,11 +44,12 @@ export abstract class Resource {
                 return p
             }, {})
 
-            const url: string = Resource.compilePath(path, _params)
-            const missingPathParams: Array<string> = (url.match(/:([a-z]+)/ig) || [])
+            const url: string = compilePath(path, _params);
+
+            const missingPathParams: string[] = (url.match(/:([a-z]+)/ig) || [])
                 .map((m: string) => m.replace(":", ""))
-            const missingParams: Array<string> = missingKeys(data, required)
-            let err: ErrorResponse
+            const missingParams: string[] = missingKeys(data, required)
+            let err: Error
 
             if (missingPathParams.length > 0) {
                 err = fromError(new PathParameterError(missingPathParams[0]))

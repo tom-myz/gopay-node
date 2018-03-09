@@ -1,7 +1,11 @@
+/**
+ *  @module Resources/Verification
+ */
+
 import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
-import { PhoneNumber } from "./common/PhoneNumber"
+import { PhoneNumber } from "./common/types"
 
 export const enum RecurringTokenPrivilege {
     NONE     = "none",
@@ -36,24 +40,24 @@ export type ResponseVerification = VerificationItem
 
 export class Verification extends CRUDResource {
 
-    public static requiredParams: Array<string> = [
+    static requiredParams: string[] = [
         "homepageUrl", "companyDescription", "companyContactInfo", "businessType", "systemManagerName"
     ]
 
-    public static routeBase: string = "/verification"
+    static routeBase: string = "/verification"
 
-    public create(data: VerificationCreateParams,
-                  callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
+    create(data: VerificationCreateParams,
+           callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
 
         return this._createRoute(Verification.requiredParams)(data, callback)
     }
 
-    public get(data?: AuthParams, callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
+    get(data?: AuthParams, callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
         return this.defineRoute(HTTPMethod.GET, this._routeBase)(data, callback)
     }
 
-    public update(data?: VerificationUpdateParams,
-                  callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
+    update(data?: VerificationUpdateParams,
+           callback?: ResponseCallback<ResponseVerification>): Promise<ResponseVerification> {
         return this.defineRoute(HTTPMethod.PATCH, this._routeBase)(data, callback)
     }
 

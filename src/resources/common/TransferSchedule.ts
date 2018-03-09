@@ -1,3 +1,8 @@
+/**
+ *  @internal
+ *  @module Configuration
+ */
+
 export const enum TransferPeriod {
     WEEKLY      = "weekly",
     BIWEEKLY    = "biweekly",
@@ -24,15 +29,15 @@ export const enum WeekOfMonth {
 }
 
 export interface TransferSchedule {
-    period: TransferPeriod
-    dayOfWeek: DayOfWeek
-    weekOfMonth: WeekOfMonth
-    dayOfMonth: number
+    period: TransferPeriod;
+    dayOfWeek: DayOfWeek;
+    weekOfMonth: WeekOfMonth;
+    dayOfMonth: number;
     weekly?: {
-        closingDay: DayOfWeek
-        payoutDay: DayOfWeek
+        closingDay: DayOfWeek;
+        payoutDay: DayOfWeek;
     }
     monthly?: {
-        dayOfMonth: number
+        dayOfMonth: number;
     }
 }

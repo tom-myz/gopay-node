@@ -1,7 +1,12 @@
-import { ErrorResponse } from "../api/RestAPI"
-import { APIError, RequestErrorCode, ResponseErrorCode } from "./APIError"
-import { PathParameterError } from "./PathParameterError"
-import { RequestParameterError } from "./RequestParameterError"
+/**
+ *  @internal
+ *  @module Errors
+ */
+
+import { APIError, ResponseErrorCode } from "./APIError";
+import { PathParameterError } from "./PathParameterError";
+import { RequestParameterError } from "./RequestParameterError";
+import { RequestError, RequestResponseBaseError, ResponseError } from "./RequestResponseError";
 
 function getCodeByStatus(status: number): string {
     const codeMap: any = {
@@ -14,48 +19,34 @@ function getCodeByStatus(status: number): string {
         429 : ResponseErrorCode.TooManyRequests,
         500 : ResponseErrorCode.InternalServerError,
         503 : ResponseErrorCode.ServiceUnavailable
-    }
+    };
 
     if (Object.keys(codeMap).indexOf(status.toString()) !== -1) {
-        return (codeMap as any)[status]
+        return (codeMap as any)[status];
     }
 
-    return ResponseErrorCode.UnknownError
+    return ResponseErrorCode.UnknownError;
 }
 
-export function fromError(error: Error): ErrorResponse {
-    let errorResponse: any
-
-    if (error instanceof PathParameterError) {
-        errorResponse = {
-            code : RequestErrorCode.RequestError,
-            errors : [{ [error.parameter] : "required" }]
-        }
-    } else if (error instanceof RequestParameterError) {
-        errorResponse = {
+export function fromError(error: Error): RequestResponseBaseError {
+    if (error instanceof PathParameterError || error instanceof RequestParameterError) {
+        return new RequestError({
             code : ResponseErrorCode.ValidationError,
             errors : [{
                 field  : error.parameter,
                 reason : ResponseErrorCode.RequiredValue
             }]
-        }
+        });
     } else if (error instanceof APIError) {
-        errorResponse = {
+        return new ResponseError({
             code     : error.response ? error.response.code : getCodeByStatus(error.status),
             httpCode : error.status,
             errors   : error.response ? error.response.errors || [] : []
-        }
-    } else if (
-        Object.getOwnPropertyNames(error)
-            .every((props: string) => ["code", "errors", "httpCode", "status"].indexOf(props) !== -1)
-    ) {
-        errorResponse = error
+        });
     }
 
-    return {
+    return new ResponseError({
         code     : ResponseErrorCode.UnknownError,
-        errors   : [],
-        status   : "error",
-        ...errorResponse
-    }
+        errors   : []
+    });
 }

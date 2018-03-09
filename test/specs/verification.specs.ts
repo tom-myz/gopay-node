@@ -1,76 +1,131 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import { expect } from "chai"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
-import { Verification } from "../../src/resources/Verification"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import { pick } from "lodash";
+import { testEndpoint } from "../utils";
+import {
+    RecurringTokenPrivilege,
+    Verification,
+    VerificationCreateParams,
+    VerificationUpdateParams
+} from "../../src/resources/Verification";
+import { RestAPI} from "../../src/api/RestAPI";
+import { generateFixture as generateVerification } from "../fixtures/verification";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
 
-let api: RestAPI
-let verification: Verification
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Verification", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    verification = new Verification(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let verification: Verification;
 
-test("route GET /verification # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "get" }
-    const okScope = scope
-        .get("/verification")
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
-
-    const r: any = await verification.get()
-
-    t.deepEqual(r, okResponse)
-})
-
-test("route POST /verification # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post("/verification")
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-
-    const data = {
-        homepageUrl: "test",
-        companyDescription: "test",
-        companyContactInfo: {} as any,
-        businessType: "test",
-        systemManagerName: "test"
+    const verificationData = {
+        homepageUrl        : "http://fake.com",
+        companyDescription : "Description",
+        companyContactInfo : {
+            name        : "Joe Doe",
+            companyName : "Company LTD.",
+            phoneNumber : {
+                countryCode : "81",
+                localNumber : "1234567890"
+            },
+            line1   : "Test",
+            line2   : "Test",
+            city    : "Tokyo",
+            state   : "Tokyo",
+            country : "JP",
+            zip     : "111-1111"
+        },
+        businessType        : "TODO",
+        systemManagerName   : "Joe Doe",
+        systemManagerNumber : {
+            countryCode : "81",
+            localNumber : "1234567890"
+        },
+        systemManagerEmail          : "test@fake.com",
+        recurringTokenRequest       : RecurringTokenPrivilege.NONE,
+        recurringTokenRequestReason : "Reason",
+        allowEmptyCvv               : false,
     }
 
-    const r: any = await verification.create(data)
+    const recordPathMatcher = `${testEndpoint}/verification`;
+    const recordData = generateVerification();
 
-    t.deepEqual(r, okResponse)
-})
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        verification = new Verification(api);
+    });
 
-test("route POST /verification # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+    afterEach(function () {
+        fetchMock.restore();
+    });
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(verification.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+    context("POST /verification", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                recordPathMatcher,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-test("route PATCH /verification # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "update" }
-    const okScope = scope
-        .patch("/verification")
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+            const data: VerificationCreateParams = {
+                ...verificationData
+            };
 
-    const data: any = null
+            await expect(verification.create(data)).to.eventually.eql(recordData);
+        });
 
-    const r: any = await verification.update(data)
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<VerificationCreateParams>, RequestError]> = [
+                [{ }, createRequestError(["homepageUrl"])],
+                [pick(verificationData, "homepageUrl"), createRequestError(["companyDescription"])],
+                [pick(verificationData, "homepageUrl", "companyDescription"), createRequestError(["companyContactInfo"])],
+                [pick(verificationData, "homepageUrl", "companyDescription", "companyContactInfo"), createRequestError(["businessType"])],
+                [pick(verificationData, "homepageUrl", "companyDescription", "companyContactInfo", "businessType"), createRequestError(["systemManagerName"])],
+            ];
 
-    t.deepEqual(r, okResponse)
-})
+            for (const [data, error] of asserts) {
+                await expect(verification.create(data as VerificationCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
+
+    context("GET /verification", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(verification.get()).to.eventually.eql(recordData);
+        });
+    });
+
+    context("PATCH /verification", function () {
+        it("should get response", async function () {
+            fetchMock.patchOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data: VerificationUpdateParams = {
+                ...verificationData
+            };
+
+            await expect(verification.update(data)).to.eventually.eql(recordData);
+        });
+    });
+
+});

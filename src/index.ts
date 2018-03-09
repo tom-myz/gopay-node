@@ -1,3 +1,7 @@
+/**
+ *  @module SDK
+ */
+
 import { RestAPIOptions } from "./api/RestAPI"
 import { PaymentsSDK } from "./PaymentsSDK"
 
@@ -20,41 +24,42 @@ import { Cancels } from "./resources/Cancels"
 
 export default class SDK extends PaymentsSDK {
 
-    public bankAccounts: BankAccounts
-    public charges: Charges
-    public checkoutInfo: CheckoutInfo
-    public merchants: Merchants
-    public ledgers: Ledgers
-    public platforms: Platforms
-    public refunds: Refunds
-    public captures: Captures
-    public stores: Stores
-    public subscriptions: Subscriptions
-    public transactionTokens: TransactionTokens
-    public transfers: Transfers
-    public verification: Verification
-    public webHooks: WebHooks
-    public cancels: Cancels
+    public bankAccounts: BankAccounts;
+    public cancels: Cancels;
+    public captures: Captures;
+    public charges: Charges;
+    public checkoutInfo: CheckoutInfo;
+    public ledgers: Ledgers;
+    public merchants: Merchants;
+    public platforms: Platforms;
+    public refunds: Refunds;
+    public stores: Stores;
+    public subscriptions: Subscriptions;
+    public transactionTokens: TransactionTokens;
+    public transfers: Transfers;
+    public verification: Verification;
+    public webHooks: WebHooks;
+
 
 
     constructor (options?: RestAPIOptions) {
-        super(options)
+        super(options);
 
-        this.bankAccounts = new BankAccounts(this.api)
-        this.charges = new Charges(this.api)
-        this.checkoutInfo = new CheckoutInfo(this.api)
-        this.merchants = new Merchants(this.api)
-        this.ledgers = new Ledgers(this.api)
-        this.platforms = new Platforms(this.api)
-        this.refunds = new Refunds(this.api)
-        this.captures = new Captures(this.api)
-        this.stores = new Stores(this.api)
-        this.subscriptions = new Subscriptions(this.api)
-        this.transactionTokens = new TransactionTokens(this.api)
-        this.transfers = new Transfers(this.api)
-        this.verification = new Verification(this.api)
-        this.webHooks = new WebHooks(this.api)
-        this.cancels = new Cancels(this.api)
+        this.bankAccounts = new BankAccounts(this.api);
+        this.cancels = new Cancels(this.api);
+        this.captures = new Captures(this.api);
+        this.charges = new Charges(this.api);
+        this.checkoutInfo = new CheckoutInfo(this.api);
+        this.ledgers = new Ledgers(this.api);
+        this.merchants = new Merchants(this.api);
+        this.platforms = new Platforms(this.api);
+        this.refunds = new Refunds(this.api);
+        this.stores = new Stores(this.api);
+        this.subscriptions = new Subscriptions(this.api);
+        this.transactionTokens = new TransactionTokens(this.api);
+        this.transfers = new Transfers(this.api);
+        this.verification = new Verification(this.api);
+        this.webHooks = new WebHooks(this.api);
     }
 
 }

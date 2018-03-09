@@ -1,9 +1,11 @@
-import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { PaymentError } from "./common/PaymentError"
-import { Metadata } from "./common/Metadata"
-import { ProcessingMode } from "./common/ProcessingMode"
-import { Resource } from "./Resource"
+/**
+ *  @module Resources/Refunds
+ */
+
+import { ResponseCallback, AuthParams } from "../api/RestAPI";
+import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
+import { PaymentError, Metadata } from "./common/types";
+import { ProcessingMode } from "./common/enums";
 
 export const enum RefundStatus {
     PENDING    = "pending",
@@ -59,49 +61,49 @@ export type ResponseRefunds = CRUDItemsResponse<RefundItem>
 
 export class Refunds extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["amount", "currency"]
+    static requiredParams: string[] = ["amount", "currency"]
 
-    public static routeBase: string = "/stores/:storeId/charges/:chargeId/refunds"
+    static routeBase: string = "/stores/:storeId/charges/:chargeId/refunds"
 
-    public list(storeId: string,
-                chargeId: string,
-                data?: RefundsListParams,
-                callback?: ResponseCallback<ResponseRefunds>): Promise<ResponseRefunds> {
+    list(storeId: string,
+         chargeId: string,
+         data?: RefundsListParams,
+         callback?: ResponseCallback<ResponseRefunds>): Promise<ResponseRefunds> {
 
         return this._listRoute()(data, callback, ["storeId", "chargeId"], storeId, chargeId)
     }
 
-    public create(storeId: string,
-                  chargeId: string,
-                  data: RefundCreateParams,
-                  callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+    create(storeId: string,
+           chargeId: string,
+           data: RefundCreateParams,
+           callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._createRoute(Refunds.requiredParams)(data, callback, ["storeId", "chargeId"], storeId, chargeId)
     }
 
-    public get(storeId: string,
-               chargeId: string,
-               id: string,
-               data?: AuthParams,
-               callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+    get(storeId: string,
+        chargeId: string,
+        id: string,
+        data?: AuthParams,
+        callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._getRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
     }
 
-    public update(storeId: string,
-                  chargeId: string,
-                  id: string,
-                  data?: RefundUpdateParams,
-                  callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+    update(storeId: string,
+           chargeId: string,
+           id: string,
+           data?: RefundUpdateParams,
+           callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
 
         return this._updateRoute()(data, callback, ["storeId", "chargeId", "id"], storeId, chargeId, id)
     }
 
-    public poll(storeId: string,
-                chargeId: string,
-                id: string,
-                data?: AuthParams,
-                callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
+    poll(storeId: string,
+         chargeId: string,
+         id: string,
+         data?: AuthParams,
+         callback?: ResponseCallback<ResponseRefund>): Promise<ResponseRefund> {
         const promise: () => Promise<ResponseRefund> = () => this._getRoute()(
             { ...data, poll : true }, null, ["storeId", "chargeId", "id"], storeId, chargeId, id
         )

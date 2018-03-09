@@ -1,119 +1,253 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import { expect } from "chai"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import * as sinon from "sinon";
+import { SinonSandbox } from "sinon";
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
 import {
-    Subscriptions, SubscriptionCreateParams, SubscriptionUpdateParams,
-    SubscriptionPeriod
-} from "../../src/resources/Subscriptions"
+    SubscriptionCreateParams, SubscriptionPeriod, Subscriptions, SubscriptionStatus,
+    SubscriptionUpdateParams
+} from "../../src/resources/Subscriptions";
+import { HTTPMethod, RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateSubscription } from "../fixtures/subscription";
+import { generateFixture as generateCharge } from "../fixtures/charge";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
+import { POLLING_TIMEOUT } from "../../src/constants"
+import { TimeoutError } from "../../src/errors/TimeoutError";
 
-let api: RestAPI
-let subscriptions: Subscriptions
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Subscriptions", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    subscriptions = new Subscriptions(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let subscriptions: Subscriptions;
+    let sandbox: SinonSandbox;
 
-test("route GET /stores/:storeId/subscriptions # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const okScope = scope
-        .get(/(\/stores\/[a-f-0-9\-]+)?\/subscriptions$/i)
-        .twice()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/:id`);
+    const recordData = generateSubscription();
 
-    const [r1, r2]: any[] = await Promise.all([
-        subscriptions.list(),
-        subscriptions.list(null, null, "1")
-    ])
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        subscriptions = new Subscriptions(api);
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"],
+            useFakeTimers: true
+        });
+    });
 
-    t.deepEqual(r1, okResponse)
-    t.deepEqual(r2, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+        sandbox.restore();
+    });
 
-test("route POST /subscriptions # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post("/subscriptions")
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-    const data: SubscriptionCreateParams = {
-        transactionTokenId : "test",
-        amount             : 1,
-        currency           : "usd",
-        period             : SubscriptionPeriod.MONTHLY
-    }
+    context("POST /subscriptions", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                `${testEndpoint}/subscriptions`,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await subscriptions.create(data)
+            const data: SubscriptionCreateParams = {
+                transactionTokenId : uuid(),
+                amount             : 1000,
+                currency           : "JPY",
+                period             : SubscriptionPeriod.MONTHLY
+            };
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(subscriptions.create(data)).to.eventually.eql(recordData);
+        });
 
-test("route POST /subscriptions # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<SubscriptionCreateParams>, RequestError]> = [
+                [{}, createRequestError(["transactionTokenId"])],
+                [{ transactionTokenId : uuid() }, createRequestError(["amount"])],
+                [{ transactionTokenId : uuid(), amount : 1000 }, createRequestError(["currency"])],
+                [{ transactionTokenId : uuid(), amount : 1000, currency : "JPY" }, createRequestError(["period"])],
+            ];
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(subscriptions.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+            for (const [data, error] of asserts) {
+                await expect(subscriptions.create(data as SubscriptionCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-test("route PATCH /subscriptions/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "update" }
-    const okScope = scope
-        .patch(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
-    const data: SubscriptionUpdateParams = {
-        transactionTokenId : "test",
-        amount             : 10
-    }
+    context("GET [/stores/:storeId]/subscriptions", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateSubscription
+            });
 
-    const r: any = await subscriptions.update("1", "1", data)
+            fetchMock.get(
+                pathToRegexMatcher(`${testEndpoint}/:storesPart(stores/[^/]+)?/subscriptions`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            const asserts = [
+                subscriptions.list(null, null),
+                subscriptions.list(null, null, uuid())
+            ];
 
-test("route GET /stores/:storeId/subscriptions/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(listData);
+            }
+        });
+    });
 
-    const r: any = await subscriptions.get("1", "1")
+    context("GET /stores/:storeId/subscriptions/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(subscriptions.get(uuid(), uuid())).to.eventually.eql(recordData);
+        });
 
-test("route DELETE /stores/:storeId/subscriptions/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "delete" }
-    const scopeScope = scope
-        .delete(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+        it("should perform long polling", async function () {
+            const recordPendingData = { ...recordData, status : SubscriptionStatus.UNVERIFIED };
 
-    const r: any = await subscriptions.delete("1", "1")
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordPendingData,
+                    headers : { "Content-Type" : "application/json" }
+                }, {
+                    method : HTTPMethod.GET,
+                    name   : "pending"
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                },
+                {
+                    method : HTTPMethod.GET,
+                    name   : "success"
+                }
+            );
 
-test("route GET /stores/:storeId/subscriptions/:id/charges # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const scopeScope = scope
-        .get(/\/stores\/[a-f-0-9\-]+\/subscriptions\/[a-f-0-9\-]+\/charges$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+            await expect(subscriptions.poll(uuid(), uuid())).to.eventually.eql(recordData);
+        });
 
-    const r: any = await subscriptions.charges("1", "1")
+        it("should timeout polling", async function () {
+            const recordPendingData = { ...recordData, status : SubscriptionStatus.UNVERIFIED };
 
-    t.deepEqual(r, okResponse)
-})
+            fetchMock.get(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordPendingData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const request = subscriptions.poll(uuid(), uuid());
+
+            sandbox.clock.tick(POLLING_TIMEOUT);
+
+            await expect(request).to.eventually.be.rejectedWith(TimeoutError);
+        });
+    });
+
+    context("PATCH /stores/:storeId/subscriptions/:id", function () {
+        it("should get response", async function () {
+            fetchMock.patchOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data: SubscriptionUpdateParams = {
+                transactionTokenId : uuid(),
+                amount             : 1000
+            };
+
+            await expect(subscriptions.update(uuid(), uuid(), data)).to.eventually.eql(recordData);
+        });
+    });
+
+    context("DELETE /stores/:storeId/subscriptions/:id", function () {
+        it("should get response", async function () {
+            fetchMock.deleteOnce(
+                recordPathMatcher,
+                {
+                    status  : 204,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(subscriptions.delete(uuid(), uuid())).to.eventually.be.empty;
+        });
+    });
+
+    context("GET /stores/:storeId/subscriptions/:id/charges", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateCharge
+            });
+
+            fetchMock.getOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/:id/charges`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(subscriptions.charges(uuid(), uuid())).to.eventually.eql(listData);
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+        const errorStoreId = createRequestError(["storeId"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [subscriptions.get(null, null), errorStoreId],
+            [subscriptions.get(null, uuid()), errorStoreId],
+            [subscriptions.get(uuid(), null), errorId],
+            [subscriptions.update(null, null), errorStoreId],
+            [subscriptions.update(null, uuid()), errorStoreId],
+            [subscriptions.update(uuid(), null), errorId],
+            [subscriptions.delete(null, null), errorStoreId],
+            [subscriptions.delete(null, uuid()), errorStoreId],
+            [subscriptions.delete(uuid(), null), errorId],
+            [subscriptions.charges(null, null), errorStoreId],
+            [subscriptions.charges(null, uuid()), errorStoreId],
+            [subscriptions.charges(uuid(), null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

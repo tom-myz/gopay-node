@@ -1,11 +1,6 @@
 node_modules/
-/typings
 /lib
-/dev
-src/**/*.js
-src/**/*.js.map
-test/**/*.js
-test/**/*.js.map
+/docs
 
 .DS_Store
 *.swp

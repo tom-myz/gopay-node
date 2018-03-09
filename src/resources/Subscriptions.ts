@@ -1,10 +1,12 @@
+/**
+ *  @module Resources/Subscriptions
+ */
+
 import { ResponseCallback, AuthParams, ErrorResponse, PollParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
-import { Metadata } from "./common/Metadata"
-import { ProcessingMode } from "./common/ProcessingMode"
+import { Metadata, WithIdempotentKey } from "./common/types"
+import { ProcessingMode } from "./common/enums"
 import { ResponseCharges, ChargesListParams } from "./Charges"
-import { Resource } from "./Resource"
-import { WithIdempotentKey } from "./common/Common"
 
 export const enum SubscriptionPeriod {
     DAILY        = "daily",
@@ -67,61 +69,61 @@ export type ResponseSubscriptions = CRUDItemsResponse<SubscriptionItem>
 
 export class Subscriptions extends CRUDResource {
 
-    public static requiredParams: Array<string> = ["transactionTokenId", "amount", "currency", "period"]
+    static requiredParams: string[] = ["transactionTokenId", "amount", "currency", "period"];
 
-    public static routeBase: string = "/stores/:storeId/subscriptions"
+    static routeBase: string = "/stores/:storeId/subscriptions";
 
-    public list(data?: SubscriptionsListParams,
-                callback?: ResponseCallback<ResponseSubscriptions>,
-                storeId?: string): Promise<ResponseSubscriptions> {
+    list(data?: SubscriptionsListParams,
+         callback?: ResponseCallback<ResponseSubscriptions>,
+         storeId?: string): Promise<ResponseSubscriptions> {
 
         return this.defineRoute(HTTPMethod.GET, "(/stores/:storeId)/subscriptions")(data, callback, ["storeId"], storeId)
     }
 
-    public create(data: SubscriptionCreateParams,
-                  callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    create(data: SubscriptionCreateParams,
+           callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this.defineRoute(HTTPMethod.POST, "/subscriptions", Subscriptions.requiredParams)(data, callback)
     }
 
-    public get(storeId: string,
-               id: string,
-               data?: AuthParams & Partial<PollParams>,
-               callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    get(storeId: string,
+        id: string,
+        data?: AuthParams & Partial<PollParams>,
+        callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public update(storeId: string,
-                  id: string,
-                  data?: SubscriptionUpdateParams,
-                  callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    update(storeId: string,
+           id: string,
+           data?: SubscriptionUpdateParams,
+           callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
 
         return this._updateRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public delete(storeId: string,
-                  id: string,
-                  data?: AuthParams,
-                  callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+    delete(storeId: string,
+           id: string,
+           data?: AuthParams,
+           callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
 
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public charges(storeId: string,
-                   id: string,
-                   data?: ChargesListParams,
-                   callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
+    charges(storeId: string,
+            id: string,
+            data?: ChargesListParams,
+            callback?: ResponseCallback<ResponseCharges>): Promise<ResponseCharges> {
 
         return this.defineRoute(HTTPMethod.GET, `${Subscriptions.routeBase}/:id/charges`)(
             data, callback, ["storeId", "id"], storeId, id
         )
     }
 
-    public poll(storeId: string,
-                id: string,
-                data?: AuthParams,
-                callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
+    poll(storeId: string,
+         id: string,
+         data?: AuthParams,
+         callback?: ResponseCallback<ResponseSubscription>): Promise<ResponseSubscription> {
         const promise: () => Promise<ResponseSubscription> = () => this.get(
             storeId,
             id,

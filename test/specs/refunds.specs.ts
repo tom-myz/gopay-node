@@ -1,70 +1,225 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
-import { Refunds } from "../../src/resources/Refunds"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import * as sinon from "sinon";
+import { SinonSandbox } from "sinon";
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
+import {
+    Refunds,
+    RefundStatus,
+    RefundCreateParams,
+    RefundUpdateParams, RefundReason
+} from "../../src/resources/Refunds";
+import {HTTPMethod, RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateRefund } from "../fixtures/refund";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
+import { POLLING_TIMEOUT } from "../../src/constants"
+import { TimeoutError } from "../../src/errors/TimeoutError";
 
-let api: RestAPI
-let refunds: Refunds
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Refunds", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    refunds = new Refunds(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let refunds: Refunds;
+    let sandbox: SinonSandbox;
 
-test("route GET /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const okScope = scope
-        .get(/\/stores\/[a-f0-9\-]+\/charges\/[a-f0-9\-]+\/refunds$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const basePathMatcher = pathToRegexMatcher(`${testEndpoint}/stores/:storeId/charges/:chargeId/refunds`);
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/stores/:storeId/charges/:chargeId/refunds/:id`);
+    const recordData = generateRefund();
 
-    const r: any = await refunds.list("1", "1")
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        refunds = new Refunds(api);
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"],
+            useFakeTimers: true
+        });
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+        sandbox.restore();
+    });
 
-test("route POST /stores/:storeId/charges/:chargeId/refunds # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post(/\/stores\/[a-f0-9\-]+\/charges\/[a-f0-9\-]+\/refunds$/i)
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-    const data = {
-        token    : "test",
-        amount   : 1,
-        currency : "usd"
-    }
+    context("POST /stores/:storeId/charges/:chargeId/refunds", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                basePathMatcher,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await refunds.create("1", "1", data)
+            const data: RefundCreateParams = {
+                amount   : 1000,
+                currency : "JPY",
+                reason   : RefundReason.CUSTOMER_REQUEST,
+                message  : "Refund",
+                metadata : {}
+            };
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(refunds.create(uuid(), uuid(), data)).to.eventually.eql(recordData);
+        });
 
-test("route POST /stores/:storeId/charges/:chargeId/refunds # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<RefundCreateParams>, RequestError]> = [
+                [{ }, createRequestError(["amount"])],
+                [{ amount : 1000 }, createRequestError(["currency"])]
+            ];
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(refunds.create("1", "1", a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+            for (const [data, error] of asserts) {
+                await expect(refunds.create(uuid(), uuid(), data as RefundCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-test("route GET /stores/:storeId/charges/:chargeId/refunds/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get(/\/stores\/[a-f0-9\-]+\/charges\/[a-f0-9\-]+\/refunds\/[a-z0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    context("GET /stores/:storeId/charges/:chargeId/refunds", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateRefund
+            });
 
-    const r: any = await refunds.get("1", "1", "1")
+            fetchMock.get(
+                basePathMatcher,
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(refunds.list(uuid(), uuid())).to.eventually.eql(listData);
+        });
+    });
+
+    context("GET /stores/:storeId/charges/:chargeId/refunds/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(refunds.get(uuid(), uuid(), uuid())).to.eventually.eql(recordData);
+        });
+
+        it("should perform long polling", async function () {
+            const recordPendingData = { ...recordData, status : RefundStatus.PENDING };
+
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordPendingData,
+                    headers : { "Content-Type" : "application/json" }
+                }, {
+                    method : HTTPMethod.GET,
+                    name   : "pending"
+                }
+            );
+
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                },
+                {
+                    method : HTTPMethod.GET,
+                    name   : "success"
+                }
+            );
+
+            await expect(refunds.poll(uuid(), uuid(), uuid())).to.eventually.eql(recordData);
+        });
+
+        it("should timeout polling", async function () {
+            const recordPendingData = { ...recordData, status : RefundStatus.PENDING };
+
+            fetchMock.get(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordPendingData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const request = refunds.poll(uuid(), uuid(), uuid());
+
+            sandbox.clock.tick(POLLING_TIMEOUT);
+
+            await expect(request).to.eventually.be.rejectedWith(TimeoutError);
+        });
+    });
+
+    context("PATCH /stores/:storeId/charges/:chargeId/refunds/:id", function () {
+        it("should get response", async function () {
+            fetchMock.patchOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data: RefundUpdateParams = {
+                status  : RefundStatus.SUCCESSFUL,
+                reason  : RefundReason.CUSTOMER_REQUEST,
+                message : "Refund"
+            };
+
+            await expect(refunds.update(uuid(), uuid(), uuid(), data)).to.eventually.eql(recordData);
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+        const errorStoreId = createRequestError(["storeId"]);
+        const errorChargeId = createRequestError(["chargeId"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [refunds.create(null, null, null), errorStoreId],
+            [refunds.create(null, uuid(), null), errorStoreId],
+            [refunds.create(uuid(), null, null), errorChargeId],
+            [refunds.list(null, null), errorStoreId],
+            [refunds.list(null, uuid()), errorStoreId],
+            [refunds.list(uuid(), null), errorChargeId],
+            [refunds.get(null, null, null), errorStoreId],
+            [refunds.get(null, uuid(), null), errorStoreId],
+            [refunds.get(null, null, uuid()), errorStoreId],
+            [refunds.get(null, uuid(), uuid()), errorStoreId],
+            [refunds.get(uuid(), null, null), errorChargeId],
+            [refunds.get(uuid(), null, uuid()), errorChargeId],
+            [refunds.get(uuid(), uuid(), null), errorId],
+
+            [refunds.update(null, null, null), errorStoreId],
+            [refunds.update(null, uuid(), null), errorStoreId],
+            [refunds.update(null, null, uuid()), errorStoreId],
+            [refunds.update(null, uuid(), uuid()), errorStoreId],
+            [refunds.update(uuid(), null, null), errorChargeId],
+            [refunds.update(uuid(), null, uuid()), errorChargeId],
+            [refunds.update(uuid(), uuid(), null), errorId]
+
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});

@@ -1,3 +1,7 @@
+/**
+ *  @module Resources/Merchants
+ */
+
 import { ResponseCallback, AuthParams, HTTPMethod } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ConfigurationItem } from "./common/Configuration"
@@ -37,7 +41,7 @@ export interface MerchantBanParams {
 
 export class Merchants extends CRUDResource {
 
-    public me(data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
+    me(data?: AuthParams, callback?: ResponseCallback<ResponseMerchant>): Promise<ResponseMerchant> {
         return this.defineRoute(HTTPMethod.GET, "/me")(data, callback)
     }
 

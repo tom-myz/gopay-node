@@ -1,11 +1,15 @@
+/**
+ *  @module SDK
+ */
+
 import { RestAPI, RestAPIOptions } from "./api/RestAPI"
 
 export abstract class PaymentsSDK {
 
-    public api:RestAPI
+    public api:RestAPI;
 
     constructor (options?: RestAPIOptions) {
-        this.api = new RestAPI(options)
+        this.api = new RestAPI(options);
     }
 
 }

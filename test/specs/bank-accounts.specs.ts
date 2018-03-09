@@ -1,110 +1,186 @@
-import "../utils"
-import { test, TestContext } from "ava"
-import nock = require("nock")
-import { Scope } from "nock"
-import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
-import { ResponseErrorCode } from "../../src/errors/APIError"
-import { BankAccounts, BankAccountType } from "../../src/resources/BankAccounts"
+import { expect } from "chai";
+import fetchMock = require("fetch-mock");
+import uuid = require("uuid");
+import { testEndpoint } from "../utils";
+import { pathToRegexMatcher } from "../utils/routes";
+import {
+    BankAccounts,
+    BankAccountType,
+    BankAccountCreateParams,
+    BankAccountUpdateParams
+} from "../../src/resources/BankAccounts";
+import { RestAPI} from "../../src/api/RestAPI";
+import { generateList } from "../fixtures/list";
+import { generateFixture as generateBankAccount } from "../fixtures/bank-account";
+import { RequestError } from "../../src/errors/RequestResponseError";
+import { createRequestError } from "../fixtures/errors";
 
-let api: RestAPI
-let accounts: BankAccounts
-let scope: Scope
-const testEndpoint = "http://localhost:80"
+describe("Bank Accounts", function () {
 
-test.beforeEach(() => {
-    api = new RestAPI({endpoint: testEndpoint })
-    accounts = new BankAccounts(api)
-    scope = nock(testEndpoint)
-})
+    let api: RestAPI;
+    let bankAccounts: BankAccounts;
 
-test("route GET /bank_accounts # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "list" }
-    const okScope = scope
-        .get("/bank_accounts")
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    const recordBasePathMatcher = `${testEndpoint}/bank_accounts`;
+    const recordPathMatcher = pathToRegexMatcher(`${testEndpoint}/bank_accounts/:id`);
+    const recordData = generateBankAccount();
 
-    const r: any = await accounts.list()
+    beforeEach(function () {
+        api = new RestAPI({ endpoint: testEndpoint });
+        bankAccounts = new BankAccounts(api);
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    afterEach(function () {
+        fetchMock.restore();
+    });
 
-test("route POST /bank_accounts # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "create" }
-    const okScope = scope
-        .post("/bank_accounts")
-        .once()
-        .reply(201, okResponse, { "Content-Type" : "application/json" })
-    const data = {
-        accountNumber : "test",
-        country       : "test",
-        currency      : "test",
-        holderName    : "test",
-        bankName      : "test",
-        accountType   : "checking" as BankAccountType
-    }
+    context("POST /bank_accounts", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                recordBasePathMatcher,
+                {
+                    status  : 201,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await accounts.create(data)
+            const data: BankAccountCreateParams = {
+                accountNumber : "1234567890",
+                country       : "JP",
+                currency      : "JPY",
+                holderName    : "Joe Doe",
+                bankName      : "Bank",
+                branchName    : "Branch",
+                bankAddress   : "Address",
+                swiftCode     : "FAKECODE",
+                accountType   : BankAccountType.CHECKING
+            };
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(bankAccounts.create(data)).to.eventually.eql(recordData);
+        });
 
-test("route POST /bank_accounts # should return validation error if data is invalid", (t: TestContext) => {
-    const asserts = [
-        {}
-    ]
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<BankAccountCreateParams>, RequestError]> = [
+                [{ }, createRequestError(["accountNumber"])],
+                [{ accountNumber : "" }, createRequestError(["country"])],
+                [{ accountNumber : "", country : "JP" }, createRequestError(["currency"])],
+                [{ accountNumber : "", country : "JP", currency : "JPY" }, createRequestError(["holderName"])],
+                [{ accountNumber : "", country : "JP", currency : "JPY", holderName : "Joe" }, createRequestError(["bankName"])],
+            ];
 
-    return Promise.all(asserts.map(async (a: any) => {
-        const e: ErrorResponse = await t.throws(accounts.create(a))
-        t.deepEqual(e.code, ResponseErrorCode.ValidationError)
-    }))
-})
+            for (const [data, error] of asserts) {
+                await expect(bankAccounts.create(data as BankAccountCreateParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
 
-test("route GET /bank_accounts/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get(/\/bank_accounts\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    context("GET /bank_accounts", function () {
+        it("should get response", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateBankAccount
+            });
 
-    const r: any = await accounts.get("1")
+            fetchMock.get(
+                recordBasePathMatcher,
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(bankAccounts.list()).to.eventually.eql(listData);
+        });
+    });
 
-test("route GET /bank_accounts/primary # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .get("/bank_accounts/primary")
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
+    context("GET /bank_accounts/:id", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    const r: any = await accounts.getPrimary()
+            await expect(bankAccounts.get(uuid())).to.eventually.eql(recordData);
+        });
+    });
 
-    t.deepEqual(r, okResponse)
-})
+    context("GET /bank_accounts/primary", function () {
+        it("should get response", async function () {
+            fetchMock.getOnce(
+                `${recordBasePathMatcher}/primary`,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-test("route PATCH /bank_accounts/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "update" }
-    const okScope = scope
-        .patch(/\/bank_accounts\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(200, okResponse, { "Content-Type" : "application/json" })
-    const data: any = null
+            await expect(bankAccounts.getPrimary()).to.eventually.eql(recordData);
+        });
+    });
 
-    const r: any = await accounts.update("1", data)
+    context("PATCH /bank_accounts/:id", function () {
+        it("should get response", async function () {
+            fetchMock.patchOnce(
+                recordPathMatcher,
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            const data: BankAccountUpdateParams = {
+                accountNumber : "1234567890",
+                country       : "JP",
+                currency      : "JPY",
+                holderName    : "Joe Doe",
+                bankName      : "Bank",
+                branchName    : "Branch",
+                bankAddress   : "Address",
+                swiftCode     : "FAKECODE",
+                accountType   : BankAccountType.CHECKING
+            };
 
-test("route DELETE /bank_accounts/:id # should return correct response", async (t: TestContext) => {
-    const okResponse = { action : "read" }
-    const scopeScope = scope
-        .delete(/\/bank_accounts\/[a-f-0-9\-]+$/i)
-        .once()
-        .reply(204, okResponse, { "Content-Type" : "application/json" })
+            await expect(bankAccounts.update(uuid(), data)).to.eventually.eql(recordData);
+        });
+    });
 
-    const r: any = await accounts.delete("1")
+    context("DELETE /bank_accounts/:id", function () {
+        it("should get response", async function () {
+            fetchMock.deleteOnce(
+                recordPathMatcher,
+                {
+                    status  : 204,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
 
-    t.deepEqual(r, okResponse)
-})
+            await expect(bankAccounts.delete(uuid())).to.eventually.be.empty;
+        });
+    });
+
+    it("should return request error when parameters for route are invalid", async function () {
+        const errorId = createRequestError(["id"]);
+
+        const asserts: Array<[Promise<any>, RequestError]> = [
+            [bankAccounts.get(null), errorId],
+            [bankAccounts.update(null), errorId],
+            [bankAccounts.delete(null), errorId]
+        ];
+
+        for (const [request, error] of asserts) {
+            await expect(request).to.eventually.be.rejectedWith(RequestError)
+                .that.has.property("errorResponse")
+                .which.eql(error.errorResponse);
+        }
+    });
+
+});
