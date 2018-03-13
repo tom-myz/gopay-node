@@ -62,6 +62,7 @@ node('slave') {
             stage("Test") {
                 basicTools.withDevNotifications("Test", gitInfo.githubUrl) {
                     npmRun "test"
+                    npmRun "run coverage"
                 }
             }
 
