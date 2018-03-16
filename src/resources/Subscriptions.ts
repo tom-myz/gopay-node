@@ -2,13 +2,14 @@
  *  @module Resources/Subscriptions
  */
 
+import { Omit } from "type-zoo";
 import { ResponseCallback, ErrorResponse, PollParams, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
 import { ResponseCharges, ChargesListParams } from "./Charges"
 
-export const enum SubscriptionPeriod {
+export enum SubscriptionPeriod {
     DAILY        = "daily",
     WEEKLY       = "weekly",
     BIWEEKLY     = "biweekly",
@@ -18,7 +19,7 @@ export const enum SubscriptionPeriod {
     ANNUALLY     = "annually"
 }
 
-export const enum SubscriptionStatus {
+export enum SubscriptionStatus {
     UNVERIFIED  = "unverified",
     CURRENT     = "current",
     UNPAID      = "unpaid",
@@ -27,7 +28,36 @@ export const enum SubscriptionStatus {
     COMPLETED   = "completed"
 }
 
+export enum InstallmentPlan {
+    REVOLVING          = "revolving",
+    FIXED_CYCLES       = "fixed_cycles",
+    FIXED_CYCLE_AMOUNT = "fixed_cycle_amount"
+}
+
 /* Request */
+export interface InstallmentBaseParams {
+    planType: InstallmentPlan;
+    initialAmount?: number;
+}
+
+export interface InstallmentRevolvingParams extends Omit<InstallmentBaseParams, "initialAmount"> {
+    planType: InstallmentPlan.REVOLVING;
+}
+
+export interface InstallmentCyclesParams extends InstallmentBaseParams {
+    planType: InstallmentPlan.FIXED_CYCLES;
+    fixedCycles: number;
+}
+
+export interface InstallmentCycleAmountParams extends InstallmentBaseParams {
+    planType: InstallmentPlan.FIXED_CYCLE_AMOUNT;
+    fixedCycleAmount: number;
+}
+
+export type InstallmentPlanParams = InstallmentRevolvingParams | InstallmentCyclesParams | InstallmentCycleAmountParams;
+
+export type InstallmentPlanItem = InstallmentPlanParams;
+
 export interface SubscriptionsListParams extends CRUDPaginationParams {
     search?: string
     status?: SubscriptionStatus
@@ -35,17 +65,19 @@ export interface SubscriptionsListParams extends CRUDPaginationParams {
 }
 
 export interface SubscriptionCreateParams {
-    transactionTokenId: string
-    amount: number
-    currency: string
-    period: SubscriptionPeriod
-    metadata?: Metadata
+    transactionTokenId: string;
+    amount: number;
+    currency: string;
+    period: SubscriptionPeriod;
+    metadata?: Metadata;
+    installmentPlan?: InstallmentPlanParams;
 }
 
 export interface SubscriptionUpdateParams {
-    transactionTokenId?: string
-    amount?: number
-    metadata?: Metadata
+    transactionTokenId?: string;
+    amount?: number;
+    metadata?: Metadata;
+    installmentPlan?: Partial<InstallmentPlanParams>;
 }
 
 /* Response */
@@ -62,6 +94,7 @@ export interface SubscriptionItem {
     metadata?: Metadata
     mode: ProcessingMode
     createdOn: string
+    installmentPlan?: InstallmentPlanItem;
 }
 
 export type ResponseSubscription = SubscriptionItem

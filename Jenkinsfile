@@ -14,7 +14,7 @@ node('slave') {
         def gitTools = load "${JENKINS_TOOLS_DIR}/git-tools.groovy"
         def gitInfo = gitTools.getGitInformation(projectName, projectOwner)
         def notificationsChannel = basicTools.getChannels().Notifications
-        def states = basicTools.getStates()npmi
+        def states = basicTools.getStates()
         def nodeImage = "node:8-alpine"
 
         def isRelease = gitInfo.isMaster || gitInfo.tagVersion.isRelease
@@ -28,24 +28,21 @@ node('slave') {
             return
         }
 
-        def npmRun = { cmd ->
-            sh "docker run " +
-                "--rm " +
-                "-e GOPAY_API_ENDPOINT=https://api.gopay.jp " +
-                "-e HOME=/usr/src/app " +
-                "-v $WORKSPACE:/usr/src/app " +
-                "-w /usr/src/app " +
-                "${nodeImage} npm $cmd"
-        }
-
-        def npmVersion = npmRun "info ${projectName} version"
-        def shouldDeploy = isRelease && gitInfo.tagVersion.source != npmVersion
-
         withEnv([
             "HOME=$WORKSPACE",
             "GIT_BRANCH=${gitInfo.branch}",
-            "GIT_TAG=${gitInfo.tag || ""}"
+            "GIT_TAG=${gitInfo.tag || ""}",
+            "GOPAY_API_ENDPOINT=https://api.gopay.jp"
         ]) {
+
+            def npmRunArgs = " " +
+                "-e HOME=/usr/src/app " +
+                "-v $WORKSPACE:/usr/src/app " +
+                "-w /usr/src/app "
+
+            def npmImage = docker.image(nodeImage)
+
+            npmImage.pull();
 
             // Dependencies
             stage("Dependencies") {
@@ -53,35 +50,59 @@ node('slave') {
                     string(credentialsId: 'npm-auth-token', variable: 'NPM_AUTH_TOKEN')
                 ]) {
                     buildTools.writeNpmRC("${WORKSPACE}/.npmrc", env.NPM_AUTH_TOKEN)
-		            sh "sudo rm -rf $WORKSPACE/node_modules"
-		            npmRun "install"
+
+		            npmImage.inside(npmRunArgs) {
+		                sh "npm install"
+		            }
                 }
             }
 
             // Test
             stage("Test") {
                 basicTools.withDevNotifications("Test", gitInfo.githubUrl) {
-                    npmRun "test"
-                    npmRun "run coverage"
+                    npmImage.inside(npmRunArgs) {
+                        withCredentials([
+                            string(credentialsId: 'coveralls-repo-token', variable: 'COVERALLS_REPO_TOKEN')
+                        ]) {
+                            withEnv([
+                                "CI=true",
+                                "CI_NAME=Jenkins",
+                                "CI_BUILD_NUMBER=$BUILD_NUMBER",
+                                "CI_BUILD_URL=$BUILD_URL",
+                                "CI_BRANCH=${!gitInfo.tag ? gitInfo.branch : gitInfo.tag}",
+                                "CI_PULL_REQUEST=$CHANGE_ID"
+                            ]) {
+                                sh "npm test"
+                                sh "npm run coverage"
+                            }
+                        }
+                	}
                 }
             }
 
             // Build
             stage("Build") {
                 basicTools.withDevNotifications("Build", gitInfo.githubUrl) {
-                    npmRun "run build"
+                    npmImage.inside(npmRunArgs) {
+                      sh "npm run build"
+                    }
                 }
             }
 
             // Deploy
             stage("Deploy") {
-                if (shouldDeploy) {
-                    basicTools.withDevNotifications("Deploy", gitInfo.githubUrl) {
-                        npmRun "publish"
+                basicTools.withDevNotifications("Deploy", gitInfo.githubUrl) {
+                    npmImage.inside(npmRunArgs) {
+                        def npmVersion = sh(script: "npm info ${projectName} version", returnStdout: true).trim()
+                        def shouldDeploy = isRelease && gitInfo.tagVersion.source != npmVersion
+
+                        if (shouldDeploy) {
+                            sh "npm publish"
+                        } else {
+                            echo "Not deploying..."
+                            basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
+                        }
                     }
-                } else {
-                    echo "Not deploying..."
-                    basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
                 }
             }
         }
