@@ -70,7 +70,7 @@ node('slave') {
                                 "CI_BUILD_NUMBER=$BUILD_NUMBER",
                                 "CI_BUILD_URL=$BUILD_URL",
                                 "CI_BRANCH=${!gitInfo.tag ? gitInfo.branch : gitInfo.tag}",
-                                "CI_PULL_REQUEST=$CHANGE_ID"
+                                "CI_PULL_REQUEST=${ env.CHANGE_ID || "" }"
                             ]) {
                                 sh "npm test"
                                 sh "npm run coverage"
