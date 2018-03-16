@@ -55,8 +55,6 @@
     "isomorphic-form-data": "^1.0.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.5",
-    "p-do-whilst": "^0.1.0",
-    "p-timeout": "^2.0.1",
     "process": "^0.11.10",
     "query-string": "^5.1.0"
   },
@@ -67,8 +65,6 @@
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.104",
     "@types/node-fetch": "^1.6.7",
-    "@types/p-do-whilst": "^0.1.0",
-    "@types/p-timeout": "^1.2.0",
     "@types/query-string": "^5.1",
     "type-zoo": "^1.2.1"
   },

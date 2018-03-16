@@ -22,8 +22,6 @@ import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import {extractJWT, JWTPayload, parseJWT} from "./utils/JWT";
 import { get, omit } from "lodash";
-import pTimeout = require("p-timeout");
-import pDoWhilst = require("p-do-whilst");
 
 export enum HTTPMethod {
     GET    = "GET",
@@ -268,20 +266,27 @@ export class RestAPI {
                          timeout: number = POLLING_TIMEOUT): Promise<A> {
 
         return await execRequest(async () => {
-            let response: A;
             let timedOut: boolean = false;
 
-            await pTimeout(
-                pDoWhilst(async () => {
-                    response = await promise();
-                }, () => !condition(response) && !timedOut),
-                timeout,
-                () => {
-                    timedOut = true;
-                    throw new TimeoutError(timeout);
-                }
-            );
-            return response;
+            return Promise.race([
+                // Timeout
+                new Promise<A>((_, reject) => {
+                    setTimeout(() => {
+                        timedOut = true;
+                        reject(new TimeoutError(timeout));
+                    }, timeout);
+                }),
+                // Repeater
+                (async function repeater(): Promise<A> {
+                    const result = await promise();
+
+                    if (!timedOut && !condition(result)) {
+                        return await repeater();
+                    }
+
+                    return result;
+                })()
+            ]);
         }, callback);
     }
 
