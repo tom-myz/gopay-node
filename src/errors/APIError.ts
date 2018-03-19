@@ -222,15 +222,19 @@ export enum ResponseErrorCode {
     CardNotBanned                              = "CARD_NOT_BANNED",
 
     /** Installments */
-    SubscriptionAlreadyCanceled                = "SUBSCRIPTION_ALREADY_CANCELED",
-    SubscriptionNotFound                       = "SUBSCRIPTION_NOT_FOUND",
-    InstallmentPlanNotFound                    = "INSTALLMENT_PLAN_NOT_FOUND",
-    InvalidInstallment                         = "INVALID_INSTALLMENT",
-    InvalidInstallmentPlanType                 = "INVALID_INSTALLMENT_PLAN_TYPE",
-    InstallmentAlreadySet                      = "INSTALLMENT_ALREADY_SET",
-    InstallmentMaxPayoutPeriodExceeded         = "INSTALLMENT_MAX_PAYOUT_PERIOD_EXCEEDED",
-    InstallmentInsufficientAmountPerCharge     = "INSTALLMENT_INSUFFICENT_AMOUNT_PER_CHARGE",
-    InstallmentsNotEnabled                     = "INSTALLMENTS_NOT_ENABLED",
+    SubscriptionAlreadyCanceled                      = "SUBSCRIPTION_ALREADY_CANCELED",
+    SubscriptionNotFound                             = "SUBSCRIPTION_NOT_FOUND",
+    InstallmentPlanNotFound                          = "INSTALLMENT_PLAN_NOT_FOUND",
+    InstallmentInvalidPlan                           = "INSTALLMENT_INVALID_PLAN",
+    InstallmentInvalidPlanType                       = "INSTALLMENT_INVALID_PLAN_TYPE",
+    InstallmentInvalidInitialAmount                  = "INSTALLMENT_INVALID_INITIAL_AMOUNT",
+    InstallmentInitialAmountsNotSupportedByProcessor = "INSTALLMENT_INITIAL_AMOUNTS_NOT_SUPPORTED_BY_PROCESSOR",
+    InstallmentAlreadySet                            = "INSTALLMENT_ALREADY_SET",
+    InstallmentMaxPayoutPeriodExceeded               = "INSTALLMENT_MAX_PAYOUT_PERIOD_EXCEEDED",
+    InstallmentInsufficientAmountPerCharge           = "INSTALLMENT_INSUFFICIENT_AMOUNT_PER_CHARGE",
+    InstallmentRevolvingPlanCannotHaveInitialAmount  = "INSTALLMENT_REVOLVING_PLAN_CANNOT_HAVE_INITIAL_AMOUNT",
+    InstallmentsNotEnabled                           = "INSTALLMENTS_NOT_ENABLED",
+    InstallmentInvalidCyclesCount                    = "INSTALLMENT_INVALID_CYCLES_COUNT",
 
     /* path bindables */
     InvalidElasticIndex                        = "INVALID_ELASTIC_INDEX",
