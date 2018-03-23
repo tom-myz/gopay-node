@@ -1,10 +1,10 @@
 import { WithCreatedOn, AmountWithCurrency, InvoiceChargeFee } from "./types"
 import { CardBrandPercentFeesItem, InstallmentsConfiguration } from "./Configuration"
-import { TransferSchedule } from "./TransferSchedule"
+import { TransferScheduleItem } from "./TransferSchedule"
 
 export interface PlatformUserDefaults {
     percentFee: number;
-    transferSchedule: TransferSchedule;
+    transferSchedule: TransferScheduleItem;
     flatFees: Array<AmountWithCurrency>;
     waitPeriod: string;
     cardBrandPercentFees: Partial<CardBrandPercentFeesItem>;

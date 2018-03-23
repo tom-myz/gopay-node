@@ -65,11 +65,10 @@ node('slave') {
                             string(credentialsId: 'coveralls-repo-token', variable: 'COVERALLS_REPO_TOKEN')
                         ]) {
                             withEnv([
-                                "CI=true",
-                                "CI_NAME=Jenkins",
-                                "CI_BUILD_NUMBER=$BUILD_NUMBER",
+                                "BUILD_ID=$BUILD_NUMBER",
                                 "CI_BUILD_URL=$BUILD_URL",
-                                "CI_BRANCH=${!gitInfo.tag ? gitInfo.branch : gitInfo.tag}",
+                                "GIT_COMMIT=${gitInfo.commit}",
+                                "GIT_BRANCH=${!gitInfo.tag ? gitInfo.branch : gitInfo.tag}",
                                 "CI_PULL_REQUEST=${ env.CHANGE_ID || "" }"
                             ]) {
                                 sh "npm test"

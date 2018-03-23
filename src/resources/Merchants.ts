@@ -6,7 +6,7 @@ import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ConfigurationItem } from "./common/Configuration"
 import { RecurringTokenPrivilege } from "./Verification"
-import { TransferSchedule } from "./common/TransferSchedule"
+import { TransferScheduleItem } from "./common/TransferSchedule"
 
 /* Request */
 
@@ -18,7 +18,7 @@ export interface RecurringTokenConfiguration {
 
 export interface MerchantConfigurationItem extends ConfigurationItem {
     waitPeriod?: string
-    transferSchedule?: TransferSchedule
+    transferSchedule?: TransferScheduleItem
     recurringTokenConfiguration?: RecurringTokenConfiguration
     language?: string
 }

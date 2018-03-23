@@ -28,16 +28,12 @@ export const enum WeekOfMonth {
     LAST    = "last"
 }
 
-export interface TransferSchedule {
+export interface TransferScheduleItem {
+    waitPeriod: string;
     period: TransferPeriod;
     dayOfWeek: DayOfWeek;
     weekOfMonth: WeekOfMonth;
     dayOfMonth: number;
-    weekly?: {
-        closingDay: DayOfWeek;
-        payoutDay: DayOfWeek;
-    }
-    monthly?: {
-        dayOfMonth: number;
-    }
+    weeklyClosingDay?: DayOfWeek;
+    weeklyPayoutDay?: DayOfWeek;
 }
