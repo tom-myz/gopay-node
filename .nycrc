@@ -15,7 +15,7 @@
   ],
   "cwd": "src",
   "all": true,
-  "check-coverage": true,
+  "check-coverage": false,
   "per-file": false,
   "lines": 90,
   "statements": 90,

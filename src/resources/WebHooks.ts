@@ -16,27 +16,29 @@ export const enum WebHookTrigger {
     CANCEL_FINISHED       = "cancel_finished",
 
     // Merchant
+    TRANSFER_CREATED      = "transfer_created",
+    TRANSFER_UPDATED      = "transfer_updated",
     TRANSFER_FINALIZED    = "transfer_finalized"
 }
 
 /* Request */
 export type WebHooksListParams = CRUDPaginationParams;
 
-export interface WebHookCreateParams {
-    triggers: WebHookTrigger[]
+export interface WebHookCreateParams<Trigger = WebHookTrigger> {
+    triggers: Trigger[]
     url: string
 }
-export interface WebHookUpdateParams {
-    triggers?: WebHookTrigger[]
+export interface WebHookUpdateParams<Trigger = WebHookTrigger> {
+    triggers?: Trigger[]
     url?: string
 }
 
 /* Response */
-export interface WebHookItem {
+export interface WebHookItem<Trigger = WebHookTrigger> {
     id: string
     merchantId: string
     storeId: string
-    triggers: WebHookTrigger[]
+    triggers: Trigger[]
     url: string
     createdOn: string
 }

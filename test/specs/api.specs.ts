@@ -81,15 +81,15 @@ describe("API", function () {
     it("should return error response", async function () {
         fetchMock.getOnce(
             `${testEndpoint}/error`,
-            { status : 400 }
+            { status : 503 }
         );
 
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
         const spy = sinon.spy()
         const error = new ResponseError({
-            code     : ResponseErrorCode.BadRequest,
+            code     : ResponseErrorCode.ServiceUnavailable,
             errors   : [],
-            httpCode : 400
+            httpCode : 503
         });
 
         const resError = await expect(api.send(HTTPMethod.GET, "/error", null, spy)).to.eventually.be.rejected;
