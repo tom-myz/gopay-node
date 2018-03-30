@@ -20,12 +20,12 @@ describe("JWT", function () {
     });
 
     it("should parse JWT data", function () {
-        const jwtTokenPayload = { foo : "bar" };
+        const jwtTokenPayload = { foo_bar : "test" };
+        const jwtTokenPayloadCamel = { fooBar : "test" };
         const jwtToken = jwt.sign(jwtTokenPayload, "foo");
 
-        const parsed = parseJWT(jwtToken);
-
-        expect(parsed).to.contain(jwtTokenPayload);
+        expect(parseJWT(jwtToken)).to.contain(jwtTokenPayloadCamel);
+        expect(parseJWT(jwtToken, true)).to.contain(jwtTokenPayload);
 
         for (const empty of [null, undefined, ""]) {
             expect(parseJWT(empty)).to.be.null;

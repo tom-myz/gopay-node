@@ -5,6 +5,8 @@
 
 import jwtDecode = require("jwt-decode");
 import { JWTError } from "../../errors/JWTError";
+import {transformKeys} from "../../utils/object";
+import camelCase = require("camelcase");
 
 export interface JWTBasePayload {
     iss?: string;
@@ -18,7 +20,7 @@ export interface JWTBasePayload {
 
 export type JWTPayload<Payload> = JWTBasePayload & Payload;
 
-export function parseJWT<Payload>(jwt: string): JWTPayload<Payload> | null {
+export function parseJWT<Payload>(jwt: string, keepKeys: boolean = false): JWTPayload<Payload> | null {
     if (!jwt) {
         return null;
     }
@@ -28,7 +30,8 @@ export function parseJWT<Payload>(jwt: string): JWTPayload<Payload> | null {
     }
 
     try {
-        return jwtDecode(jwt);
+        const decoded = jwtDecode(jwt);
+        return keepKeys ? decoded : transformKeys(decoded, camelCase) ;
     } catch {
         throw new JWTError();
     }
