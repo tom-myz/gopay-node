@@ -55,6 +55,11 @@ export interface SecurityConfiguration {
     refundPercentLimit?: number;
 }
 
+export interface UserTransactionsConfiguration {
+    enabled?: boolean
+    notifyCustomer?: boolean
+}
+
 export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
@@ -65,6 +70,7 @@ export interface ConfigurationItem {
     percentFee: number
     logoUrl?: string
     securityConfiguration?: SecurityConfiguration
+    userTransactionsConfiguration?: UserTransactionsConfiguration
 }
 
 export interface ConfigurationParams {

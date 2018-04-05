@@ -1,5 +1,5 @@
 import { WithCreatedOn, AmountWithCurrency, InvoiceChargeFee } from "./types"
-import { CardBrandPercentFeesItem, InstallmentsConfiguration } from "./Configuration"
+import { CardBrandPercentFeesItem, InstallmentsConfiguration, UserTransactionsConfiguration } from "./Configuration"
 import { TransferScheduleItem } from "./TransferSchedule"
 
 export interface PlatformUserDefaults {
@@ -10,6 +10,7 @@ export interface PlatformUserDefaults {
     cardBrandPercentFees: Partial<CardBrandPercentFeesItem>;
     minTransferPayout: AmountWithCurrency;
     installmentsConfiguration: Partial<InstallmentsConfiguration>;
+    userTransactionsConfiguration?: UserTransactionsConfiguration;
 }
 
 export interface PlatformPaymentDefaults {
