@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { SubscriptionItem, SubscriptionPeriod, SubscriptionStatus } from "../../src/resources/Subscriptions";
 import { ProcessingMode } from "../../src/resources/common/enums";
 

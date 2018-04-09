@@ -5,7 +5,7 @@
 import { RestAPI, HTTPMethod } from "../api/RestAPI"
 import { Resource, DefinedRoute } from "./Resource"
 
-export const enum CursorDirection {
+export enum CursorDirection {
     ASC  = "asc",
     DESC = "desc"
 }

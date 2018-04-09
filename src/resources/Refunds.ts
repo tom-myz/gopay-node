@@ -7,14 +7,14 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { PaymentError, Metadata } from "./common/types";
 import { ProcessingMode } from "./common/enums";
 
-export const enum RefundStatus {
+export enum RefundStatus {
     PENDING    = "pending",
     SUCCESSFUL = "successful",
     FAILED     = "failed",
     ERROR      = "error"
 }
 
-export const enum RefundReason {
+export enum RefundReason {
     DUPLICATE        = "duplicate",
     FRAUD            = "fraud",
     CUSTOMER_REQUEST = "customer_request",

@@ -3,14 +3,14 @@
  *  @module Configuration
  */
 
-export const enum TransferPeriod {
+export enum TransferPeriod {
     WEEKLY      = "weekly",
     BIWEEKLY    = "biweekly",
     SEMIMONTHLY = "semimonthly",
     MONTHLY     = "monthly"
 }
 
-export const enum DayOfWeek {
+export enum DayOfWeek {
     SUNDAY      = "sunday",
     MONDAY      = "monday",
     TUESDAY     = "tuesday",
@@ -20,7 +20,7 @@ export const enum DayOfWeek {
     SATURDAY    = "saturday"
 }
 
-export const enum WeekOfMonth {
+export enum WeekOfMonth {
     FIRST   = "first",
     SECOND  = "second",
     THIRD   = "third",

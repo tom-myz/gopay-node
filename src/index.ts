@@ -3,7 +3,7 @@
  */
 
 import { RestAPIOptions } from "./api/RestAPI"
-import { PaymentsSDK } from "./PaymentsSDK"
+import { PaymentsSDK } from "./sdk/PaymentsSDK"
 
 // Resources
 import { BankAccounts } from "./resources/BankAccounts"

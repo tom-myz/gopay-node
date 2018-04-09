@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import fetchMock = require("fetch-mock");
-import uuid = require("uuid");
+import fetchMock from "fetch-mock";
+import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {

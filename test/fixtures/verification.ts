@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { RecurringTokenPrivilege, VerificationItem } from "../../src/resources/Verification";
 
 export function generateFixture(): VerificationItem {

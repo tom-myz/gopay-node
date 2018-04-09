@@ -1,4 +1,4 @@
-import pathToRegex = require("path-to-regexp");
+import pathToRegex from "path-to-regexp";
 import { MockMatcher } from "fetch-mock";
 
 export function pathToRegexMatcher(path: string): MockMatcher {

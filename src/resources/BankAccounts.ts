@@ -5,14 +5,14 @@
 import {ResponseCallback, ErrorResponse, HTTPMethod, SendData} from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export const enum BankAccountStatus {
+export enum BankAccountStatus {
     NEW              = "new",
     UNABLE_TO_VERIFY = "unable_to_verify",
     VERIFIED         = "verified",
     ERRORED          = "errored"
 }
 
-export const enum BankAccountType {
+export enum BankAccountType {
     CHECKING = "checking",
     SAVINGS  = "savings"
 }

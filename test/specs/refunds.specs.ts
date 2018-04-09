@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import fetchMock = require("fetch-mock");
+import fetchMock from "fetch-mock";
 import * as sinon from "sinon";
 import { SinonSandbox } from "sinon";
-import uuid = require("uuid");
+import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {
@@ -11,12 +11,12 @@ import {
     RefundCreateParams,
     RefundUpdateParams, RefundReason
 } from "../../src/resources/Refunds";
-import {HTTPMethod, RestAPI} from "../../src/api/RestAPI";
+import { HTTPMethod, RestAPI } from "../../src/api/RestAPI";
 import { generateList } from "../fixtures/list";
 import { generateFixture as generateRefund } from "../fixtures/refund";
 import { RequestError } from "../../src/errors/RequestResponseError";
 import { createRequestError } from "../fixtures/errors";
-import { POLLING_TIMEOUT } from "../../src/constants"
+import { POLLING_TIMEOUT } from "../../src/common/constants";
 import { TimeoutError } from "../../src/errors/TimeoutError";
 
 describe("Refunds", function () {

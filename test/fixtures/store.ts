@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { StoreItem } from "../../src/resources/Stores";
 import { generateFixture as generateConfiguration } from "./common/configuration";
 

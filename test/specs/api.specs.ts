@@ -1,13 +1,11 @@
 import { expect } from "chai";
-import sinon = require("sinon");
-import { SinonSandbox } from "sinon"
-import fetchMock = require("fetch-mock");
-import { FetchMockStatic } from "fetch-mock";
-import jwt = require("jsonwebtoken");
+import sinon, { SinonSandbox } from "sinon"
+import fetchMock, { FetchMockStatic } from "fetch-mock";
+import jwt from "jsonwebtoken";
 import { parseUrl } from "query-string";
 import { HTTPMethod, RestAPI, RestAPIOptions} from "../../src/api/RestAPI";
 import { testEndpoint } from "../utils";
-import { ENV_KEY_APP_ID, ENV_KEY_SECRET, IDEMPOTENCY_KEY_HEADER } from "../../src/constants";
+import { ENV_KEY_APP_ID, ENV_KEY_SECRET, IDEMPOTENCY_KEY_HEADER } from "../../src/common/constants";
 import { ResponseErrorCode } from "../../src/errors/APIError";
 import { ResponseError } from "../../src/errors/RequestResponseError";
 

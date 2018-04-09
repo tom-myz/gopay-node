@@ -3,9 +3,9 @@
  *  @module Utils
  */
 
-import camelCase = require("camelcase")
-import { APIError } from "../errors/APIError"
-import { transformKeys } from "./object"
+import camelCase from "camelcase";
+import { APIError } from "../errors/APIError";
+import { transformKeys } from "./object";
 
 export async function checkStatus(response: Response): Promise<Response> {
     if (response.status >= 200 && response.status < 400) {

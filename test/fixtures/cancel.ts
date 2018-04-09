@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { ProcessingMode } from "../../src/resources/common/enums";
 import { CancelItem, CancelStatus } from "../../src/resources/Cancels";
 

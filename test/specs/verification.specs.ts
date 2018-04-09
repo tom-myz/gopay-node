@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import fetchMock = require("fetch-mock");
+import fetchMock from "fetch-mock";
 import { pick } from "lodash";
 import { testEndpoint } from "../utils";
 import {

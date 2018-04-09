@@ -7,7 +7,7 @@ import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
 import { PhoneNumber } from "./common/types"
 
-export const enum RecurringTokenPrivilege {
+export enum RecurringTokenPrivilege {
     NONE     = "none",
     BOUNDED  = "bounded",
     INFINITE = "infinite"

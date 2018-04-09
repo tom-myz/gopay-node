@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { LedgerItem, LedgerOrigin } from "../../src/resources/Ledgers";
 
 export function generateFixture(): LedgerItem {

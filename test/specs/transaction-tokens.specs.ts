@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import fetchMock = require("fetch-mock");
+import fetchMock from "fetch-mock";
 import * as sinon from "sinon";
 import { SinonSandbox } from "sinon";
-import uuid = require("uuid");
+import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {

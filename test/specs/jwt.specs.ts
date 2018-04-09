@@ -1,7 +1,6 @@
 import { expect } from "chai";
-import sinon = require("sinon");
-import { SinonSandbox } from "sinon"
-import jwt = require("jsonwebtoken");
+import sinon, { SinonSandbox } from "sinon"
+import jwt from "jsonwebtoken";
 import { parseJWT, extractJWT } from "../../src/api/utils/JWT";
 import { JWTError } from "../../src/errors/JWTError";
 

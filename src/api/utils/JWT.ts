@@ -3,10 +3,11 @@
  *  @module Utils
  */
 
-import jwtDecode = require("jwt-decode");
+import jwtDecode from "jwt-decode";
+import camelCase from "camelcase";
 import { JWTError } from "../../errors/JWTError";
 import {transformKeys} from "../../utils/object";
-import camelCase = require("camelcase");
+
 
 export interface JWTBasePayload {
     iss?: string;

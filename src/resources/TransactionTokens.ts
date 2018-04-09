@@ -7,21 +7,21 @@ import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDRes
 import { CardBrand, ProcessingMode } from "./common/enums"
 import { PhoneNumber } from "./common/types"
 
-export const enum UsageLimit {
+export enum UsageLimit {
     DAILY   = "daily",
     WEEKLY  = "weekly",
     MONTHLY = "monthly",
     YEARLY  = "yearly"
 }
 
-export const enum PaymentType {
+export enum PaymentType {
     CARD      = "card",
     QR_SCAN   = "qr_scan",
     KONBINI   = "konbini",
     APPLE_PAY = "apple_pay"
 }
 
-export const enum ConvenienceStore {
+export enum ConvenienceStore {
     SEVEN_ELEVEN         = "seven_eleven",
     FAMILY_MART          = "family_mart",
     LAWSON               = "lawson",
@@ -34,7 +34,7 @@ export const enum ConvenienceStore {
     YAMAZAKI_DAILY_STORE = "yamazaki_daily_store"
 }
 
-export const enum TransactionTokenType {
+export enum TransactionTokenType {
     ONE_TIME     = "one_time",
     SUBSCRIPTION = "subscription",
     RECURRING    = "recurring"

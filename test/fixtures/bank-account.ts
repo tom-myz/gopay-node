@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { BankAccountItem, BankAccountStatus, BankAccountType } from "../../src/resources/BankAccounts";
 
 export function generateFixture(): BankAccountItem {

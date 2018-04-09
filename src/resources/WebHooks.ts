@@ -5,7 +5,7 @@
 import { ResponseCallback, ErrorResponse, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
-export const enum WebHookTrigger {
+export enum WebHookTrigger {
     // Store
     CHARGE_FINISHED       = "charge_finished",
     CHARGE_UPDATED        = "charge_updated",

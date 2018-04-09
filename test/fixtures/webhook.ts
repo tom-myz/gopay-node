@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { WebHookItem, WebHookTrigger } from "../../src/resources/WebHooks";
 
 export function generateFixture(): WebHookItem {

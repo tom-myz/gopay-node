@@ -7,7 +7,7 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { PaymentError, Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
 
-export const enum ChargeStatus {
+export enum ChargeStatus {
     PENDING    = "pending",
     SUCCESSFUL = "successful",
     FAILED     = "failed",

@@ -5,7 +5,7 @@
 import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI";
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource";
 
-export const enum LedgerOrigin {
+export enum LedgerOrigin {
     CHARGE = "charge",
     REFUND = "refund",
     MANUAL = "manual"

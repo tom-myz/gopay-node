@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { PlatformConfigurationItem } from "../../src/resources/Platforms";
 import { CardBrand } from "../../src/resources/common/enums";
 import { PaymentType } from "../../src/resources/TransactionTokens";

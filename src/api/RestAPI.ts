@@ -4,8 +4,8 @@
 
 import "isomorphic-fetch";
 import "isomorphic-form-data";
-import process = require("process");
-import decamelize = require("decamelize");
+import process from "process";
+import decamelize from "decamelize";
 import {
     DEFAULT_ENDPOINT,
     ENV_KEY_ENDPOINT,
@@ -13,15 +13,16 @@ import {
     ENV_KEY_SECRET,
     POLLING_TIMEOUT,
     IDEMPOTENCY_KEY_HEADER
-} from "../constants";
+} from "../common/constants";
 import { transformKeys } from "../utils/object";
 import { checkStatus, parseJSON } from "../utils/fetch";
 import { TimeoutError } from "../errors/TimeoutError";
 import { fromError } from "../errors/parser";
 import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
-import {extractJWT, JWTPayload, parseJWT} from "./utils/JWT";
-import { get, omit } from "lodash";
+import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
+import get from "lodash/get";
+import omit from "lodash/omit";
 
 export enum HTTPMethod {
     GET    = "GET",

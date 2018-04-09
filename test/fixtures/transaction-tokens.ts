@@ -1,4 +1,4 @@
-import uuid = require("uuid");
+import uuid from "uuid";
 import { CardBrand, ProcessingMode } from "../../src/resources/common/enums";
 import {
     PaymentType,
