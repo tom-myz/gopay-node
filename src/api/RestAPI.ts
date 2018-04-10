@@ -14,15 +14,13 @@ import {
     POLLING_TIMEOUT,
     IDEMPOTENCY_KEY_HEADER
 } from "../common/constants";
-import { transformKeys } from "../utils/object";
+import { transformKeys, omit } from "../utils/object";
 import { checkStatus, parseJSON } from "../utils/fetch";
 import { TimeoutError } from "../errors/TimeoutError";
 import { fromError } from "../errors/parser";
 import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
-import get from "lodash/get";
-import omit from "lodash/omit";
 
 export enum HTTPMethod {
     GET    = "GET",
@@ -105,7 +103,7 @@ function getIdempotencyKey<Data>(data: SendData<Data>): string | null {
     // TODO: make extraction from FormData
     return data instanceof FormData
         ? null
-        : get(data, "idempotentKey");
+        : (typeof data === "object" && !!data ? data["idempotentKey"] : null);
 }
 
 function stringifyParams<Data extends object>(data: Data): string {

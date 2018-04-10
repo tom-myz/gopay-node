@@ -5,6 +5,7 @@
         "downlevelIteration": true,
         "importHelpers": true,
         "sourceMap": true,
+        "noEmit": true,
         "module": "commonjs",
         "moduleResolution": "node",
         "declaration": true,
@@ -12,6 +13,7 @@
         "checkJs": false,
         "lib": [
             "dom",
+            "scripthost",
             "es2015",
             "es2016",
             "es2017",
@@ -30,9 +32,6 @@
         "suppressImplicitAnyIndexErrors": true,
         "baseUrl": ".",
         "paths": {
-            "lodash/*": [
-                "node_modules/@types/lodash-es/*"
-            ],
             "*": ["types/*"]
         }
     },

@@ -2,6 +2,7 @@
  *  @internal
  *  @module Utils
  */
+import { Omit } from "type-zoo";
 
 export type Transformer = (...args: any[]) => string;
 
@@ -40,4 +41,10 @@ export function missingKeys(obj: any, keys: string[] = []): string[] {
     }
 
     return missing;
+}
+
+export function omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+    return Object.keys(obj || {}).reduce((acc: any, key: K) => {
+        return keys.indexOf(key) === -1 ? { ...acc, [key]: obj[key] } : acc
+    }, {});
 }
