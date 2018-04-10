@@ -6,6 +6,7 @@
     "ts-node/register/type-check"
   ],
   "exclude": [
+    "coverage/**",
     "**/*.d.ts"
   ],
   "reporter": [

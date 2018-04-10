@@ -262,4 +262,16 @@ describe("API", function () {
         expect(response).to.eql({ fooBar : true });
     })
 
+    it("should ping the api", async function () {
+        fetchMock.getOnce(
+            `${testEndpoint}/heartbeat`,
+            {
+                status  : 200
+            }
+        );
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
+        await expect(api.ping()).to.eventually.be.undefined;
+    })
+
 });

@@ -103,7 +103,7 @@ function getIdempotencyKey<Data>(data: SendData<Data>): string | null {
     // TODO: make extraction from FormData
     return data instanceof FormData
         ? null
-        : (typeof data === "object" && !!data ? data["idempotentKey"] : null);
+        : (typeof data === "object" && !!data ? data.idempotentKey : null);
 }
 
 function stringifyParams<Data extends object>(data: Data): string {
@@ -201,6 +201,7 @@ export class RestAPI {
         return await execRequest(async () => {
             // FIXME: Use Request when fetch-mock is fixed
             // const response = await fetch(request);
+
             const response = await fetch(
                 `${this.endpoint}${uri}${payload ? "" : stringifyParams(requestData)}`,
                 payload ? { ...params, body : getRequestBody(data) } : params
@@ -287,6 +288,10 @@ export class RestAPI {
                 })()
             ]);
         }, callback);
+    }
+
+    async ping(callback?: ResponseCallback<void>): Promise<void> {
+        await this.send(HTTPMethod.GET, "/heartbeat", null, callback);
     }
 
 }

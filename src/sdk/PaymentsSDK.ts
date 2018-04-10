@@ -6,9 +6,9 @@ import { RestAPI, RestAPIOptions } from "../api/RestAPI"
 
 export abstract class PaymentsSDK {
 
-    public api:RestAPI;
+    api: RestAPI;
 
-    constructor (options?: RestAPIOptions) {
+    constructor(options?: RestAPIOptions) {
         this.api = new RestAPI(options);
     }
 
