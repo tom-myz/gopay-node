@@ -7,9 +7,7 @@
     "url": "git@github.com:gyro-n/gopay-node.git"
   },
   "main": "lib/index.js",
-  "module": "es6/index.js",
   "files": [
-    "es6/",
     "lib/"
   ],
   "sideEffects": false,
@@ -57,7 +55,7 @@
     "isomorphic-form-data": "^1.0.0",
     "jwt-decode": "^2.2.0",
     "process": "^0.11.10",
-    "query-string": "^6.0.0"
+    "query-string": "^5.1"
   },
   "optionalDependencies": {
     "@types/camelcase": "^4.1",
