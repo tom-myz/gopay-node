@@ -7,18 +7,20 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 
 export enum WebHookTrigger {
     // Store
-    CHARGE_FINISHED       = "charge_finished",
-    CHARGE_UPDATED        = "charge_updated",
-    SUBSCRIPTION_PAYMENT  = "subscription_payment",
-    SUBSCRIPTION_FAILURE  = "subscription_failure",
-    SUBSCRIPTION_CANCELED = "subscription_canceled",
-    REFUND_FINISHED       = "refund_finished",
-    CANCEL_FINISHED       = "cancel_finished",
+    CHARGE_FINISHED        = "charge_finished",
+    CHARGE_UPDATED         = "charge_updated",
+    SUBSCRIPTION_PAYMENT   = "subscription_payment",
+    SUBSCRIPTION_FAILURE   = "subscription_failure",
+    SUBSCRIPTION_CANCELED  = "subscription_canceled",
+    SUBSCRIPTION_COMPLETED = "subscription_completed",
+    SUBSCRIPTION_SUSPENDED = "subscription_suspended",
+    REFUND_FINISHED        = "refund_finished",
+    CANCEL_FINISHED        = "cancel_finished",
 
     // Merchant
-    TRANSFER_CREATED      = "transfer_created",
-    TRANSFER_UPDATED      = "transfer_updated",
-    TRANSFER_FINALIZED    = "transfer_finalized"
+    TRANSFER_CREATED       = "transfer_created",
+    TRANSFER_UPDATED       = "transfer_updated",
+    TRANSFER_FINALIZED     = "transfer_finalized"
 }
 
 /* Request */
