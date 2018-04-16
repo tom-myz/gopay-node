@@ -63,10 +63,10 @@
     "linter": "tslint src/**/*.ts",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\",\"noEmit\": true}' nyc mocha",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf dist && tsc && npm run copy",
     "preversion": "npm test",
     "docs": "typedoc --options typedoc.json",
-    "prepublishOnly": "cp -rf package.json CHANGELOG.md LICENSE README.md dist",
+    "copy": "cp -rf package.json CHANGELOG.md LICENSE README.md dist",
     "release": "np --no-yarn --no-publish"
   }
 }
