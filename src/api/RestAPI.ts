@@ -4,7 +4,6 @@
 
 import "isomorphic-fetch";
 import "isomorphic-form-data";
-import process from "process";
 import decamelize from "decamelize";
 import {
     DEFAULT_ENDPOINT,
@@ -26,7 +25,7 @@ export enum HTTPMethod {
     GET    = "GET",
     POST   = "POST",
     PATCH  = "PATCH",
-    UPDATE = "PATCH",
+    PUT    = "PUT",
     DELETE = "DELETE",
     OPTION = "OPTION",
     HEAD   = "HEAD"
@@ -191,21 +190,13 @@ export class RestAPI {
 
         const requestData = getData(data);
 
-        /*
         const request: Request = new Request(
             `${this.endpoint}${uri}${payload ? "" : stringifyParams(requestData)}`,
             payload ? { ...params, body : getRequestBody(data) } : params
         );
-        */
 
         return await execRequest(async () => {
-            // FIXME: Use Request when fetch-mock is fixed
-            // const response = await fetch(request);
-
-            const response = await fetch(
-                `${this.endpoint}${uri}${payload ? "" : stringifyParams(requestData)}`,
-                payload ? { ...params, body : getRequestBody(data) } : params
-            );
+            const response = await fetch(request);
 
             await checkStatus(response);
 

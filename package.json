@@ -6,10 +6,9 @@
     "type": "git",
     "url": "git@github.com:gyro-n/gopay-node.git"
   },
-  "main": "lib/index.js",
-  "files": [
-    "lib/"
-  ],
+  "engines": {
+    "node": ">=6"
+  },
   "sideEffects": false,
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -18,7 +17,7 @@
     "@types/jsonwebtoken": "^7.2.6",
     "@types/lodash": "^4.14.106",
     "@types/mocha": "^5.0.0",
-    "@types/node": "^9.6.2",
+    "@types/node": "^9.6.5",
     "@types/sinon": "^4.3.1",
     "@types/sinon-chai": "^2.7.29",
     "@types/uuid": "^3.4.3",
@@ -28,15 +27,11 @@
     "fetch-mock": "^6.3.0",
     "jsonwebtoken": "^8.2.1",
     "lodash": "^4.17.5",
-    "mocha": "^5.0.5",
+    "mocha": "^5.1.0",
     "mocha-tap-reporter": "^0.1.3",
-    "node-fetch": "^2.1.2",
+    "np": "^2.20.1",
     "nyc": "^11.6.0",
-    "path": "^0.12.7",
     "path-to-regexp": "^2.2.0",
-    "preprocess": "^3.1.0",
-    "preprocess-cli": "^0.1.0",
-    "rimraf": "^2.6.2",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
     "ts-node": "^5.0.1",
@@ -54,27 +49,24 @@
     "isomorphic-fetch": "^2.2.1",
     "isomorphic-form-data": "^1.0.0",
     "jwt-decode": "^2.2.0",
-    "process": "^0.11.10",
-    "query-string": "^5.1"
+    "node-fetch": "^2.1.2",
+    "query-string": "^6.0.0"
   },
   "optionalDependencies": {
     "@types/camelcase": "^4.1",
     "@types/decamelize": "^1.2",
-    "@types/form-data": "^2.2.1",
     "@types/jwt-decode": "^2.2.1",
-    "@types/node-fetch": "^1.6.8",
     "@types/query-string": "^5.1",
     "type-zoo": "^1.2.1"
   },
   "scripts": {
     "linter": "tslint src/**/*.ts",
-    "clean": "rimraf lib",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"target\":\"es6\",\"noEmit\": true}' nyc mocha",
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\",\"noEmit\": true}' nyc mocha",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "build": "npm run build:cjs && npm run build:es6",
-    "build:cjs": "rimraf lib && tsc -p tsconfig.cjs.json",
-    "build:es6": "rimraf es6 && tsc -p tsconfig.es6.json",
+    "build": "rm -rf lib && tsc",
     "preversion": "npm test",
-    "docs": "typedoc --options typedoc.json"
+    "docs": "typedoc --options typedoc.json",
+    "prepublishOnly": "cp -rf package.json CHANGELOG.md LICENSE README.md dist",
+    "release": "np --no-yarn --no-publish"
   }
 }

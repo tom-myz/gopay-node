@@ -40,8 +40,6 @@ export default class SDK extends PaymentsSDK {
     public verification: Verification;
     public webHooks: WebHooks;
 
-
-
     constructor (options?: RestAPIOptions) {
         super(options);
 
@@ -61,5 +59,4 @@ export default class SDK extends PaymentsSDK {
         this.verification = new Verification(this.api);
         this.webHooks = new WebHooks(this.api);
     }
-
 }

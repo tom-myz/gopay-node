@@ -2,7 +2,7 @@
  *  @module Resources/BankAccounts
  */
 
-import {ResponseCallback, ErrorResponse, HTTPMethod, SendData} from "../api/RestAPI"
+import { ResponseCallback, ErrorResponse, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 
 export enum BankAccountStatus {

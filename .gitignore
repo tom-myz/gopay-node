@@ -1,7 +1,6 @@
 node_modules/
-/es6
-/lib
-/docs
+dist/
+docs/
 
 .DS_Store
 *.swp
@@ -10,7 +9,7 @@ node_modules/
 .idea
 *.orig
 .nyc_output
-coverage
-reports
+coverage/
+reports/
 
 .vscode/

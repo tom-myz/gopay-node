@@ -133,7 +133,7 @@ describe("API", function () {
         for (const [initParams, sendParams, authHeader] of asserts) {
             const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...initParams })
             const response = await api.send(HTTPMethod.GET, "/header", sendParams);
-            const { headers }  = mock.lastCall()[1];
+            const { headers }  = mock.lastCall()[0] as any;
             const reqAuthHeader = (headers as Headers).get("Authorization");
 
             expect(reqAuthHeader).to.be.equal(authHeader ? authHeader : null);
@@ -204,7 +204,7 @@ describe("API", function () {
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
         await api.send(HTTPMethod.GET, "/header", { idempotentKey : "test" });
 
-        const { headers } = mock.lastCall()[1];
+        const { headers } = mock.lastCall()[0] as any;
         const keyHeader = (headers as Headers).get(IDEMPOTENCY_KEY_HEADER);
 
         expect(keyHeader).to.equal("test");
@@ -232,16 +232,19 @@ describe("API", function () {
         // For request with payload
         for (const assert of asserts) {
             await api.send(HTTPMethod.POST, "/camel", assert);
-            const [ url, init ]  = mock.lastCall();
-            const req = new Request(url, init);
+            const [ url, init ]  = mock.lastCall() as any;
+
+            const req = typeof url === "object"
+                ? url
+                : new Request(url, init);
             await expect(req.json()).to.eventually.eql(expectationPost);
         }
 
         // For request without payload
         for (const assert of asserts) {
             await api.send(HTTPMethod.GET, "/camel", assert);
-            const [ url ]  = mock.lastCall();
-            const { query } = parseUrl(url);
+            const [ url ]  = mock.lastCall() as any;
+            const { query } = parseUrl(typeof url === "object" ? url.url : url);
             expect(query).to.eql(expectationGet);
         }
     });
