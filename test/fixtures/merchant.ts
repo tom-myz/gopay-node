@@ -13,7 +13,7 @@ export function generateFixture(): MerchantItem {
         verified           : true,
         configuration: {
             ...generateConfiguration(),
-            waitPeriod       : "P7D",
+            displayTimeZone  : "Asia/Tokyo",
             transferSchedule : generateTransferSchedule(),
             recurringTokenConfiguration : {
                 recurringType    : RecurringTokenPrivilege.NONE,

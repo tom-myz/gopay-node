@@ -21,6 +21,7 @@ export interface MerchantConfigurationItem extends ConfigurationItem {
     transferSchedule?: TransferScheduleItem
     recurringTokenConfiguration?: RecurringTokenConfiguration
     language?: string
+    displayTimeZone?: string
 }
 
 export interface MerchantItem {

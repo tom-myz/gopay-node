@@ -39,4 +39,5 @@ export interface PlatformConfiguration {
     logoUri: string;
     userDefaults: PlatformUserDefaults;
     paymentDefaults: PlatformPaymentDefaults;
+    timeZone: string;
 }

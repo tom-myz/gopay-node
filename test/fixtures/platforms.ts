@@ -11,6 +11,7 @@ export function generateFixture(): PlatformConfigurationItem {
         domain                : "fake.com",
         name                  : "Platform",
         configuration         : {
+            timeZone               : "Asia/Tokyo",
             adminEmailAddresses    : ["test@fake.com"],
             notifyUserTransactions : true,
             defaultLanguage        : "JA_JP",
