@@ -79,7 +79,7 @@ export class Charges extends CRUDResource {
         const promise: () => Promise<ResponseCharge> = () => this.get(
             storeId,
             id,
-            { ...(data as object), poll : true }
+            { ...(data as object), polling : true }
         );
         return this.api.longPolling(
             promise,

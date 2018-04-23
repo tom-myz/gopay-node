@@ -35,11 +35,12 @@ export interface RestAPIOptions {
     endpoint?: string;
     jwt?: string;
     handleUpdateJWT?(jwt: string): void;
+    secret?: string;
 
     // Deprecated
     authToken?: string;
     appId?: string;
-    secret?: string;
+
 }
 
 export interface SubError {
@@ -64,15 +65,15 @@ export type PromiseReject = (reason?: any) => void
 
 export interface AuthParams {
     jwt?: string;
+    secret?: string;
 
     // Deprecated
     authToken?: string;
     appId?: string;
-    secret?: string;
 }
 
 export interface PollParams {
-    poll?: boolean;
+    polling?: boolean;
 }
 
 export interface IdempotentParams {
@@ -133,16 +134,12 @@ export class RestAPI {
     endpoint: string;
     jwt: JWTPayload<any>;
     protected handleUpdateJWT: (jwt: string) => void = () => undefined;
+    secret: string;
 
     /**
      *  @deprecated
      */
     appId: string;
-
-    /**
-     *  @deprecated
-     */
-    secret: string;
 
     /**
      *  @deprecated
@@ -242,7 +239,12 @@ export class RestAPI {
         } else if (appId) {
             headers.append("Authorization", `ApplicationToken ${appId}|${secret || ""}`);
         } else if (jwt) {
-            headers.append("Authorization", `Bearer ${jwt}`);
+            if (!!secret) {
+                headers.append("Authorization", `Bearer ${secret}.${jwt}`);
+            } else {
+                headers.append("Authorization", `Bearer ${jwt}`);
+            }
+
         }
 
         return headers;

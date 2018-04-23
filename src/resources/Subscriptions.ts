@@ -160,7 +160,7 @@ export class Subscriptions extends CRUDResource {
         const promise: () => Promise<ResponseSubscription> = () => this.get(
             storeId,
             id,
-            { ...(data as object), poll : true }
+            { ...(data as object), polling : true }
         );
         return this.api.longPolling(
             promise,

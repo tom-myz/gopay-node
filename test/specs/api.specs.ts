@@ -116,6 +116,7 @@ describe("API", function () {
             [{ jwt : jwtToken }, null, `Bearer ${jwtToken}`],
             [{ jwt : jwtToken }, { jwt : jwtToken1 }, `Bearer ${jwtToken1}`],
             [null, { jwt : jwtToken1 }, `Bearer ${jwtToken1}`],
+            [{ secret : "secret" }, { jwt : jwtToken1 }, `Bearer secret.${jwtToken1}`]
         ];
 
         const mock: FetchMockStatic = fetchMock.get(

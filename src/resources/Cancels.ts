@@ -76,7 +76,7 @@ export class Cancels extends CRUDResource {
             storeId,
             chargeId,
             id,
-            { ...(data as object), poll : true }
+            { ...(data as object), polling : true }
         );
         return this.api.longPolling(
             promise,
