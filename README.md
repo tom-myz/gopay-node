@@ -8,7 +8,7 @@
 [github-url]: https://github.com/gyro-n/gopay-node/
 [github-issues-url]: https://github.com/gyro-n/gopay-node/issues
 [github-pr-url]: https://github.com/gyro-n/gopay-node/pulls
-[coveralls-url]: https://coveralls.io/github/gyro-n/gopay-node?branch=0.6.0
+[coveralls-url]: https://coveralls.io/github/gyro-n/gopay-node?branch=0.6.2
 [license-url]: https://github.com/gyro-n/gopay-node/blob/master/LICENSE
 [cla-url]: https://cla-assistant.io/gyro-n/gopay-node
 
@@ -19,7 +19,7 @@
 [shield-dependencies]: https://img.shields.io/david/gyro-n/gopay-node.svg
 [shield-devDependencies]: https://img.shields.io/david/dev/gyro-n/gopay-node.svg
 [shield-optionalDependencies]: https://img.shields.io/david/optional/gyro-n/gopay-node.svg
-[shield-coverage]: https://img.shields.io/coveralls/github/gyro-n/gopay-node/0.6.0.svg
+[shield-coverage]: https://img.shields.io/coveralls/github/gyro-n/gopay-node/0.6.2.svg
 [shield-issues]: https://img.shields.io/github/issues/gyro-n/gopay-node.svg
 [shield-pullRequests]: https://img.shields.io/github/issues-pr/gyro-n/gopay-node.svg
 [shield-cla]: https://cla-assistant.io/readme/badge/gyro-n/gopay-node
@@ -56,7 +56,7 @@ Table of Contents
 Requirements
 ------------
 
-Paddington requires the following to run:
+`gopay-node` requires the following to run:
 
   * [Node.js][node] 6.0+
   * [npm][npm] (normally comes with Node.js) or [yarn][yarn]
@@ -72,7 +72,7 @@ npm install gopay-common
 ```
 or with [yarn][yarn]:
 ```bash
-yarn gopay-common
+yarn add gopay-common
 ```
 
 Usage
@@ -120,7 +120,7 @@ The library is written in TypeScript and thus type definitions are already inclu
 
 This module is primarily design for [Node.js][node] and is shipped with only ES6 version of the code. However it is possible
 to use it in the browser when it is transpiled to ES5 by your bundle. The example configuration for [Webpack][webpack] requires
-additional module which detectes `engines` field in the `packacge.json` file and transpiles the files of cherry picked modules
+additional module which detectes `engines` field in the `package.json` file and transpiles the files of cherry picked modules
 from `node_modules` even if this path is ignored (it should be) be default. I recommend one of the following plugins:
 [webpack-babel-env-deps](https://www.npmjs.com/package/webpack-babel-env-deps) or [babel-engine-plugin](https://www.npmjs.com/package/babel-engine-plugin).
 
