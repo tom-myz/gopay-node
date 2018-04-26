@@ -50,7 +50,7 @@
     "isomorphic-form-data": "^1.0.0",
     "jwt-decode": "^2.2.0",
     "node-fetch": "^2.1.2",
-    "query-string": "^6.0.0"
+    "query-string": "^5.1"
   },
   "optionalDependencies": {
     "@types/camelcase": "^4.1",
