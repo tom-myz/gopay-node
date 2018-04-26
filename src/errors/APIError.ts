@@ -157,6 +157,9 @@ export enum ResponseErrorCode {
     CardBrandNotSupported                      = "CARD_BRAND_NOT_SUPPORTED",
     Unspecified                                = "UNSPECIFIED",
 
+    /** Used when creating a new Platform */
+    MerchantConsoleURIExists                   = "MERCHANT_CONSOLE_URI_EXISTS",
+
     /** Used when creating a new Merchant */
     OnlyASCII                                  = "ONLY_ASCII",
     UniqueCharacters                           = "UNIQUE_CHARACTERS",
