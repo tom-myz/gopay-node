@@ -26,6 +26,7 @@ export interface PlatformItem extends WithCreatedOn {
     id: string;
     domain: string;
     name: string;
+    ownerId?: string;
     invoiceChargeFee: Array<InvoiceChargeFee>;
 }
 
