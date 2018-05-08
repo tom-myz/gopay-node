@@ -2,13 +2,10 @@ import { expect } from "chai";
 import fetchMock from "fetch-mock";
 import { testEndpoint } from "../utils";
 import {
-    CheckoutInfo,
-    CheckoutInfoParams
+    CheckoutInfo
 } from "../../src/resources/CheckoutInfo";
 import { RestAPI } from "../../src/api/RestAPI";
 import { generateFixture as generateCheckoutInfo } from "../fixtures/checkout-info";
-import { RequestError } from "../../src/errors/RequestResponseError";
-import {createRequestError} from "../fixtures/errors";
 
 describe("Checkout Info", function () {
 
@@ -40,18 +37,6 @@ describe("Checkout Info", function () {
             const origin = "http://fake.com";
 
             await expect(checkoutInfo.get({ origin })).to.eventually.eql(recordData);
-        });
-
-        it("should return validation error if data is invalid", async function () {
-            const asserts: Array<[Partial<CheckoutInfoParams>, RequestError]> = [
-                [{}, createRequestError(["origin"])]
-            ];
-
-            for (const [data, error] of asserts) {
-                await expect(checkoutInfo.get(data as CheckoutInfoParams)).to.eventually.be.rejectedWith(RequestError)
-                    .that.has.property("errorResponse")
-                    .which.eql(error.errorResponse);
-            }
         });
     });
 

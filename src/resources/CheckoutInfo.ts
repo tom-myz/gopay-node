@@ -10,7 +10,8 @@ import { CardConfigurationItem, ConvenienceConfigurationItem, QRScanConfiguratio
 
 /* Request */
 export interface CheckoutInfoParams {
-    origin: string
+    // @deprecated
+    origin?: string
 }
 
 /* Response */
@@ -42,7 +43,7 @@ export type ResponseCheckoutInfo = CheckoutInfoItem
 export class CheckoutInfo extends Resource {
 
     get(data: SendData<CheckoutInfoParams>, callback?: ResponseCallback<ResponseCheckoutInfo>): Promise<ResponseCheckoutInfo> {
-        return this.defineRoute(HTTPMethod.GET, "/checkout_info", ["origin"])(data, callback)
+        return this.defineRoute(HTTPMethod.GET, "/checkout_info")(data, callback)
     }
 
 }
