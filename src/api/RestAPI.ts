@@ -216,8 +216,6 @@ export class RestAPI {
 
         if (!isFormData) {
             headers.append("Content-Type", "application/json");
-        } else {
-            headers.append("Content-Type", "multipart/form-data");
         }
 
         const idempotentKey = getIdempotencyKey(data);
