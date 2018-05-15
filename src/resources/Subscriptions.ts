@@ -93,8 +93,10 @@ export interface SubscriptionItem {
     status: SubscriptionStatus
     metadata?: Metadata
     mode: ProcessingMode
+    installmentPlan?: InstallmentPlanItem
+    initialAmount?: number
+    subsequentCyclesStart?: string
     createdOn: string
-    installmentPlan?: InstallmentPlanItem;
 }
 
 export type ResponseSubscription = SubscriptionItem
