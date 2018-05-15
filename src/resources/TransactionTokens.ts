@@ -4,7 +4,7 @@
 
 import { ResponseCallback, ErrorResponse, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
-import { CardBrand, ProcessingMode } from "./common/enums"
+import { CardBrand, CardSubBrand, CardCategory, ProcessingMode } from "./common/enums"
 import { PhoneNumber } from "./common/types"
 
 export enum UsageLimit {
@@ -90,6 +90,9 @@ export interface TransactionTokenCardDetails {
     lastFour: string
     brand: CardBrand
     country?: string
+    subBrand?: CardSubBrand
+    issuer?: string
+    category?: CardCategory
 }
 
 export interface TransactionTokenCardBilling {

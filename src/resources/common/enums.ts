@@ -14,6 +14,21 @@ export enum CardBrand {
     UNIONPAY   = "unionpay"
 }
 
+export enum CardSubBrand {
+    NONE                      = "none",
+    VISA_ELECTRON             = "visa_electron",
+    DANKORT                   = "dankort",
+    DINERS_CLUB_CARTE_BLANCHE = "diners_club_carte_blanche",
+    DINERS_CLUB_INTERNATIONAL = "diners_club_international",
+    DINERS_CLUB_US_CANADA     = "diners_club_us_canada"
+}
+
+export enum CardCategory {
+    CLASSIC   = "classic",
+    CORPORATE = "corporate",
+    PREPAID   = "prepaid"
+}
+
 export enum ProcessingMode {
     TEST      = "test",
     LIVE      = "live",
