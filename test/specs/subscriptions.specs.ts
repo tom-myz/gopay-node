@@ -6,6 +6,8 @@ import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {
+    InstallmentPlan, InstallmentPlanSimulationItem,
+    InstallmentPlanSimulationParams,
     SubscriptionCreateParams, SubscriptionPeriod, Subscriptions, SubscriptionStatus,
     SubscriptionUpdateParams
 } from "../../src/resources/Subscriptions";
@@ -17,6 +19,7 @@ import { RequestError } from "../../src/errors/RequestResponseError";
 import { createRequestError } from "../fixtures/errors";
 import { POLLING_TIMEOUT } from "../../src/common/constants";
 import { TimeoutError } from "../../src/errors/TimeoutError";
+import { PaymentType } from "../../src/resources/TransactionTokens";
 
 describe("Subscriptions", function () {
 
@@ -30,7 +33,7 @@ describe("Subscriptions", function () {
     beforeEach(function () {
         api = new RestAPI({ endpoint: testEndpoint });
         subscriptions = new Subscriptions(api);
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"],
             useFakeTimers: true
         });
@@ -224,6 +227,55 @@ describe("Subscriptions", function () {
         });
     });
 
+    context("POST /stores/:storeId/subscriptions/simulate_plan", function () {
+        it("should get response", async function () {
+            const simulationData: InstallmentPlanSimulationItem = {
+                installmentPlan       : InstallmentPlan.FIXED_CYCLE_AMOUNT,
+                currency              : "JPY",
+                initialAmount         : 1000,
+                subsequentCyclesStart : new Date().getTime(),
+                paymentType           : PaymentType.CARD,
+                period                : SubscriptionPeriod.MONTHLY,
+                cycles                : []
+            }
+
+            fetchMock.postOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/simulate_plan`),
+                {
+                    status  : 200,
+                    body    : simulationData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data: InstallmentPlanSimulationParams = {
+                installmentPlan       : InstallmentPlan.FIXED_CYCLE_AMOUNT,
+                currency              : "JPY",
+                initialAmount         : 1000,
+                subsequentCyclesStart : new Date().getTime(),
+                paymentType           : PaymentType.CARD,
+                period                : SubscriptionPeriod.MONTHLY
+            };
+
+            await expect(subscriptions.simulation(uuid(), data)).to.eventually.eql(simulationData);
+        });
+
+        it("should return validation error if data is invalid", async function () {
+            const asserts: Array<[Partial<InstallmentPlanSimulationParams>, RequestError]> = [
+                [{}, createRequestError(["installmentPlan"])],
+                [{ installmentPlan : InstallmentPlan.FIXED_CYCLE_AMOUNT }, createRequestError(["paymentType"])],
+                [{ installmentPlan : InstallmentPlan.FIXED_CYCLE_AMOUNT, paymentType : PaymentType.CARD }, createRequestError(["currency"])],
+                [{ installmentPlan : InstallmentPlan.FIXED_CYCLE_AMOUNT, paymentType : PaymentType.CARD, currency : "JPY" }, createRequestError(["period"])]
+            ];
+
+            for (const [data, error] of asserts) {
+                await expect(subscriptions.simulation(uuid(), data as InstallmentPlanSimulationParams)).to.eventually.be.rejectedWith(RequestError)
+                    .that.has.property("errorResponse")
+                    .which.eql(error.errorResponse);
+            }
+        });
+    });
+
     it("should return request error when parameters for route are invalid", async function () {
         const errorId = createRequestError(["id"]);
         const errorStoreId = createRequestError(["storeId"]);
@@ -240,7 +292,8 @@ describe("Subscriptions", function () {
             [subscriptions.delete(uuid(), null), errorId],
             [subscriptions.charges(null, null), errorStoreId],
             [subscriptions.charges(null, uuid()), errorStoreId],
-            [subscriptions.charges(uuid(), null), errorId]
+            [subscriptions.charges(uuid(), null), errorId],
+            [subscriptions.simulation(null, null), errorStoreId]
         ];
 
         for (const [request, error] of asserts) {

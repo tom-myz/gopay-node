@@ -8,6 +8,7 @@ import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDRes
 import { Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
 import { ResponseCharges, ChargesListParams } from "./Charges"
+import {PaymentType} from "./TransactionTokens";
 
 export enum SubscriptionPeriod {
     DAILY        = "daily",
@@ -38,6 +39,7 @@ export enum InstallmentPlan {
 export interface InstallmentBaseParams {
     planType: InstallmentPlan;
     initialAmount?: number;
+    subsequentCyclesStart?: string | number;
 }
 
 export interface InstallmentRevolvingParams extends Omit<InstallmentBaseParams, "initialAmount"> {
@@ -58,6 +60,15 @@ export type InstallmentPlanParams = InstallmentRevolvingParams | InstallmentCycl
 
 export type InstallmentPlanItem = InstallmentPlanParams;
 
+export interface InstallmentPlanSimulationParams {
+    installmentPlan: InstallmentPlan;
+    currency: string;
+    initialAmount?: number;
+    subsequentCyclesStart?: string | number;
+    paymentType: PaymentType;
+    period: SubscriptionPeriod
+}
+
 export interface SubscriptionsListParams extends CRUDPaginationParams {
     search?: string
     status?: SubscriptionStatus
@@ -70,6 +81,8 @@ export interface SubscriptionCreateParams {
     currency: string;
     period: SubscriptionPeriod;
     metadata?: Metadata;
+    initialAmount?: number;
+    subsequentCyclesStart?: string | number;
     installmentPlan?: InstallmentPlanParams;
 }
 
@@ -99,12 +112,22 @@ export interface SubscriptionItem {
     createdOn: string
 }
 
+export interface CycleAmount {
+    cycleDate: string;
+    amount: number;
+}
+
+export type InstallmentPlanSimulationItem = Required<InstallmentPlanSimulationParams> & {
+    cycles: CycleAmount[];
+}
+
 export type ResponseSubscription = SubscriptionItem
 export type ResponseSubscriptions = CRUDItemsResponse<SubscriptionItem>
 
 export class Subscriptions extends CRUDResource {
 
     static requiredParams: string[] = ["transactionTokenId", "amount", "currency", "period"];
+    static requiredSimulationParams: string[] = ["installmentPlan", "paymentType", "currency", "period"];
 
     static routeBase: string = "/stores/:storeId/subscriptions";
 
@@ -169,6 +192,16 @@ export class Subscriptions extends CRUDResource {
             (response: ResponseSubscription) => response.status !== SubscriptionStatus.UNVERIFIED,
             callback
         );
+    }
+
+    simulation(storeId: string,
+               data: SendData<InstallmentPlanSimulationParams>,
+               callback?: ResponseCallback<InstallmentPlanSimulationItem>): Promise<InstallmentPlanSimulationItem> {
+        return this.defineRoute(
+            HTTPMethod.POST,
+            `${Subscriptions.routeBase}/simulate_plan`,
+            Subscriptions.requiredSimulationParams
+        )(data, callback, ["storeId"], storeId)
     }
 
 }
