@@ -6,8 +6,9 @@ import { parseUrl } from "query-string";
 import { HTTPMethod, RestAPI, RestAPIOptions} from "../../src/api/RestAPI";
 import { testEndpoint } from "../utils";
 import { ENV_KEY_APP_ID, ENV_KEY_SECRET, IDEMPOTENCY_KEY_HEADER } from "../../src/common/constants";
-import { ResponseErrorCode } from "../../src/errors/APIError";
-import { ResponseError } from "../../src/errors/RequestResponseError";
+import {APIError, ResponseErrorCode} from "../../src/errors/APIError";
+import { RequestError, ResponseError } from "../../src/errors/RequestResponseError";
+import {fromError} from "../../src/errors/parser";
 
 describe("API", function () {
     const okResponse = { ok : true }
@@ -15,7 +16,7 @@ describe("API", function () {
     let sandbox: SinonSandbox;
 
     beforeEach(function () {
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"]
         });
     });
@@ -277,5 +278,57 @@ describe("API", function () {
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
         await expect(api.ping()).to.eventually.be.undefined;
     })
+
+    it("should throw an error if token is expired", async function () {
+        const dateNow = new Date();
+        const jwtToken = jwt.sign({
+            exp : Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60) - 1000,
+            foo : "bar"
+        }, "foo");
+
+        fetchMock.getOnce(
+            `${testEndpoint}/heartbeat`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : {
+                    "Content-Type"  : "application/json",
+                    "Authorization" : `Bearer ${jwtToken}`
+                }
+            }
+        );
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint, jwt : jwtToken });
+
+        const error = new RequestError({
+            code     : ResponseErrorCode.ExpiredLoginToken,
+            errors   : []
+        });
+
+        const resError = await expect(api.ping()).to.eventually.be.rejected;
+        expect(resError).to.be.instanceOf(RequestError);
+        expect(resError.errorResponse).to.eql(error.errorResponse);
+    });
+
+    it("should return unknown error", async function () {
+        const error = new Error("Test");
+
+        expect(fromError(error)).to.be.instanceOf(ResponseError)
+            .and.to.have.property("errorResponse").that.eql({
+            status   : "error",
+            code     : ResponseErrorCode.UnknownError,
+            errors   : []
+        });
+
+        const errorApi = new APIError(422);
+
+        expect(fromError(errorApi)).to.be.instanceOf(ResponseError)
+            .and.to.have.property("errorResponse").that.eql({
+            status   : "error",
+            httpCode : 422,
+            code     : ResponseErrorCode.UnknownError,
+            errors   : []
+        });
+    });
 
 });

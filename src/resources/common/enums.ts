@@ -11,7 +11,8 @@ export enum CardBrand {
     DINERS     = "diners_club",
     DISCOVER   = "discover",
     JCB        = "jcb",
-    UNIONPAY   = "unionpay"
+    UNIONPAY   = "unionpay",
+    UNKNOWN    = "unknown"
 }
 
 export enum CardSubBrand {

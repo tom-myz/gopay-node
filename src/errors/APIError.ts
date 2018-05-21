@@ -253,7 +253,7 @@ export class APIError extends Error {
     constructor(status: number, response?: any) {
         super();
         this.status = status;
-        this.response = Object.keys(response).length !== 0 ? response : null;
+        this.response = Object.keys(response  || {}).length !== 0 ? response : null;
         Object.setPrototypeOf(this, APIError.prototype);
     }
 

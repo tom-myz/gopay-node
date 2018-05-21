@@ -20,6 +20,7 @@ import { fromError } from "../errors/parser";
 import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
+import { RequestError } from "../errors/RequestResponseError";
 
 export enum HTTPMethod {
     GET    = "GET",
@@ -177,6 +178,15 @@ export class RestAPI {
                               uri: string,
                               data?: SendData<Data>,
                               callback?: ResponseCallback<A>): Promise<A> {
+        const dateNow = new Date();
+        const timestampUTC = Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60);
+
+        if (this._jwtRaw && this.jwt.exp < timestampUTC) {
+            throw new RequestError({
+                code   : ResponseErrorCode.ExpiredLoginToken,
+                errors : []
+            });
+        }
 
         const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) === -1;
 
