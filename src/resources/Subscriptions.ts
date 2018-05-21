@@ -2,7 +2,6 @@
  *  @module Resources/Subscriptions
  */
 
-import { Omit } from "type-zoo";
 import { ResponseCallback, ErrorResponse, PollParams, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { Metadata } from "./common/types"
@@ -38,11 +37,9 @@ export enum InstallmentPlan {
 /* Request */
 export interface InstallmentBaseParams {
     planType: InstallmentPlan;
-    initialAmount?: number;
-    subsequentCyclesStart?: string | number;
 }
 
-export interface InstallmentRevolvingParams extends Omit<InstallmentBaseParams, "initialAmount"> {
+export interface InstallmentRevolvingParams extends InstallmentBaseParams {
     planType: InstallmentPlan.REVOLVING;
 }
 
@@ -57,11 +54,10 @@ export interface InstallmentCycleAmountParams extends InstallmentBaseParams {
 }
 
 export type InstallmentPlanParams = InstallmentRevolvingParams | InstallmentCyclesParams | InstallmentCycleAmountParams;
-
 export type InstallmentPlanItem = InstallmentPlanParams;
 
 export interface InstallmentPlanSimulationParams {
-    installmentPlan: InstallmentPlan;
+    installmentPlan: InstallmentPlanParams;
     currency: string;
     initialAmount?: number;
     subsequentCyclesStart?: string | number;

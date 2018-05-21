@@ -6,7 +6,7 @@ import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {
-    InstallmentPlan, InstallmentPlanSimulationItem,
+    InstallmentPlanSimulationItem,
     InstallmentPlanSimulationParams,
     SubscriptionCreateParams, SubscriptionPeriod, Subscriptions, SubscriptionStatus,
     SubscriptionUpdateParams
@@ -230,7 +230,7 @@ describe("Subscriptions", function () {
     context("POST /stores/:storeId/subscriptions/simulate_plan", function () {
         it("should get response", async function () {
             const simulationData: InstallmentPlanSimulationItem = {
-                installmentPlan       : InstallmentPlan.FIXED_CYCLE_AMOUNT,
+                installmentPlan       : null,
                 currency              : "JPY",
                 initialAmount         : 1000,
                 subsequentCyclesStart : new Date().getTime(),
@@ -249,7 +249,7 @@ describe("Subscriptions", function () {
             );
 
             const data: InstallmentPlanSimulationParams = {
-                installmentPlan       : InstallmentPlan.FIXED_CYCLE_AMOUNT,
+                installmentPlan       : null,
                 currency              : "JPY",
                 initialAmount         : 1000,
                 subsequentCyclesStart : new Date().getTime(),
@@ -263,9 +263,9 @@ describe("Subscriptions", function () {
         it("should return validation error if data is invalid", async function () {
             const asserts: Array<[Partial<InstallmentPlanSimulationParams>, RequestError]> = [
                 [{}, createRequestError(["installmentPlan"])],
-                [{ installmentPlan : InstallmentPlan.FIXED_CYCLE_AMOUNT }, createRequestError(["paymentType"])],
-                [{ installmentPlan : InstallmentPlan.FIXED_CYCLE_AMOUNT, paymentType : PaymentType.CARD }, createRequestError(["currency"])],
-                [{ installmentPlan : InstallmentPlan.FIXED_CYCLE_AMOUNT, paymentType : PaymentType.CARD, currency : "JPY" }, createRequestError(["period"])]
+                [{ installmentPlan : null }, createRequestError(["paymentType"])],
+                [{ installmentPlan : null, paymentType : PaymentType.CARD }, createRequestError(["currency"])],
+                [{ installmentPlan : null, paymentType : PaymentType.CARD, currency : "JPY" }, createRequestError(["period"])]
             ];
 
             for (const [data, error] of asserts) {
