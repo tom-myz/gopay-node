@@ -227,9 +227,9 @@ describe("Subscriptions", function () {
         });
     });
 
-    context("POST /stores/:storeId/subscriptions/simulate_plan", function () {
+    context("POST [/stores/:storeId]/subscriptions/simulate_plan", function () {
         it("should get response", async function () {
-            const simulationData: InstallmentPlanSimulationItem = {
+            const simulationData: InstallmentPlanSimulationItem<any> = {
                 installmentPlan       : null,
                 currency              : "JPY",
                 initialAmount         : 1000,
@@ -239,8 +239,8 @@ describe("Subscriptions", function () {
                 cycles                : []
             }
 
-            fetchMock.postOnce(
-                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/simulate_plan`),
+            fetchMock.post(
+                pathToRegexMatcher(`${testEndpoint}/:storesPart(stores/[^/]+)?/subscriptions/simulate_plan`),
                 {
                     status  : 200,
                     body    : simulationData,
@@ -248,7 +248,7 @@ describe("Subscriptions", function () {
                 }
             );
 
-            const data: InstallmentPlanSimulationParams = {
+            const data: InstallmentPlanSimulationParams<any> = {
                 installmentPlan       : null,
                 currency              : "JPY",
                 initialAmount         : 1000,
@@ -257,11 +257,18 @@ describe("Subscriptions", function () {
                 period                : SubscriptionPeriod.MONTHLY
             };
 
-            await expect(subscriptions.simulation(uuid(), data)).to.eventually.eql(simulationData);
+            const asserts = [
+                subscriptions.simulation(data),
+                subscriptions.simulation(data, null, uuid())
+            ];
+
+            for (const assert of asserts) {
+                await expect(assert).to.eventually.eql(simulationData);
+            }
         });
 
         it("should return validation error if data is invalid", async function () {
-            const asserts: Array<[Partial<InstallmentPlanSimulationParams>, RequestError]> = [
+            const asserts: Array<[Partial<InstallmentPlanSimulationParams<any>>, RequestError]> = [
                 [{}, createRequestError(["installmentPlan"])],
                 [{ installmentPlan : null }, createRequestError(["paymentType"])],
                 [{ installmentPlan : null, paymentType : PaymentType.CARD }, createRequestError(["currency"])],
@@ -269,7 +276,7 @@ describe("Subscriptions", function () {
             ];
 
             for (const [data, error] of asserts) {
-                await expect(subscriptions.simulation(uuid(), data as InstallmentPlanSimulationParams)).to.eventually.be.rejectedWith(RequestError)
+                await expect(subscriptions.simulation(data as InstallmentPlanSimulationParams<any>)).to.eventually.be.rejectedWith(RequestError)
                     .that.has.property("errorResponse")
                     .which.eql(error.errorResponse);
             }
@@ -292,8 +299,7 @@ describe("Subscriptions", function () {
             [subscriptions.delete(uuid(), null), errorId],
             [subscriptions.charges(null, null), errorStoreId],
             [subscriptions.charges(null, uuid()), errorStoreId],
-            [subscriptions.charges(uuid(), null), errorId],
-            [subscriptions.simulation(null, null), errorStoreId]
+            [subscriptions.charges(uuid(), null), errorId]
         ];
 
         for (const [request, error] of asserts) {

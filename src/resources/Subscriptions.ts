@@ -53,11 +53,11 @@ export interface InstallmentCycleAmountParams extends InstallmentBaseParams {
     fixedCycleAmount: number;
 }
 
-export type InstallmentPlanParams = InstallmentRevolvingParams | InstallmentCyclesParams | InstallmentCycleAmountParams;
-export type InstallmentPlanItem = InstallmentPlanParams;
+export type InstallmentPlanItem<InstallmentPlanData extends InstallmentBaseParams> = InstallmentPlanData;
 
-export interface InstallmentPlanSimulationParams {
-    installmentPlan: InstallmentPlanParams;
+export interface InstallmentPlanSimulationParams<InstallmentPlanData extends InstallmentBaseParams> {
+    installmentPlan: InstallmentPlanData;
+    amount: number;
     currency: string;
     initialAmount?: number;
     subsequentCyclesStart?: string | number;
@@ -79,14 +79,14 @@ export interface SubscriptionCreateParams {
     metadata?: Metadata;
     initialAmount?: number;
     subsequentCyclesStart?: string | number;
-    installmentPlan?: InstallmentPlanParams;
+    installmentPlan?: InstallmentPlanItem<any>;
 }
 
 export interface SubscriptionUpdateParams {
     transactionTokenId?: string;
     amount?: number;
     metadata?: Metadata;
-    installmentPlan?: Partial<InstallmentPlanParams>;
+    installmentPlan?: Partial<InstallmentPlanItem<any>>;
 }
 
 /* Response */
@@ -102,7 +102,7 @@ export interface SubscriptionItem {
     status: SubscriptionStatus
     metadata?: Metadata
     mode: ProcessingMode
-    installmentPlan?: InstallmentPlanItem
+    installmentPlan?: InstallmentPlanItem<any>
     initialAmount?: number
     subsequentCyclesStart?: string
     createdOn: string
@@ -113,7 +113,8 @@ export interface CycleAmount {
     amount: number;
 }
 
-export type InstallmentPlanSimulationItem = Required<InstallmentPlanSimulationParams> & {
+export type InstallmentPlanSimulationItem<InstallmentPlanData extends InstallmentBaseParams> =
+    Required<InstallmentPlanSimulationParams<InstallmentPlanData>> & {
     cycles: CycleAmount[];
 }
 
@@ -190,12 +191,14 @@ export class Subscriptions extends CRUDResource {
         );
     }
 
-    simulation(storeId: string,
-               data: SendData<InstallmentPlanSimulationParams>,
-               callback?: ResponseCallback<InstallmentPlanSimulationItem>): Promise<InstallmentPlanSimulationItem> {
+    simulation<InstallmentPlanData extends InstallmentBaseParams>(
+        data: SendData<InstallmentPlanSimulationParams<InstallmentPlanData>>,
+        callback?: ResponseCallback<InstallmentPlanSimulationItem<InstallmentPlanData>>,
+        storeId?: string
+    ): Promise<InstallmentPlanSimulationItem<InstallmentPlanData>> {
         return this.defineRoute(
             HTTPMethod.POST,
-            `${Subscriptions.routeBase}/simulate_plan`,
+            "(/stores/:storeId)/subscriptions/simulate_plan",
             Subscriptions.requiredSimulationParams
         )(data, callback, ["storeId"], storeId)
     }
