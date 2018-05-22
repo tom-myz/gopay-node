@@ -231,6 +231,7 @@ describe("Subscriptions", function () {
         it("should get response", async function () {
             const simulationData: InstallmentPlanSimulationItem<any> = {
                 installmentPlan       : null,
+                amount                : 10000,
                 currency              : "JPY",
                 initialAmount         : 1000,
                 subsequentCyclesStart : new Date().getTime(),
@@ -250,6 +251,7 @@ describe("Subscriptions", function () {
 
             const data: InstallmentPlanSimulationParams<any> = {
                 installmentPlan       : null,
+                amount                : 10000,
                 currency              : "JPY",
                 initialAmount         : 1000,
                 subsequentCyclesStart : new Date().getTime(),
