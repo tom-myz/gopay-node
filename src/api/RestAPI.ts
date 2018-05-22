@@ -21,6 +21,7 @@ import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
 import { RequestError } from "../errors/RequestResponseError";
+import {ProcessingMode} from "../resources/common/enums";
 
 export enum HTTPMethod {
     GET    = "GET",
@@ -42,6 +43,16 @@ export interface RestAPIOptions {
     authToken?: string;
     appId?: string;
 
+}
+
+export interface ApplicationToken {
+    sub: "app_token";
+}
+
+export interface StoreToken extends ApplicationToken {
+    storeId: string;
+    mode: ProcessingMode;
+    domains: string[];
 }
 
 export interface SubError {

@@ -6,8 +6,7 @@
 import jwtDecode from "jwt-decode";
 import camelCase from "camelcase";
 import { JWTError } from "../../errors/JWTError";
-import {transformKeys} from "../../utils/object";
-
+import { transformKeys } from "../../utils/object";
 
 export interface JWTBasePayload {
     iss?: string;
