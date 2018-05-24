@@ -202,7 +202,7 @@ export class RestAPI {
         const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) === -1;
 
         const params: RequestInit = {
-            headers : this.getHeaders(data),
+            headers : this.getHeaders(data, payload),
             method
         };
 
@@ -229,13 +229,13 @@ export class RestAPI {
         }, callback);
     }
 
-    protected getHeaders<Data extends object>(data: SendData<Data>): Headers {
+    protected getHeaders<Data extends object>(data: SendData<Data>, payload: boolean): Headers {
         const headers: Headers = new Headers();
         const isFormData = data instanceof FormData;
 
         headers.append("Accept", "application/json");
 
-        if (!isFormData) {
+        if (!isFormData || payload) {
             headers.append("Content-Type", "application/json");
         }
 
