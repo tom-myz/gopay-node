@@ -31,6 +31,7 @@ export enum WeekOfMonth {
 export interface TransferScheduleItem {
     waitPeriod: string;
     period: TransferPeriod;
+    fullPeriodRequired: boolean;
     dayOfWeek: DayOfWeek;
     weekOfMonth: WeekOfMonth;
     dayOfMonth: number;
