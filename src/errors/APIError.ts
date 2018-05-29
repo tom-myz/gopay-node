@@ -159,6 +159,7 @@ export enum ResponseErrorCode {
 
     /** Used when creating a new Platform */
     MerchantConsoleURIExists                   = "MERCHANT_CONSOLE_URI_EXISTS",
+    PlatformKeyExists                          = "PLATFORM_KEY_EXISTS",
 
     /** Used when creating a new Merchant */
     OnlyASCII                                  = "ONLY_ASCII",
