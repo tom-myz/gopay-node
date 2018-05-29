@@ -235,7 +235,7 @@ export class RestAPI {
 
         headers.append("Accept", "application/json");
 
-        if (!isFormData || payload) {
+        if (!isFormData && payload) {
             headers.append("Content-Type", "application/json");
         }
 
