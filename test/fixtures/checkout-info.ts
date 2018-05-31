@@ -1,6 +1,6 @@
 import { ProcessingMode } from "../../src/resources/common/enums";
 import { CheckoutInfoItem } from "../../src/resources/CheckoutInfo";
-import { RecurringTokenPrivilege } from "../../src/resources/Verification";
+import { RecurringTokenPrivilege } from "../../src/resources/TransactionTokens";
 import { generateFixturePaymentType, generateFixtureCardConfiguration } from "./common/configuration";
 
 export function generateFixture(): CheckoutInfoItem {

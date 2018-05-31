@@ -2,7 +2,7 @@ import uuid from "uuid";
 import { MerchantItem } from "../../src/resources/Merchants";
 import { generateFixture as generateConfiguration } from "./common/configuration";
 import { generateFixture as generateTransferSchedule } from "./common/transfer-schedule";
-import { RecurringTokenPrivilege } from "../../src/resources/Verification";
+import { RecurringTokenPrivilege } from "../../src/resources/TransactionTokens";
 
 export function generateFixture(): MerchantItem {
     return {

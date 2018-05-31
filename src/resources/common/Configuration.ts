@@ -5,6 +5,7 @@
 
 import { CardBrand } from "./enums";
 import { AmountWithCurrency } from "./types";
+import { RecurringTokenPrivilege } from "../TransactionTokens";
 
 export interface PaymentTypeConfiguration {
     enabled?: boolean;
@@ -60,6 +61,15 @@ export interface UserTransactionsConfiguration {
     notifyCustomer?: boolean
 }
 
+export interface RecurringTokenConfiguration {
+    recurringType?: RecurringTokenPrivilege;
+    chargeWaitPeriod?: string;
+    cardChargeCvvConfiguration?: {
+        enabled?: boolean;
+        threshold?: AmountWithCurrency;
+    }
+}
+
 export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
@@ -72,6 +82,7 @@ export interface ConfigurationItem {
     logoUrl?: string
     securityConfiguration?: SecurityConfiguration
     userTransactionsConfiguration?: UserTransactionsConfiguration
+    recurringTokenConfiguration?: RecurringTokenConfiguration
 }
 
 export interface ConfigurationParams {

@@ -3,11 +3,11 @@ import fetchMock from "fetch-mock";
 import { pick } from "lodash";
 import { testEndpoint } from "../utils";
 import {
-    RecurringTokenPrivilege,
     Verification,
     VerificationCreateParams,
     VerificationUpdateParams
 } from "../../src/resources/Verification";
+import { RecurringTokenPrivilege } from "../../src/resources/TransactionTokens";
 import { RestAPI} from "../../src/api/RestAPI";
 import { generateFixture as generateVerification } from "../fixtures/verification";
 import { RequestError } from "../../src/errors/RequestResponseError";
