@@ -56,6 +56,8 @@ export function generateFixture(): ConfigurationItem {
             },
             refundPercentLimit : 5
         },
-        installmentsConfiguration : generateFixtureInstallmentConfiguration()
+        installmentsConfiguration : generateFixtureInstallmentConfiguration(),
+        maximumChargeAmounts      : []
+
     }
 }

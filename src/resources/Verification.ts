@@ -6,12 +6,7 @@ import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ContactInfo, ContactInfoPartial } from "./common/ContactInfo"
 import { PhoneNumber } from "./common/types"
-
-export enum RecurringTokenPrivilege {
-    NONE     = "none",
-    BOUNDED  = "bounded",
-    INFINITE = "infinite"
-}
+import { RecurringTokenPrivilege } from "./TransactionTokens";
 
 export interface BaseVerification<T> {
     homepageUrl: string

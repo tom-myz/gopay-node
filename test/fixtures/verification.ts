@@ -1,5 +1,6 @@
 import uuid from "uuid";
-import { RecurringTokenPrivilege, VerificationItem } from "../../src/resources/Verification";
+import { RecurringTokenPrivilege } from "../../src/resources/TransactionTokens";
+import { VerificationItem } from "../../src/resources/Verification";
 
 export function generateFixture(): VerificationItem {
     return {

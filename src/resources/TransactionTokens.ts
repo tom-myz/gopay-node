@@ -40,6 +40,12 @@ export enum TransactionTokenType {
     RECURRING    = "recurring"
 }
 
+export enum RecurringTokenPrivilege {
+    NONE     = "none",
+    BOUNDED  = "bounded",
+    INFINITE = "infinite"
+}
+
 /* Request */
 
 export interface TransactionTokenCardData {
