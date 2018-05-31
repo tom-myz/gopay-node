@@ -5,7 +5,7 @@
 import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/enums"
-import { RecurringTokenPrivilege } from "./Verification"
+import { RecurringTokenPrivilege } from "./TransactionTokens"
 import { CardConfigurationItem, ConvenienceConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
 
 /* Request */

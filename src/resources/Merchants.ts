@@ -5,7 +5,7 @@
 import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
 import { ConfigurationItem } from "./common/Configuration"
-import { RecurringTokenPrivilege } from "./Verification"
+import { RecurringTokenPrivilege } from "./TransactionTokens"
 import { TransferScheduleItem } from "./common/TransferSchedule"
 
 /* Request */

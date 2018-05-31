@@ -41,6 +41,8 @@ export function generateFixture(): PlatformConfigurationItem {
                 convenienceEnabled: true,
                 installmentsEnabled: true
             },
+            maximumChargeAmounts : [],
+            minimumChargeAmounts : []
         },
         supportedPaymentTypes : [PaymentType.CARD],
         supportedCardBrands   : [CardBrand.VISA],

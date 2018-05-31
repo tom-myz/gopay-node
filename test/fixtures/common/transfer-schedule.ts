@@ -7,10 +7,11 @@ import {
 
 export function generateFixture(): TransferScheduleItem {
     return {
-        waitPeriod  : "P3D",
-        period      : TransferPeriod.MONTHLY,
-        dayOfWeek   : DayOfWeek.MONDAY,
-        weekOfMonth : WeekOfMonth.FIRST,
-        dayOfMonth  : 1
+        waitPeriod         : "P3D",
+        period             : TransferPeriod.MONTHLY,
+        dayOfWeek          : DayOfWeek.MONDAY,
+        weekOfMonth        : WeekOfMonth.FIRST,
+        dayOfMonth         : 1,
+        fullPeriodRequired : false
     }
 }
