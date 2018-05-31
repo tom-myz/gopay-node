@@ -40,5 +40,7 @@ export interface PlatformConfiguration {
     logoUri: string;
     userDefaults: PlatformUserDefaults;
     paymentDefaults: PlatformPaymentDefaults;
+    minimumChargeAmounts: Array<AmountWithCurrency>;
+    maximumChargeAmounts: Array<AmountWithCurrency>;
     timeZone: string;
 }
