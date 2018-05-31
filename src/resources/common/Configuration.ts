@@ -67,6 +67,7 @@ export interface ConfigurationItem {
     convenienceConfiguration: ConvenienceConfigurationItem
     installmentsConfiguration: InstallmentsConfigurationItem
     flatFees: Array<AmountWithCurrency>
+    maximumChargeAmounts: Array<AmountWithCurrency>
     percentFee: number
     logoUrl?: string
     securityConfiguration?: SecurityConfiguration
