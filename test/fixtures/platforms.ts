@@ -33,6 +33,7 @@ export function generateFixture(): PlatformConfigurationItem {
                 },
                 installmentsConfiguration : generateFixtureInstallmentConfiguration()
             },
+            refundPercentLimit: 5,
             paymentDefaults: {
                 cardsEnabled: true,
                 qrScanEnabled: true,

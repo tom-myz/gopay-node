@@ -31,16 +31,22 @@ export interface PlatformItem extends WithCreatedOn {
 }
 
 export interface PlatformConfiguration {
-    adminEmailAddresses: Array<string>;
-    notifyUserTransactions: boolean;
-    defaultLanguage: string;
-    supportedLanguages: Array<string>;
+    adminEmailAddresses?: Array<string>;
     country: string;
     currency: string;
+    defaultLanguage: string;
+    limitCardChargeByCardConfiguration?: {
+        quantityOfCharges: number;
+        durationWindow: string;
+    }
     logoUri: string;
-    userDefaults: PlatformUserDefaults;
-    paymentDefaults: PlatformPaymentDefaults;
-    minimumChargeAmounts: Array<AmountWithCurrency>;
     maximumChargeAmounts: Array<AmountWithCurrency>;
+    minimumChargeAmounts: Array<AmountWithCurrency>;
+    notifyUserTransactions: boolean;
+    paymentDefaults: PlatformPaymentDefaults;
+    recurringCardChargeCvvConfirmationThreshold?: AmountWithCurrency;
+    refundPercentLimit: number;
+    supportedLanguages: Array<string>;
     timeZone: string;
+    userDefaults: PlatformUserDefaults;
 }
