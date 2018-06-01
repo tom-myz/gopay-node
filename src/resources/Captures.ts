@@ -6,6 +6,11 @@ import { ResponseCallback, SendData } from "../api/RestAPI";
 import { CRUDResource } from "./CRUDResource";
 
 /* Request */
+export enum CaptureStatus {
+    Authorized    = "authorized",
+    Captured      = "captured",
+    NotAuthorized = "not_authorized"
+}
 
 export interface CaptureCreateParams {
     amount: number;

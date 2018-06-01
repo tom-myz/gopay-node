@@ -6,6 +6,7 @@ import {ResponseCallback, PollParams, HTTPMethod, SendData} from "../api/RestAPI
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError, Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
+import { CaptureStatus } from "./Captures";
 
 export enum ChargeStatus {
     PENDING    = "pending",
@@ -43,6 +44,7 @@ export interface ChargeItem {
     chargedCurrency: string
     chargedAmountFormatted: number
     captureAt?: string
+    captureStatus?: CaptureStatus
     status: ChargeStatus
     error?: PaymentError
     metadata?: Metadata
