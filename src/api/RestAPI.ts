@@ -20,7 +20,7 @@ import { fromError } from "../errors/parser";
 import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
-import { RequestError } from "../errors/RequestResponseError";
+// import { RequestError } from "../errors/RequestResponseError";
 import {ProcessingMode} from "../resources/common/enums";
 
 export enum HTTPMethod {
@@ -189,15 +189,18 @@ export class RestAPI {
                               uri: string,
                               data?: SendData<Data>,
                               callback?: ResponseCallback<A>): Promise<A> {
-        const dateNow = new Date();
-        const timestampUTC = Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60);
+        // FIXME: Remarked this cause of error before deploy:
+        // This should not be done on any request we do before login e.g. ping, platform
 
-        if (this._jwtRaw && this.jwt.exp < timestampUTC) {
-            throw new RequestError({
-                code   : ResponseErrorCode.ExpiredLoginToken,
-                errors : []
-            });
-        }
+        // const dateNow = new Date();
+        // const timestampUTC = Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60);
+
+        // if (this._jwtRaw && this.jwt.exp < timestampUTC) {
+        //     throw new RequestError({
+        //         code   : ResponseErrorCode.ExpiredLoginToken,
+        //         errors : []
+        //     });
+        // }
 
         const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) === -1;
 

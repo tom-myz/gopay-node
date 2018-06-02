@@ -44,7 +44,7 @@ export function missingKeys(obj: any, keys: string[] = []): string[] {
 }
 
 export function omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
-    return Object.keys(obj || {}).reduce((acc: any, key: K) => {
+    return Object.keys(obj || {}).reduce((acc: any, key: any) => {
         return keys.indexOf(key) === -1 ? { ...acc, [key]: obj[key] } : acc
     }, {});
 }
