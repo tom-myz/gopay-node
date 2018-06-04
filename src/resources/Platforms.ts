@@ -25,7 +25,7 @@ export class Platforms extends CRUDResource {
         data?: SendData<void>,
         callback?: ResponseCallback<ResponsePlatformConfiguration>
     ): Promise<ResponsePlatformConfiguration> {
-        return this.defineRoute(HTTPMethod.GET, "/platform")(data, callback);
+        return this.defineRoute(HTTPMethod.GET, "/platform", undefined, false)(data, callback);
     }
 
 }

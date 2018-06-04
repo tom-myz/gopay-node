@@ -6,9 +6,10 @@ import { parseUrl } from "query-string";
 import { HTTPMethod, RestAPI, RestAPIOptions} from "../../src/api/RestAPI";
 import { testEndpoint } from "../utils";
 import { ENV_KEY_APP_ID, ENV_KEY_SECRET, IDEMPOTENCY_KEY_HEADER } from "../../src/common/constants";
-import {APIError, ResponseErrorCode} from "../../src/errors/APIError";
-import { ResponseError } from "../../src/errors/RequestResponseError";
-import {fromError} from "../../src/errors/parser";
+import { APIError, ResponseErrorCode } from "../../src/errors/APIError";
+import { RequestError, ResponseError } from "../../src/errors/RequestResponseError";
+import { fromError } from "../../src/errors/parser";
+import {Merchants} from "../../src/resources/Merchants";
 
 describe("API", function () {
     const okResponse = { ok : true }
@@ -279,36 +280,48 @@ describe("API", function () {
         await expect(api.ping()).to.eventually.be.undefined;
     })
 
-    // it("should throw an error if token is expired", async function () {
-    //     const dateNow = new Date();
-    //     const jwtToken = jwt.sign({
-    //         exp : Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60) - 1000,
-    //         foo : "bar"
-    //     }, "foo");
+    it("should throw an error if token is expired", async function () {
+        const dateNow = new Date();
+        const jwtToken = jwt.sign({
+            exp : Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60) - 1000,
+            foo : "bar"
+        }, "foo");
 
-    //     fetchMock.getOnce(
-    //         `${testEndpoint}/heartbeat`,
-    //         {
-    //             status  : 200,
-    //             body    : okResponse,
-    //             headers : {
-    //                 "Content-Type"  : "application/json",
-    //                 "Authorization" : `Bearer ${jwtToken}`
-    //             }
-    //         }
-    //     );
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint, jwt : jwtToken });
+        const merchants = new Merchants(api);
 
-    //     const api: RestAPI = new RestAPI({ endpoint : testEndpoint, jwt : jwtToken });
+        const error = new RequestError({
+            code     : ResponseErrorCode.ExpiredLoginToken,
+            errors   : []
+        });
 
-    //     const error = new RequestError({
-    //         code     : ResponseErrorCode.ExpiredLoginToken,
-    //         errors   : []
-    //     });
+        const resError = await expect(merchants.me()).to.eventually.be.rejected;
+        expect(resError).to.be.instanceOf(RequestError);
+        expect(resError.errorResponse).to.eql(error.errorResponse);
+    });
 
-    //     const resError = await expect(api.ping()).to.eventually.be.rejected;
-    //     expect(resError).to.be.instanceOf(RequestError);
-    //     expect(resError.errorResponse).to.eql(error.errorResponse);
-    // });
+    it("should not throw an error for open routes even if token is expired", async function () {
+        const dateNow = new Date();
+        const jwtToken = jwt.sign({
+            exp : Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60) - 1000,
+            foo : "bar"
+        }, "foo");
+
+        fetchMock.getOnce(
+            `${testEndpoint}/heartbeat`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : {
+                    "Content-Type"  : "application/json",
+                    "Authorization" : `Bearer ${jwtToken}`
+                }
+            }
+        );
+
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint, jwt : jwtToken });
+        await expect(api.ping()).to.eventually.be.fulfilled;
+    });
 
     it("should return unknown error", async function () {
         const error = new Error("Test");
