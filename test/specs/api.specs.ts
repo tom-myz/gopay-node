@@ -148,27 +148,35 @@ describe("API", function () {
         const jwtTokenPayload = { foo : "bar" };
         const jwtToken = jwt.sign(jwtTokenPayload, "foo");
 
-        fetchMock.getOnce(
-            `${testEndpoint}/header`,
-            {
-                status  : 200,
-                body    : okResponse,
-                headers : {
-                    "Content-Type"  : "application/json",
-                    "Authorization" : `Bearer ${jwtToken}`
-                }
-            }
-        );
-
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
 
         expect(api.jwtRaw).to.be.undefined;
         expect(api.jwt).to.be.null;
 
-        await api.send(HTTPMethod.GET, "/header");
+        const asserts = [
+            ["header", "Authorization"],
+            ["headerAmzn", "x-amzn-Remapped-Authorization"]
+        ]
 
-        expect(api.jwtRaw).to.equal(jwtToken);
-        expect(api.jwt).to.contain(jwtTokenPayload);
+        for (const [uri, header] of asserts) {
+            fetchMock.getOnce(
+                `${testEndpoint}/${uri}`,
+                {
+                    status  : 200,
+                    body    : okResponse,
+                    headers : {
+                        "Content-Type" : "application/json",
+                        [header]       : `Bearer ${jwtToken}`
+                    }
+                }
+            );
+
+            await api.send(HTTPMethod.GET, `/${uri}`);
+            expect(api.jwtRaw).to.equal(jwtToken);
+            expect(api.jwt).to.contain(jwtTokenPayload);
+        }
+
+
     });
 
     it("should fire callback with new token if it was updated", async function () {
