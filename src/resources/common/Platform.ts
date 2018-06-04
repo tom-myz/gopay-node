@@ -44,7 +44,7 @@ export interface PlatformConfiguration {
     minimumChargeAmounts: Array<AmountWithCurrency>;
     notifyUserTransactions: boolean;
     paymentDefaults: PlatformPaymentDefaults;
-    recurringCardChargeCvvConfirmationThreshold?: AmountWithCurrency;
+    recurringCardChargeCvvConfirmationThreshold?: Array<AmountWithCurrency>;
     refundPercentLimit: number;
     supportedLanguages: Array<string>;
     timeZone: string;
