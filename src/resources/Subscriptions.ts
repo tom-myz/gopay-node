@@ -104,6 +104,7 @@ export interface SubscriptionItem {
     mode: ProcessingMode
     installmentPlan?: InstallmentPlanItem<any>
     initialAmount?: number
+    initialAmountFormatted?: number
     subsequentCyclesStart?: string
     createdOn: string
 }
