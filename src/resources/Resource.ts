@@ -29,7 +29,10 @@ export abstract class Resource {
         this.api = api
     }
 
-    protected defineRoute(method: HTTPMethod, path: string, required: string[] = []): DefinedRoute {
+    protected defineRoute(method: HTTPMethod,
+                          path: string,
+                          required: string[] = [],
+                          requireAuth: boolean = true): DefinedRoute {
         const api: RestAPI = this.api;
 
         return function route<A, B>(data?: SendData<A>,
@@ -67,7 +70,7 @@ export abstract class Resource {
                 return Promise.reject(err)
             }
 
-            return api.send(method, url, data, callback)
+            return api.send(method, url, data, callback, requireAuth)
         }
     }
 

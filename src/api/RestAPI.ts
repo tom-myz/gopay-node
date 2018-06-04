@@ -20,8 +20,8 @@ import { fromError } from "../errors/parser";
 import { stringify as stringifyQuery } from "query-string";
 import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
-// import { RequestError } from "../errors/RequestResponseError";
-import {ProcessingMode} from "../resources/common/enums";
+import { ProcessingMode } from "../resources/common/enums";
+import { RequestError } from "../errors/RequestResponseError";
 
 export enum HTTPMethod {
     GET    = "GET",
@@ -188,19 +188,17 @@ export class RestAPI {
     async send<A, Data = any>(method: HTTPMethod,
                               uri: string,
                               data?: SendData<Data>,
-                              callback?: ResponseCallback<A>): Promise<A> {
-        // FIXME: Remarked this cause of error before deploy:
-        // This should not be done on any request we do before login e.g. ping, platform
+                              callback?: ResponseCallback<A>,
+                              requireAuth: boolean = true): Promise<A> {
+        const dateNow = new Date();
+        const timestampUTC = Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60);
 
-        // const dateNow = new Date();
-        // const timestampUTC = Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60);
-
-        // if (this._jwtRaw && this.jwt.exp < timestampUTC) {
-        //     throw new RequestError({
-        //         code   : ResponseErrorCode.ExpiredLoginToken,
-        //         errors : []
-        //     });
-        // }
+        if (requireAuth && this._jwtRaw && this.jwt.exp < timestampUTC) {
+            throw new RequestError({
+                code   : ResponseErrorCode.ExpiredLoginToken,
+                errors : []
+            });
+        }
 
         const payload: boolean = [HTTPMethod.GET, HTTPMethod.DELETE].indexOf(method) === -1;
 
@@ -306,7 +304,7 @@ export class RestAPI {
     }
 
     async ping(callback?: ResponseCallback<void>): Promise<void> {
-        await this.send(HTTPMethod.GET, "/heartbeat", null, callback);
+        await this.send(HTTPMethod.GET, "/heartbeat", null, callback, false);
     }
 
 }
