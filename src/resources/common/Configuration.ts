@@ -66,7 +66,7 @@ export interface RecurringTokenConfiguration {
     chargeWaitPeriod?: string;
     cardChargeCvvConfiguration?: {
         enabled?: boolean;
-        threshold?: AmountWithCurrency;
+        threshold?: Array<AmountWithCurrency>;
     }
 }
 
