@@ -11,6 +11,9 @@ export function generateFixture(): CheckoutInfoItem {
         cardConfiguration        : generateFixtureCardConfiguration(),
         qrScanConfiguration      : generateFixturePaymentType(),
         convenienceConfiguration : generateFixturePaymentType(),
+        recurringCardChargeCvvConfirmation: {
+            enabled: false
+        },
         logoImage                : "http://fake.com/logo.jpg",
         theme : {
             colors : {

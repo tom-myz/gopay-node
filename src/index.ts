@@ -21,6 +21,7 @@ import { Verification } from "./resources/Verification"
 import { WebHooks } from "./resources/WebHooks"
 import { Platforms } from "./resources/Platforms"
 import { Cancels } from "./resources/Cancels"
+import { ExchangeRates } from "./resources/ExchangeRates";
 
 export default class SDK extends PaymentsSDK {
 
@@ -29,6 +30,7 @@ export default class SDK extends PaymentsSDK {
     public captures: Captures;
     public charges: Charges;
     public checkoutInfo: CheckoutInfo;
+    public exchangeRates: ExchangeRates;
     public ledgers: Ledgers;
     public merchants: Merchants;
     public platforms: Platforms;
@@ -48,6 +50,7 @@ export default class SDK extends PaymentsSDK {
         this.captures = new Captures(this.api);
         this.charges = new Charges(this.api);
         this.checkoutInfo = new CheckoutInfo(this.api);
+        this.exchangeRates = new ExchangeRates(this.api);
         this.ledgers = new Ledgers(this.api);
         this.merchants = new Merchants(this.api);
         this.platforms = new Platforms(this.api);

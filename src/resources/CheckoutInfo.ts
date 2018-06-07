@@ -5,8 +5,9 @@
 import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/enums"
-import { RecurringTokenPrivilege } from "./TransactionTokens"
 import { CardConfigurationItem, ConvenienceConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
+import { AmountWithCurrency } from "./common/types";
+import { RecurringTokenPrivilege } from "./TransactionTokens";
 
 /* Request */
 export interface CheckoutInfoParams {
@@ -32,6 +33,10 @@ export interface CheckoutInfoItem {
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
     convenienceConfiguration: ConvenienceConfigurationItem
+    recurringCardChargeCvvConfirmation: {
+        enabled?: boolean;
+        threshold?: Array<AmountWithCurrency>;
+    }
     logoImage?: string
     theme: {
         colors: CheckoutColors

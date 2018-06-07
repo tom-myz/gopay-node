@@ -5,7 +5,7 @@
 import { ResponseCallback, ErrorResponse, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
 import { CardBrand, CardSubBrand, CardCategory, ProcessingMode } from "./common/enums"
-import { PhoneNumber } from "./common/types"
+import { Metadata, PhoneNumber } from "./common/types"
 
 export enum UsageLimit {
     DAILY   = "daily",
@@ -79,9 +79,15 @@ export interface TransactionTokenCreateParams {
     email: string
     usageLimit?: UsageLimit
     data: TransactionTokenCardData | TransactionTokenQRScanData | TransactionTokenConvenienceData
+    metadata?: Metadata
 }
 
-export type TransactionTokenListParams = CRUDPaginationParams;
+export interface TransactionTokenListParams extends CRUDPaginationParams {
+    customerId?: string;
+    type?: TransactionTokenType;
+    search?: string;
+    mode?: ProcessingMode;
+}
 
 export interface TransactionTokenUpdateParams {
     email?: string
@@ -134,6 +140,7 @@ export interface TransactionTokenItem {
     paymentType: PaymentType
     usageLimit?: UsageLimit
     data?: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem | TransactionTokenConvenienceDataItem
+    metadata?: Metadata
 }
 
 export type ResponseTransactionToken = TransactionTokenItem
