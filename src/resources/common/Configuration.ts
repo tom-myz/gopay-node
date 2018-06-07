@@ -64,7 +64,7 @@ export interface UserTransactionsConfiguration {
 export interface RecurringTokenConfiguration {
     recurringType?: RecurringTokenPrivilege;
     chargeWaitPeriod?: string;
-    cardChargeCvvConfiguration?: {
+    cardChargeCvvConfirmation?: {
         enabled?: boolean;
         threshold?: Array<AmountWithCurrency>;
     }
