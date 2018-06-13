@@ -35,7 +35,7 @@ export interface CheckoutInfoItem {
     convenienceConfiguration: ConvenienceConfigurationItem
     recurringCardChargeCvvConfirmation: {
         enabled?: boolean;
-        threshold?: Array<AmountWithCurrency>;
+        threshold?: AmountWithCurrency[];
     }
     logoImage?: string
     theme: {

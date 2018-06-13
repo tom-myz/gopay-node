@@ -291,7 +291,7 @@ describe("API", function () {
     it("should throw an error if token is expired", async function () {
         const dateNow = new Date();
         const jwtToken = jwt.sign({
-            exp : Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60) - 1000,
+            exp : Math.round(dateNow.getTime() / 1000) - 1000,
             foo : "bar"
         }, "foo");
 
@@ -311,7 +311,7 @@ describe("API", function () {
     it("should not throw an error for open routes even if token is expired", async function () {
         const dateNow = new Date();
         const jwtToken = jwt.sign({
-            exp : Math.round(dateNow.getTime() / 1000) + (dateNow.getTimezoneOffset() * 60) - 1000,
+            exp : Math.round(dateNow.getTime() / 1000) - 1000,
             foo : "bar"
         }, "foo");
 
