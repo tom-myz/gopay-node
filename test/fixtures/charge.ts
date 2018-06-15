@@ -1,6 +1,7 @@
 import uuid from "uuid";
 import { ProcessingMode } from "../../src/resources/common/enums";
 import { ChargeItem, ChargeStatus } from "../../src/resources/Charges";
+import { TransactionTokenType } from "../../src/resources/TransactionTokens";
 
 export function generateFixture(): ChargeItem {
     return {
@@ -8,6 +9,7 @@ export function generateFixture(): ChargeItem {
         merchantId               : uuid(),
         storeId                  : uuid(),
         transactionTokenId       : uuid(),
+        transactionTokenType     : TransactionTokenType.ONE_TIME,
         subscriptionId           : uuid(),
         requestedAmount          : 1000,
         requestedCurrency        : "JPY",

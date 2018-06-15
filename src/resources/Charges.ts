@@ -2,11 +2,12 @@
  *  @module Resources/Charges
  */
 
-import {ResponseCallback, PollParams, HTTPMethod, SendData} from "../api/RestAPI"
+import { ResponseCallback, PollParams, HTTPMethod, SendData } from "../api/RestAPI"
 import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
 import { PaymentError, Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
 import { CaptureStatus } from "./Captures";
+import { TransactionTokenType } from "./TransactionTokens";
 
 export enum ChargeStatus {
     PENDING    = "pending",
@@ -51,6 +52,7 @@ export interface ChargeItem {
     mode: ProcessingMode
     createdOn: string
     transactionTokenId?: string
+    transactionTokenType: TransactionTokenType
 }
 
 export type ResponseCharge = ChargeItem
