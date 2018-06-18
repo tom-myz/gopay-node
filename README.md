@@ -2,15 +2,19 @@
 [npm]: https://www.npmjs.com/
 [yarn]: https://yarnpkg.com/
 [webpack]: https://webpack.js.org/
+[rollup]: https://rollupjs.org/
 
 [gopay-url]: https://gopay.jp/
 [npm-url]: https://www.npmjs.com/package/gopay-node
 [github-url]: https://github.com/gyro-n/gopay-node/
 [github-issues-url]: https://github.com/gyro-n/gopay-node/issues
 [github-pr-url]: https://github.com/gyro-n/gopay-node/pulls
-[coveralls-url]: https://coveralls.io/github/gyro-n/gopay-node?branch=0.6.4
+[coveralls-url]: https://coveralls.io/github/gyro-n/gopay-node?branch=0.6.18
 [license-url]: https://github.com/gyro-n/gopay-node/blob/master/LICENSE
 [cla-url]: https://cla-assistant.io/gyro-n/gopay-node
+[es-module-url]: https://npmjs.com/package/gopay-node-es
+[es-url]: http://www.ecma-international.org/ecma-262/6.0/
+[tree-url]: https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking
 
 [shield-node]: https://img.shields.io/node/v/gopay-node.svg
 [shield-npm]: https://img.shields.io/npm/v/gopay-node.svg
@@ -19,7 +23,7 @@
 [shield-dependencies]: https://img.shields.io/david/gyro-n/gopay-node.svg
 [shield-devDependencies]: https://img.shields.io/david/dev/gyro-n/gopay-node.svg
 [shield-optionalDependencies]: https://img.shields.io/david/optional/gyro-n/gopay-node.svg
-[shield-coverage]: https://img.shields.io/coveralls/github/gyro-n/gopay-node/0.6.4.svg
+[shield-coverage]: https://img.shields.io/coveralls/github/gyro-n/gopay-node/0.6.18.svg
 [shield-issues]: https://img.shields.io/github/issues/gyro-n/gopay-node.svg
 [shield-pullRequests]: https://img.shields.io/github/issues-pr/gyro-n/gopay-node.svg
 [shield-cla]: https://cla-assistant.io/readme/badge/gyro-n/gopay-node
@@ -69,11 +73,11 @@ Installation
 Gopay Node SDK is easiest to use when installed with [npm][npm]:
 
 ```bash
-npm install gopay-common
+npm install gopay-node
 ```
 or with [yarn][yarn]:
 ```bash
-yarn add gopay-common
+yarn add gopay-node
 ```
 
 Usage
@@ -119,11 +123,11 @@ The library is written in TypeScript and thus type definitions are already inclu
 
 ### Browser usage
 
-This module is primarily design for [Node.js][node] and is shipped with only ES6 version of the code. However it is possible
-to use it in the browser when it is transpiled to ES5 by your bundle. The example configuration for [Webpack][webpack] requires
-additional module which detectes `engines` field in the `package.json` file and transpiles the files of cherry picked modules
-from `node_modules` even if this path is ignored (it should be) be default. I recommend one of the following plugins:
-[webpack-babel-env-deps](https://www.npmjs.com/package/webpack-babel-env-deps) or [babel-engine-plugin](https://www.npmjs.com/package/babel-engine-plugin).
+This module is primarily design for [Node.js][node], However it is possible
+to use it in the browser when it is transpiled by a bundler such as [Webpack][webpack] or [Rollup][rollup].
+
+For optimizing your build and making it smaller you can also use a module [`gopay-node-es`][es-module-url] which is exported
+as [ES][es-url] module and thus supports [Tree shaking][tree-url].
 
 
 Contributing

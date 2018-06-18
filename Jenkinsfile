@@ -96,7 +96,8 @@ node('slave') {
                         def shouldDeploy = isRelease && gitInfo.tagVersion.source != npmVersion
 
                         if (shouldDeploy) {
-                            sh "npm publish dist"
+                            sh "npm publish lib"
+                            sh "npm publish es"
                         } else {
                             echo "Not deploying..."
                             basicTools.sendSlackMessage(notificationsChannel, "Deploy", gitInfo.githubUrl, "skipped")
