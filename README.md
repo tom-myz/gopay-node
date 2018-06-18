@@ -9,7 +9,7 @@
 [github-url]: https://github.com/gyro-n/gopay-node/
 [github-issues-url]: https://github.com/gyro-n/gopay-node/issues
 [github-pr-url]: https://github.com/gyro-n/gopay-node/pulls
-[coveralls-url]: https://coveralls.io/github/gyro-n/gopay-node?branch=0.6.18
+[coveralls-url]: https://coveralls.io/github/gyro-n/gopay-node?branch=0.7.0
 [license-url]: https://github.com/gyro-n/gopay-node/blob/master/LICENSE
 [cla-url]: https://cla-assistant.io/gyro-n/gopay-node
 [es-module-url]: https://npmjs.com/package/gopay-node-es
@@ -23,7 +23,7 @@
 [shield-dependencies]: https://img.shields.io/david/gyro-n/gopay-node.svg
 [shield-devDependencies]: https://img.shields.io/david/dev/gyro-n/gopay-node.svg
 [shield-optionalDependencies]: https://img.shields.io/david/optional/gyro-n/gopay-node.svg
-[shield-coverage]: https://img.shields.io/coveralls/github/gyro-n/gopay-node/0.6.18.svg
+[shield-coverage]: https://img.shields.io/coveralls/github/gyro-n/gopay-node/0.7.0.svg
 [shield-issues]: https://img.shields.io/github/issues/gyro-n/gopay-node.svg
 [shield-pullRequests]: https://img.shields.io/github/issues-pr/gyro-n/gopay-node.svg
 [shield-cla]: https://cla-assistant.io/readme/badge/gyro-n/gopay-node
