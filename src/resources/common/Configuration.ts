@@ -78,6 +78,7 @@ export interface ConfigurationItem {
     installmentsConfiguration: InstallmentsConfigurationItem
     flatFees: Array<AmountWithCurrency>
     maximumChargeAmounts: Array<AmountWithCurrency>
+    minTransferPayout?: AmountWithCurrency
     percentFee: number
     logoUrl?: string
     securityConfiguration?: SecurityConfiguration
