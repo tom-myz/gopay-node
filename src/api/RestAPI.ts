@@ -216,9 +216,6 @@ export class RestAPI {
 
         return await execRequest(async () => {
             const response = await fetch(request);
-
-            await checkStatus(response);
-
             const jwt = await extractJWT(response);
 
             if (!!jwt) {
@@ -226,6 +223,7 @@ export class RestAPI {
                 this.handleUpdateJWT(jwt);
             }
 
+            await checkStatus(response);
             return await parseJSON(response);
         }, callback);
     }

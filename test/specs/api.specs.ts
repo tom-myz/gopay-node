@@ -145,20 +145,20 @@ describe("API", function () {
     });
 
     it("should update token if it comes back in the response", async function () {
-        const jwtTokenPayload = { foo : "bar" };
-        const jwtToken = jwt.sign(jwtTokenPayload, "foo");
-
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
 
         expect(api.jwtRaw).to.be.undefined;
         expect(api.jwt).to.be.null;
 
         const asserts = [
-            ["header", "Authorization"],
-            ["headerAmzn", "x-amzn-Remapped-Authorization"]
-        ]
+            ["header1", "Authorization"],
+            ["headerAmzn1", "x-amzn-Remapped-Authorization"]
+        ];
 
         for (const [uri, header] of asserts) {
+            const jwtTokenPayload = { test : uri };
+            const jwtToken = jwt.sign(jwtTokenPayload, uri);
+
             fetchMock.getOnce(
                 `${testEndpoint}/${uri}`,
                 {
@@ -171,12 +171,43 @@ describe("API", function () {
                 }
             );
 
-            await api.send(HTTPMethod.GET, `/${uri}`);
+            await expect(api.send(HTTPMethod.GET, `/${uri}`)).to.eventually.be.fulfilled;
             expect(api.jwtRaw).to.equal(jwtToken);
             expect(api.jwt).to.contain(jwtTokenPayload);
         }
+    });
 
+    it("should update token if it comes back in the error response", async function () {
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
 
+        expect(api.jwtRaw).to.be.undefined;
+        expect(api.jwt).to.be.null;
+
+        const asserts = [
+            ["header1", "Authorization"],
+            ["headerAmzn1", "x-amzn-Remapped-Authorization"]
+        ];
+
+        for (const [uri, header] of asserts) {
+            const jwtTokenPayload = { test : uri };
+            const jwtToken = jwt.sign(jwtTokenPayload, uri);
+
+            fetchMock.getOnce(
+                `${testEndpoint}/${uri}`,
+                {
+                    status  : 404,
+                    body    : okResponse,
+                    headers : {
+                        "Content-Type" : "application/json",
+                        [header]       : `Bearer ${jwtToken}`
+                    }
+                }
+            );
+
+            await expect(api.send(HTTPMethod.GET, `/${uri}`)).to.eventually.be.rejected;
+            expect(api.jwtRaw).to.equal(jwtToken);
+            expect(api.jwt).to.contain(jwtTokenPayload);
+        }
     });
 
     it("should fire callback with new token if it was updated", async function () {
