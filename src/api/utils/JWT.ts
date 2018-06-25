@@ -43,14 +43,13 @@ const BearerRegexp = /^Bearer (.*)$/i;
  *  @internal
  */
 export function extractJWT(response: Response): string | null {
-    const header = response.headers.get("Authorization");
-    const headerAmzn = response.headers.get("x-amzn-Remapped-Authorization");
+    const headerNames = ["authorization", "x-amzn-remapped-authorization"];
+    const header = headerNames.reduce((acc: string, name: string) => response.headers.get(name) || acc, null);
 
-    if (header === null && headerAmzn === null) {
+    if (header === null) {
         return null;
     }
 
-    const matches = header ? header.match(BearerRegexp) : headerAmzn.match(BearerRegexp);
-
+    const matches = header.match(BearerRegexp);
     return matches === null ? null : matches[1];
 }
