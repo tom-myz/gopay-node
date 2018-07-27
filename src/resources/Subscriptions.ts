@@ -2,12 +2,12 @@
  *  @module Resources/Subscriptions
  */
 
-import { ResponseCallback, ErrorResponse, PollParams, HTTPMethod, SendData } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { ErrorResponse, HTTPMethod, PollParams, ResponseCallback, RestAPI, SendData } from "../api/RestAPI"
+import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
 import { Metadata } from "./common/types"
 import { ProcessingMode } from "./common/enums"
-import { ResponseCharges, ChargesListParams } from "./Charges"
-import {PaymentType} from "./TransactionTokens";
+import { ChargesListParams, ResponseCharges } from "./Charges"
+import { PaymentType } from "./TransactionTokens";
 
 export enum SubscriptionPeriod {
     DAILY        = "daily",
@@ -53,6 +53,18 @@ export interface InstallmentCycleAmountParams extends InstallmentBaseParams {
     fixedCycleAmount: number;
 }
 
+export interface ScheduledPaymentItem {
+    id: string;
+    subscriptionId: string;
+    dueDate: string;
+    zoneId: string;
+    amount: number;
+    currency: string;
+    isPaid: boolean;
+    isLastPayment: boolean;
+    createdOn: string;
+}
+
 export type InstallmentPlanItem<InstallmentPlanData extends InstallmentBaseParams> = InstallmentPlanData;
 
 export interface InstallmentPlanSimulationParams<InstallmentPlanData extends InstallmentBaseParams> {
@@ -89,24 +101,37 @@ export interface SubscriptionUpdateParams {
     installmentPlan?: Partial<InstallmentPlanItem<any>>;
 }
 
+export type PaymentUpdateParams = Partial<ScheduledPaymentItem>;
+
+export interface ScheduleSettings {
+    startDateReference: string;
+    startOn?: string;
+    zoneId: string;
+    preserveEndOfMonth?: boolean;
+}
+
 /* Response */
 export interface SubscriptionItem {
-    id: string
-    merchantId: string
-    storeId: string
-    transactionTokenId: string
-    amount: number
-    currency: string
-    amountFormatted: number
-    period: SubscriptionPeriod
-    status: SubscriptionStatus
-    metadata?: Metadata
-    mode: ProcessingMode
-    installmentPlan?: InstallmentPlanItem<any>
-    initialAmount?: number
-    initialAmountFormatted?: number
-    subsequentCyclesStart?: string
-    createdOn: string
+    id: string;
+    storeId: string;
+    amount: number;
+    amountFormatted: number;
+    amountLeft: number;
+    amountLeftFormatted: number;
+    currency: string;
+    period: SubscriptionPeriod;
+    initialAmount?: number;
+    initialAmountFormatted?: number;
+    subsequentCyclesStart?: string;
+    scheduleSettings: ScheduleSettings;
+    status: SubscriptionStatus;
+    metadata?: Metadata;
+    mode: ProcessingMode;
+    createdOn: string;
+    installmentPlan?: InstallmentPlanItem<any>;
+    transactionTokenId: string;
+    nextPayment: ScheduledPaymentItem
+    paymentsLeft: number;
 }
 
 export interface CycleAmount {
@@ -122,12 +147,69 @@ export type InstallmentPlanSimulationItem<InstallmentPlanData extends Installmen
 export type ResponseSubscription = SubscriptionItem
 export type ResponseSubscriptions = CRUDItemsResponse<SubscriptionItem>
 
+export type ResponsePayment = PaymentItem;
+export type ResponsePayments = CRUDItemsResponse<PaymentItem>;
+
+export class ScheduledPayments extends CRUDResource {
+
+    static routeBase: string = "/stores/:storeId/subscriptions/:subscriptionsId/payments";
+
+    list(storeId: string,
+         subscriptionsId: string,
+         data?: SendData<void>,
+         callback?: ResponseCallback<ResponsePayments>
+    ): Promise<ResponsePayments> {
+        return this.defineRoute(
+            HTTPMethod.GET,
+            `${Subscriptions.routeBase}/:subscriptionsId/payments`
+        )(data, callback, ["storeId", "subscriptionsId"], storeId, subscriptionsId);
+    }
+
+    get(storeId: string,
+        subscriptionsId: string,
+        id: string,
+        data?: SendData<void>,
+        callback?: ResponseCallback<ResponsePayment>
+    ): Promise<ResponsePayment> {
+        return this._getRoute()(data, callback, ["storeId", "subscriptionsId", "id"], storeId, subscriptionsId, id);
+    }
+
+    update(storeId: string,
+           subscriptionsId: string,
+           id: string,
+           data?: SendData<PaymentUpdateParams>,
+           callback?: ResponseCallback<ResponsePayment>
+    ): Promise<ResponsePayment> {
+        return this._updateRoute()(data, callback, ["storeId", "subscriptionsId", "id"], storeId, subscriptionsId, id)
+    }
+
+    listCharges(storeId: string,
+                subscriptionsId: string,
+                paymentId: string,
+                data?: SendData<void>,
+                callback?: ResponseCallback<ResponsePayment>
+    ): Promise<ResponsePayment> {
+        return this.defineRoute(
+            HTTPMethod.GET,
+            `${Subscriptions.routeBase}/:subscriptionsId/payments/:paymentId/charges`
+        )(data, callback, ["storeId", "subscriptionsId", "paymentId"], storeId, subscriptionsId, paymentId);
+    }
+}
+
 export class Subscriptions extends CRUDResource {
 
     static requiredParams: string[] = ["transactionTokenId", "amount", "currency", "period"];
     static requiredSimulationParams: string[] = ["installmentPlan", "paymentType", "currency", "period"];
 
     static routeBase: string = "/stores/:storeId/subscriptions";
+
+    payments: ScheduledPayments;
+
+    constructor(api: RestAPI) {
+        super(api);
+
+        this.payments = new ScheduledPayments(api);
+    }
 
     list(data?: SendData<SubscriptionsListParams>,
          callback?: ResponseCallback<ResponseSubscriptions>,
@@ -203,5 +285,4 @@ export class Subscriptions extends CRUDResource {
             Subscriptions.requiredSimulationParams
         )(data, callback, ["storeId"], storeId)
     }
-
 }

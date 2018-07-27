@@ -8,13 +8,17 @@ import { pathToRegexMatcher } from "../utils/routes";
 import {
     InstallmentPlanSimulationItem,
     InstallmentPlanSimulationParams,
-    SubscriptionCreateParams, SubscriptionPeriod, Subscriptions, SubscriptionStatus,
+    SubscriptionCreateParams,
+    SubscriptionPeriod,
+    Subscriptions,
+    SubscriptionStatus,
     SubscriptionUpdateParams
 } from "../../src/resources/Subscriptions";
-import { HTTPMethod, RestAPI} from "../../src/api/RestAPI";
+import { HTTPMethod, RestAPI } from "../../src/api/RestAPI";
 import { generateList } from "../fixtures/list";
 import { generateFixture as generateSubscription } from "../fixtures/subscription";
 import { generateFixture as generateCharge } from "../fixtures/charge";
+import { generateFixture as generateScheduledPayment } from "../fixtures/scheduled-payment";
 import { RequestError } from "../../src/errors/RequestResponseError";
 import { createRequestError } from "../fixtures/errors";
 import { POLLING_TIMEOUT } from "../../src/common/constants";
@@ -282,6 +286,80 @@ describe("Subscriptions", function () {
                     .that.has.property("errorResponse")
                     .which.eql(error.errorResponse);
             }
+        });
+    });
+
+    context("GET /stores/:storeId/subscriptions/:id/payments", function () {
+        it("should get the payments list", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateScheduledPayment
+            });
+
+            fetchMock.getOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/:subscriptionId/payments`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(subscriptions.payments.list(uuid(), uuid())).to.eventually.eql(listData);
+        });
+    });
+
+    context("GET /stores/:storeId/subscriptions/:subscriptionId/payments/:paymentId", function () {
+        it("should get the payment", async function () {
+            const recordData = generateScheduledPayment();
+
+            fetchMock.getOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/:subscriptionId/payments/:paymentId`),
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(subscriptions.payments.get(uuid(), uuid(), uuid())).to.eventually.eql(recordData);
+        });
+    });
+
+    context("PATCH /stores/:storeId/subscriptions/:subscriptionId/payments/:paymentId", function () {
+        it("should update the payment", async function () {
+            const recordData = generateScheduledPayment();
+
+            fetchMock.patchOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/:subscriptionId/payments/:paymentId`),
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(subscriptions.payments.update(uuid(), uuid(), uuid(), recordData)).to.eventually.eql(recordData);
+        });
+    });
+
+    context("GET /stores/:storeId/subscriptions/:subscriptionId/payments/:paymentId/charges", function () {
+        it("should get the payments list", async function () {
+            const listData = generateList({
+                count : 10,
+                recordGenerator : generateCharge
+            });
+
+            fetchMock.getOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/subscriptions/:subscriptionId/payments/:paymentId/charges`),
+                {
+                    status  : 200,
+                    body    : listData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            await expect(subscriptions.payments.listCharges(uuid(), uuid(), uuid())).to.eventually.eql(listData);
         });
     });
 
