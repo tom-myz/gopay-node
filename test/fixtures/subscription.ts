@@ -38,6 +38,7 @@ export function generateFixture(): SubscriptionItem {
             dueDate: new Date().toISOString(),
             zoneId: "Asia/Tokyo",
             amount: 1,
+            amountFormatted: 1,
             currency: "JPY",
             isPaid: false,
             isLastPayment: false,
