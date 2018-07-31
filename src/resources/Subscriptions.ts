@@ -59,6 +59,7 @@ export interface ScheduledPaymentItem {
     dueDate: string;
     zoneId: string;
     amount: number;
+    amountFormatted: number;
     currency: string;
     isPaid: boolean;
     isLastPayment: boolean;
@@ -187,9 +188,9 @@ export class ScheduledPayments extends CRUDResource {
     listCharges(storeId: string,
                 subscriptionsId: string,
                 paymentId: string,
-                data?: SendData<void>,
-                callback?: ResponseCallback<ResponsePayment>
-    ): Promise<ResponsePayment> {
+                data?: SendData<ChargesListParams>,
+                callback?: ResponseCallback<ResponseCharges>
+    ): Promise<ResponseCharges> {
         return this.defineRoute(
             HTTPMethod.GET,
             `${Subscriptions.routeBase}/:subscriptionsId/payments/:paymentId/charges`
