@@ -27,7 +27,6 @@ export function generateFixture(): SubscriptionItem {
         subsequentCyclesStart: "",
         paymentsLeft: 4,
         scheduleSettings: {
-            startDateReference: new Date().toISOString(),
             startOn: new Date().toISOString(),
             zoneId: "Asia/Tokyo",
             preserveEndOfMonth: true

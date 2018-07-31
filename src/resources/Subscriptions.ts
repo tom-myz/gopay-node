@@ -83,6 +83,8 @@ export interface SubscriptionsListParams extends CRUDPaginationParams {
     mode?: ProcessingMode
 }
 
+export type ScheduledPaymentsListParams = CRUDPaginationParams;
+
 export interface SubscriptionCreateParams {
     transactionTokenId: string;
     amount: number;
@@ -104,7 +106,6 @@ export interface SubscriptionUpdateParams {
 export type PaymentUpdateParams = Partial<ScheduledPaymentItem>;
 
 export interface ScheduleSettings {
-    startDateReference: string;
     startOn?: string;
     zoneId: string;
     preserveEndOfMonth?: boolean;
@@ -147,8 +148,8 @@ export type InstallmentPlanSimulationItem<InstallmentPlanData extends Installmen
 export type ResponseSubscription = SubscriptionItem
 export type ResponseSubscriptions = CRUDItemsResponse<SubscriptionItem>
 
-export type ResponsePayment = PaymentItem;
-export type ResponsePayments = CRUDItemsResponse<PaymentItem>;
+export type ResponsePayment = ScheduledPaymentItem;
+export type ResponsePayments = CRUDItemsResponse<ScheduledPaymentItem>;
 
 export class ScheduledPayments extends CRUDResource {
 
@@ -156,7 +157,7 @@ export class ScheduledPayments extends CRUDResource {
 
     list(storeId: string,
          subscriptionsId: string,
-         data?: SendData<void>,
+         data?: SendData<ScheduledPaymentsListParams>,
          callback?: ResponseCallback<ResponsePayments>
     ): Promise<ResponsePayments> {
         return this.defineRoute(
