@@ -6,6 +6,7 @@ import {
     SubscriptionStatus
 } from "../../src/resources/Subscriptions";
 import { ProcessingMode } from "../../src/resources/common/enums";
+import { generateFixture as generatePayment } from "./scheduled-payment";
 
 export function generateFixture(): SubscriptionItem {
     return {
@@ -32,17 +33,6 @@ export function generateFixture(): SubscriptionItem {
             preserveEndOfMonth: true
         },
         installmentPlan: InstallmentPlan.FIXED_CYCLES,
-        nextPayment: {
-            id: uuid(),
-            subscriptionId: uuid(),
-            dueDate: new Date().toISOString(),
-            zoneId: "Asia/Tokyo",
-            amount: 1,
-            amountFormatted: 1,
-            currency: "JPY",
-            isPaid: false,
-            isLastPayment: false,
-            createdOn: new Date().toISOString()
-        }
+        nextPayment: generatePayment()
     }
 };
