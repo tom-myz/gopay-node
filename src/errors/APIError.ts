@@ -302,7 +302,6 @@ export enum ResponseErrorCode {
     DebitDisabled                                          = "DEBIT_DISABLED",
     PrepaidDisabled                                        = "PREPAID_DISABLED",
     CountryNotSupported                                    = "COUNTRY_NOT_SUPPORTED",
-    // CardBrandNotSupported                               = "CARD_BRAND_NOT_SUPPORTED",
     Unspecified                                            = "UNSPECIFIED"
 }
 
