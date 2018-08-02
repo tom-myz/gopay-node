@@ -2,6 +2,7 @@
  *  @module Resources/Subscriptions
  */
 
+import { Omit } from "type-zoo";
 import { ErrorResponse, HTTPMethod, PollParams, ResponseCallback, RestAPI, SendData } from "../api/RestAPI"
 import { CRUDItemsResponse, CRUDPaginationParams, CRUDResource } from "./CRUDResource"
 import { Metadata } from "./common/types"
@@ -55,7 +56,6 @@ export interface InstallmentCycleAmountParams extends InstallmentBaseParams {
 
 export interface ScheduledPaymentItem {
     id: string;
-    subscriptionId: string;
     dueDate: string;
     zoneId: string;
     amount: number;
@@ -67,16 +67,6 @@ export interface ScheduledPaymentItem {
 }
 
 export type InstallmentPlanItem<InstallmentPlanData extends InstallmentBaseParams> = InstallmentPlanData;
-
-export interface InstallmentPlanSimulationParams<InstallmentPlanData extends InstallmentBaseParams> {
-    installmentPlan: InstallmentPlanData;
-    amount: number;
-    currency: string;
-    initialAmount?: number;
-    subsequentCyclesStart?: string | number;
-    paymentType: PaymentType;
-    period: SubscriptionPeriod
-}
 
 export interface SubscriptionsListParams extends CRUDPaginationParams {
     search?: string
@@ -136,15 +126,66 @@ export interface SubscriptionItem {
     paymentsLeft: number;
 }
 
+/*
+
+object SubscriptionSimulationData {
+
+    def form(implicit clock: TimeZone): Form[SubscriptionSimulationData] = {
+      Form(
+        mapping(
+          "installment_plan"  -> optional(installmentPlanType),
+          "amount"            -> refinedAmount[Positive],
+          "currency"          -> currencyLike,
+          "initial_amount"    -> optional(refinedAmount[NonNegative]),
+          "schedule_settings" -> scheduleSettings,
+          "payment_type"      -> enum[PaymentType],
+          "period"            -> subscriptionPeriod
+        )(SubscriptionSimulationData.apply)(SubscriptionSimulationData.unapply)
+      )
+    }
+  }
+ */
+
+interface SubscriptionSimulationBaseParams<InstallmentPlanData extends InstallmentBaseParams> {
+    installmentPlan?: InstallmentPlanData;
+    amount: number;
+    currency: string;
+    initialAmount?: number;
+    paymentType: PaymentType;
+    period: SubscriptionPeriod
+}
+
+export interface SubscriptionSimulationLegacyParams<InstallmentPlanData extends InstallmentBaseParams>
+    extends SubscriptionSimulationBaseParams<InstallmentPlanData> {
+
+    subsequentCyclesStart?: string | number;
+}
+
+export interface SubscriptionSimulationNewParams<InstallmentPlanData extends InstallmentBaseParams>
+    extends SubscriptionSimulationBaseParams<InstallmentPlanData> {
+
+    scheduleSettings: ScheduleSettings;
+}
+
+export type SubscriptionSimulationParams<InstallmentPlanData extends InstallmentBaseParams> =
+    SubscriptionSimulationLegacyParams<InstallmentPlanData> | SubscriptionSimulationNewParams<InstallmentPlanData>
+
 export interface CycleAmount {
     cycleDate: string;
     amount: number;
 }
 
-export type InstallmentPlanSimulationItem<InstallmentPlanData extends InstallmentBaseParams> =
-    Required<InstallmentPlanSimulationParams<InstallmentPlanData>> & {
+export type SubscriptionSimulationLegacyItem<InstallmentPlanData extends InstallmentBaseParams> =
+    Required<SubscriptionSimulationLegacyParams<InstallmentPlanData>> & {
     cycles: CycleAmount[];
 }
+
+export interface SubscriptionSimulationNewItem {
+    [index: string]: Omit<ScheduledPaymentItem, "id" | "createdOn">;
+}
+
+export type SubscriptionSimulationItem<InstallmentPlanData extends InstallmentBaseParams> =
+    SubscriptionSimulationLegacyItem<InstallmentPlanData> | SubscriptionSimulationNewItem;
 
 export type ResponseSubscription = SubscriptionItem
 export type ResponseSubscriptions = CRUDItemsResponse<SubscriptionItem>
@@ -277,10 +318,10 @@ export class Subscriptions extends CRUDResource {
     }
 
     simulation<InstallmentPlanData extends InstallmentBaseParams>(
-        data: SendData<InstallmentPlanSimulationParams<InstallmentPlanData>>,
-        callback?: ResponseCallback<InstallmentPlanSimulationItem<InstallmentPlanData>>,
+        data: SendData<SubscriptionSimulationParams<InstallmentPlanData>>,
+        callback?: ResponseCallback<SubscriptionSimulationItem<InstallmentPlanData>>,
         storeId?: string
-    ): Promise<InstallmentPlanSimulationItem<InstallmentPlanData>> {
+    ): Promise<SubscriptionSimulationItem<InstallmentPlanData>> {
         return this.defineRoute(
             HTTPMethod.POST,
             "(/stores/:storeId)/subscriptions/simulate_plan",
