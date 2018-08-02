@@ -16,7 +16,7 @@ export async function checkStatus(response: Response): Promise<Response> {
     throw new APIError(response.status, json);
 }
 
-export async function parseJSON(response: Response): Promise<any> {
+export async function parseJSON(response: Response, ignoreKeys: string[] = ["metadata"]): Promise<any> {
     const text = await response.text();
-    return text ? transformKeys(JSON.parse(text), camelCase) : {}
+    return text ? transformKeys(JSON.parse(text), camelCase, ignoreKeys) : {}
 }
