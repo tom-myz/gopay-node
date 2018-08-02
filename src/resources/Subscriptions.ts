@@ -126,26 +126,6 @@ export interface SubscriptionItem {
     paymentsLeft: number;
 }
 
-/*
-
-object SubscriptionSimulationData {
-
-    def form(implicit clock: TimeZone): Form[SubscriptionSimulationData] = {
-      Form(
-        mapping(
-          "installment_plan"  -> optional(installmentPlanType),
-          "amount"            -> refinedAmount[Positive],
-          "currency"          -> currencyLike,
-          "initial_amount"    -> optional(refinedAmount[NonNegative]),
-          "schedule_settings" -> scheduleSettings,
-          "payment_type"      -> enum[PaymentType],
-          "period"            -> subscriptionPeriod
-        )(SubscriptionSimulationData.apply)(SubscriptionSimulationData.unapply)
-      )
-    }
-  }
- */
-
 interface SubscriptionSimulationBaseParams<InstallmentPlanData extends InstallmentBaseParams> {
     installmentPlan?: InstallmentPlanData;
     amount: number;
