@@ -8,6 +8,7 @@ export function generateFixture(): ScheduledPaymentItem {
         dueDate             : new Date().toISOString(),
         zoneId              : uuid(),
         amount              : 1000,
+        amountFormatted     : 1000,
         currency            : "JPY",
         isPaid              : true,
         isLastPayment       : false,
