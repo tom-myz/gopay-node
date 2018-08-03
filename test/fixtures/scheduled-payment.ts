@@ -4,7 +4,6 @@ import { ScheduledPaymentItem } from "../../src/resources/Subscriptions";
 export function generateFixture(): ScheduledPaymentItem {
     return {
         id                  : uuid(),
-        subscriptionId      : uuid(),
         dueDate             : new Date().toISOString(),
         zoneId              : uuid(),
         amount              : 1000,
