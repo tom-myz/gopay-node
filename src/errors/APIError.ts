@@ -250,7 +250,7 @@ export enum ResponseErrorCode {
     TestCardCannotBeBanned                                 = "TEST_CARD_CANNOT_BE_BANNED",
 
     /** Installments */
-    UseStartOn                                             = "USE_START_ON ",
+    UseStartOn                                             = "USE_START_ON",
     PaymentInTimePeriod                                    = "PAYMENT_IN_TIME_PERIOD",
     SecondChargeAlreadyMade                                = "SECOND_CHARGE_ALREADY_MADE",
     NotSupportedByProcessor                                = "NOT_SUPPORTED_BY_PROCESSOR",
@@ -267,7 +267,7 @@ export enum ResponseErrorCode {
     InstallmentRevolvingPlanCannotSetInitialAmount         = "INSTALLMENT_REVOLVING_PLAN_CANNOT_SET_INITIAL_AMOUNT",
     InstallmentRevolvingPlanCannotSetSubsequentCyclesStart = "INSTALLMENT_REVOLVING_PLAN_CANNOT_SET_SUBSEQUENT_CYCLES_START",
     InstallmentProcessorInitialAmountsNotSupported         = "INSTALLMENT_PROCESSOR_INITIAL_AMOUNTS_NOT_SUPPORTED",
-    InstallmentProcessorPeriodNotSupporte                  = "INSTALLMENT_PROCESSOR_PERIOD_NOT_SUPPORTE",
+    InstallmentProcessorPeriodNotSupported                 = "INSTALLMENT_PROCESSOR_PERIOD_NOT_SUPPORTED",
     CannotChangeToken                                      = "CANNOT_CHANGE_TOKEN",
     InstallmentsNotEnabled                                 = "INSTALLMENTS_NOT_ENABLED",
     CannotChangeInstallmentAmount                          = "CANNOT_CHANGE_INSTALLMENT_AMOUNT",
