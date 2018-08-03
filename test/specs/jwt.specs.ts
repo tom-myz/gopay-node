@@ -9,7 +9,7 @@ describe("JWT", function () {
     let sandbox: SinonSandbox;
 
     beforeEach(function () {
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"]
         });
     });

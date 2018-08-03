@@ -76,16 +76,25 @@ export interface SubscriptionsListParams extends CRUDPaginationParams {
 
 export type ScheduledPaymentsListParams = CRUDPaginationParams;
 
-export interface SubscriptionCreateParams {
+export interface SubscriptionCreateBaseParams {
     transactionTokenId: string;
     amount: number;
     currency: string;
     period: SubscriptionPeriod;
     metadata?: Metadata;
     initialAmount?: number;
-    subsequentCyclesStart?: string | number;
     installmentPlan?: InstallmentPlanItem<any>;
 }
+
+export interface SubscriptionCreateLegacyParams extends SubscriptionCreateBaseParams {
+    subsequentCyclesStart?: string | number;
+}
+
+export interface SubscriptionCreateNewParams extends SubscriptionCreateBaseParams {
+    scheduleSettings: Partial<ScheduleSettings>;
+}
+
+export type SubscriptionCreateParams = SubscriptionCreateLegacyParams | SubscriptionCreateNewParams;
 
 export interface SubscriptionUpdateParams {
     transactionTokenId?: string;
