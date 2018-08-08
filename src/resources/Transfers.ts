@@ -12,7 +12,8 @@ export enum TransferStatus {
     CANCELED   = "canceled",
     PROCESSING = "processing",
     PAID       = "paid",
-    FAILED     = "failed"
+    FAILED     = "failed",
+    BLANK      = "blank"
 }
 
 /* Request */
