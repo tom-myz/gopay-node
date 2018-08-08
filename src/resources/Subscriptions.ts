@@ -23,6 +23,7 @@ export enum SubscriptionPeriod {
 export enum SubscriptionStatus {
     UNVERIFIED  = "unverified",
     CURRENT     = "current",
+    SUSPENDED   = "suspended",
     UNPAID      = "unpaid",
     CANCELED    = "canceled",
     UNCONFIRMED = "unconfirmed",
@@ -99,6 +100,7 @@ export type SubscriptionCreateParams = SubscriptionCreateLegacyParams | Subscrip
 export interface SubscriptionUpdateParams {
     transactionTokenId?: string;
     amount?: number;
+    status?: SubscriptionStatus;
     metadata?: Metadata;
     installmentPlan?: Partial<InstallmentPlanItem<any>>;
 }
