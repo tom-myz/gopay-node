@@ -32,7 +32,7 @@ describe("Refunds", function () {
     beforeEach(function () {
         api = new RestAPI({ endpoint: testEndpoint });
         refunds = new Refunds(api);
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"],
             useFakeTimers: true
         });

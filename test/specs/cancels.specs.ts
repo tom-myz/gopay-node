@@ -30,7 +30,7 @@ describe("Cancels", function () {
     beforeEach(function () {
         api = new RestAPI({ endpoint: testEndpoint });
         cancels = new Cancels(api);
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"],
             useFakeTimers: true
         });

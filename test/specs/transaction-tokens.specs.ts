@@ -28,7 +28,7 @@ describe("Transaction Tokens", function () {
     beforeEach(function () {
         api = new RestAPI({ endpoint: testEndpoint });
         transactionTokens = new TransactionTokens(api);
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"],
             useFakeTimers: true
         });

@@ -29,7 +29,7 @@ describe("Charges", function () {
     beforeEach(function () {
         api = new RestAPI({ endpoint: testEndpoint });
         charges = new Charges(api);
-        sandbox = sinon.sandbox.create({
+        sandbox = sinon.createSandbox({
             properties: ["spy", "clock"],
             useFakeTimers: true
         });

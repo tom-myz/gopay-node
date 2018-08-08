@@ -6,8 +6,8 @@ import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {
-    InstallmentPlanSimulationItem,
-    InstallmentPlanSimulationParams,
+    SubscriptionSimulationItem,
+    SubscriptionSimulationParams,
     SubscriptionCreateParams,
     SubscriptionPeriod,
     Subscriptions,
@@ -233,7 +233,7 @@ describe("Subscriptions", function () {
 
     context("POST [/stores/:storeId]/subscriptions/simulate_plan", function () {
         it("should get response", async function () {
-            const simulationData: InstallmentPlanSimulationItem<any> = {
+            const simulationData: SubscriptionSimulationItem<any> = {
                 installmentPlan       : null,
                 amount                : 10000,
                 currency              : "JPY",
@@ -253,7 +253,7 @@ describe("Subscriptions", function () {
                 }
             );
 
-            const data: InstallmentPlanSimulationParams<any> = {
+            const data: SubscriptionSimulationParams<any> = {
                 installmentPlan       : null,
                 amount                : 10000,
                 currency              : "JPY",
@@ -274,7 +274,7 @@ describe("Subscriptions", function () {
         });
 
         it("should return validation error if data is invalid", async function () {
-            const asserts: Array<[Partial<InstallmentPlanSimulationParams<any>>, RequestError]> = [
+            const asserts: Array<[Partial<SubscriptionSimulationParams<any>>, RequestError]> = [
                 [{}, createRequestError(["installmentPlan"])],
                 [{ installmentPlan : null }, createRequestError(["paymentType"])],
                 [{ installmentPlan : null, paymentType : PaymentType.CARD }, createRequestError(["currency"])],
@@ -282,7 +282,7 @@ describe("Subscriptions", function () {
             ];
 
             for (const [data, error] of asserts) {
-                await expect(subscriptions.simulation(data as InstallmentPlanSimulationParams<any>)).to.eventually.be.rejectedWith(RequestError)
+                await expect(subscriptions.simulation(data as SubscriptionSimulationParams<any>)).to.eventually.be.rejectedWith(RequestError)
                     .that.has.property("errorResponse")
                     .which.eql(error.errorResponse);
             }
