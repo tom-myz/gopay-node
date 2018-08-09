@@ -3,7 +3,10 @@ import { PlatformConfigurationItem } from "../../src/resources/Platforms";
 import { CardBrand } from "../../src/resources/common/enums";
 import { PaymentType } from "../../src/resources/TransactionTokens";
 import { generateFixture as generateTransferSchedule } from "./common/transfer-schedule";
-import {generateFixtureInstallmentConfiguration} from "./common/configuration";
+import {
+    generateFixtureInstallmentConfiguration,
+    generateFixtureSubscriptionConfiguration
+} from "./common/configuration";
 
 export function generateFixture(): PlatformConfigurationItem {
     return {
@@ -31,7 +34,8 @@ export function generateFixture(): PlatformConfigurationItem {
                     amount   : 1000,
                     currency : "JPY"
                 },
-                installmentsConfiguration : generateFixtureInstallmentConfiguration()
+                installmentsConfiguration : generateFixtureInstallmentConfiguration(),
+                subscriptionConfiguration : generateFixtureSubscriptionConfiguration()
             },
             refundPercentLimit: 5,
             paymentDefaults: {

@@ -1,7 +1,7 @@
 import {
     CardConfigurationItem,
     PaymentTypeConfiguration,
-    ConfigurationItem, InstallmentsConfigurationItem
+    ConfigurationItem, InstallmentsConfigurationItem, SubscriptionsConfiguration
 } from "../../../src/resources/common/Configuration";
 import { CardBrand } from "../../../src/resources/common/enums";
 
@@ -36,6 +36,13 @@ export function generateFixtureInstallmentConfiguration(): InstallmentsConfigura
         minChargeAmount      : 1000,
         maxPayoutPeriod      : "P7D",
         failedCyclesToCancel : 3
+    };
+}
+
+export function generateFixtureSubscriptionConfiguration(): SubscriptionsConfiguration {
+    return {
+        failedChargesToCancel : 5,
+        suspendOnCancel       : true
     };
 }
 
