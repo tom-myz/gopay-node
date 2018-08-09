@@ -70,20 +70,29 @@ export interface RecurringTokenConfiguration {
     }
 }
 
+export interface SubscriptionsConfiguration {
+    failedChargesToCancel: number;
+    suspendOnCancel: boolean;
+}
+
 export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
-    qrScanConfiguration: QRScanConfigurationItem
     convenienceConfiguration: ConvenienceConfigurationItem
-    installmentsConfiguration: InstallmentsConfigurationItem
+    country: string
+    displayTimeZone: string
     flatFees: Array<AmountWithCurrency>
+    installmentsConfiguration: InstallmentsConfigurationItem
+    language: string
+    logoUrl?: string
     maximumChargeAmounts: Array<AmountWithCurrency>
     minTransferPayout?: AmountWithCurrency
     percentFee: number
-    logoUrl?: string
-    securityConfiguration?: SecurityConfiguration
+    qrScanConfiguration: QRScanConfigurationItem
+    recurringTokenConfiguration: RecurringTokenConfiguration
+    securityConfiguration: SecurityConfiguration
+    subscriptionConfiguration: SubscriptionsConfiguration
     userTransactionsConfiguration?: UserTransactionsConfiguration
-    recurringTokenConfiguration?: RecurringTokenConfiguration
 }
 
 export interface ConfigurationParams {
