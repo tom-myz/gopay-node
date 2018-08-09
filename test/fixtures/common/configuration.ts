@@ -57,7 +57,14 @@ export function generateFixture(): ConfigurationItem {
             refundPercentLimit : 5
         },
         installmentsConfiguration : generateFixtureInstallmentConfiguration(),
-        maximumChargeAmounts      : []
-
+        maximumChargeAmounts      : [],
+        country : "JP",
+        language: "ja_JP",
+        displayTimeZone: "Asia/Tokyo",
+        recurringTokenConfiguration : {},
+        subscriptionConfiguration: {
+            suspendOnCancel: true,
+            failedChargesToCancel: 10
+        }
     }
 }

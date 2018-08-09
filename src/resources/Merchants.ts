@@ -13,8 +13,6 @@ import { TransferScheduleItem } from "./common/TransferSchedule"
 export interface MerchantConfigurationItem extends ConfigurationItem {
     waitPeriod?: string
     transferSchedule?: TransferScheduleItem
-    language?: string
-    displayTimeZone?: string
 }
 
 export interface MerchantItem {
