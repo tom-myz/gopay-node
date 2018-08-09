@@ -39,8 +39,7 @@ export function generateFixture(): PlatformConfigurationItem {
                 qrScanEnabled: true,
                 prepaidEnabled: true,
                 debitEnabled: true,
-                convenienceEnabled: true,
-                installmentsEnabled: true
+                convenienceEnabled: true
             },
             maximumChargeAmounts : [],
             minimumChargeAmounts : []

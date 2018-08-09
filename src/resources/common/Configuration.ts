@@ -40,9 +40,11 @@ export type QRScanConfigurationItem = PaymentTypeConfiguration;
 export type ConvenienceConfigurationItem = PaymentTypeConfiguration;
 
 export interface InstallmentsConfiguration {
+    enabled?: boolean;
     minChargeAmount?: number;
     maxPayoutPeriod?: string;
     failedCyclesToCancel?: number;
+    onlyWithProcessor?: boolean;
 }
 
 export interface InstallmentsConfigurationItem extends PaymentTypeConfiguration, InstallmentsConfiguration { }
