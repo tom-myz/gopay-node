@@ -31,6 +31,8 @@ export function generateFixtureCardConfiguration(): CardConfigurationItem {
 export function generateFixtureInstallmentConfiguration(): InstallmentsConfigurationItem {
     return {
         ...generateFixturePaymentType(),
+        enabled              : true,
+        onlyWithProcessor    : false,
         minChargeAmount      : 1000,
         maxPayoutPeriod      : "P7D",
         failedCyclesToCancel : 3
