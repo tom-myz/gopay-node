@@ -29,8 +29,10 @@ export enum ResponseErrorCode {
     /* auth */
     InvalidDomain                                          = "INVALID_DOMAIN",
     InvalidCredentials                                     = "INVALID_CREDENTIALS",
+    AuthHeaderMissing                                      = "AUTH_HEADER_MISSING",
     InvalidPermissions                                     = "INVALID_PERMISSIONS",
     ImproperAuth                                           = "IMPROPER_AUTH",
+    CouldNotRefreshAuth                                    = "COULD_NOT_REFRESH_AUTH",
     UserBanned                                             = "USER_BANNED",
     InvalidLoginToken                                      = "INVALID_LOGIN_TOKEN",
     InvalidAppToken                                        = "INVALID_APP_TOKEN",
@@ -52,19 +54,20 @@ export enum ResponseErrorCode {
     EmailExists                                            = "EMAIL_EXISTS",
     StoreExists                                            = "STORE_EXISTS",
     GatewayCredentialsExists                               = "GATEWAY_CREDENTIALS_EXISTS",
+    WebhookURLExists                                       = "WEBHOOK_URL_EXISTS",
     NonUniqueRuleForMerchant                               = "NON_UNIQUE_RULE_FOR_MERCHANT",
     NonUniqueRuleSetForMerchant                            = "NON_UNIQUE_RULE_SET_FOR_MERCHANT",
     NonUniqueRule                                          = "NON_UNIQUE_RULE",
     RulePriorityMustBePositive                             = "RULE_PRIORITY_MUST_BE_POSITIVE",
     NonExistingRule                                        = "NON_EXISTING_RULE",
     MustContainUniqueElementsOnly                          = "MUST_CONTAIN_UNIQUE_ELEMENTS_ONLY",
-    WebhookURLExists                                       = "WEBHOOK_URL_EXISTS",
     GroupExists                                            = "GROUP_EXISTS",
     PrimaryBankAccountNotFound                             = "PRIMARY_BANK_ACCOUNT_NOT_FOUND",
     MustHaveAPrimaryBankAccount                            = "MUST_HAVE_A_PRIMARY_BANK_ACCOUNT",
     VerificationDataExists                                 = "VERIFICATION_DATA_EXISTS",
     TemplateExists                                         = "TEMPLATE_EXISTS",
     StratusCredentialsExists                               = "STRATUS_CREDENTIALS_EXISTS",
+    StratusRuleStillInUse                                  = "STRATUS_RULE_STILL_IN_USE",
     ResourceLimitReached                                   = "RESOURCE_LIMIT_REACHED",
 
     /* payments and charges */
@@ -86,7 +89,6 @@ export enum ResponseErrorCode {
     QRProcessingDisabled                                   = "QR_PROCESSING_DISABLED",
     ConvenienceProcessingDisabled                          = "CONVENIENCE_PROCESSING_DISABLED",
     NotOneTimeToken                                        = "NOT_ONE_TIME_TOKEN",
-    NotLumpSum                                             = "NOT_LUMP_SUM",
     NotSubscriptionToken                                   = "NOT_SUBSCRIPTION_TOKEN",
     NotRecurringToken                                      = "NOT_RECURRING_TOKEN",
     CurrencyMustMatchCharge                                = "CURRENCY_MUST_MATCH_CHARGE",
@@ -133,6 +135,8 @@ export enum ResponseErrorCode {
     InvalidCurrency                                        = "INVALID_CURRENCY",
     InvalidAmount                                          = "INVALID_AMOUNT",
     InvalidEventForStore                                   = "INVALID_EVENT_FOR_STORE",
+    InvalidEventForPlatform                                = "INVALID_EVENT_FOR_PLATFORM",
+    InvalidEventForMerchant                                = "INVALID_EVENT_FOR_MERCHANT",
     InvalidFormatDomain                                    = "INVALID_FORMAT_DOMAIN",
     InvalidFormatUrl                                       = "INVALID_FORMAT_URL",
     InvalidFormatObject                                    = "INVALID_FORMAT_OBJECT",
@@ -165,6 +169,7 @@ export enum ResponseErrorCode {
     UnsupportedLanguage                                    = "UNSUPPORTED_LANGUAGE",
     DefaultLanguageNotSupported                            = "DEFAULT_LANGUAGE_NOT_SUPPORTED",
     CaptureOnlyForCardPayment                              = "CAPTURE_ONLY_FOR_CARD_PAYMENT",
+    CaptureOnlyForCreditCards                              = "CAPTURE_ONLY_FOR_CREDIT_CARDS",
     InvalidScheduledCaptureDate                            = "INVALID_SCHEDULED_CAPTURE_DATE",
     InvalidMerchantStatus                                  = "INVALID_MERCHANT_STATUS",
     IncoherentDateRange                                    = "INCOHERENT_DATE_RANGE",
@@ -176,6 +181,7 @@ export enum ResponseErrorCode {
     GatewayNoLongerSupported                               = "GATEWAY_NO_LONGER_SUPPORTED",
     InvalidChargeAmountLimit                               = "INVALID_CHARGE_AMOUNT_LIMIT",
     PlatformCurrencyRequiredInCvvAmount                    = "PLATFORM_CURRENCY_REQUIRED_IN_CVV_AMOUNT",
+    TransferScheduleWaitPeriodAndPeriodRequired            = "TRANSFER_SCHEDULE_WAIT_PERIOD_AND_PERIOD_REQUIRED",
     ChargeAmountTooLow                                     = "CHARGE_AMOUNT_TOO_LOW",
     ChargeAmountTooHigh                                    = "CHARGE_AMOUNT_TOO_HIGH",
 
@@ -190,6 +196,7 @@ export enum ResponseErrorCode {
     UnsupportedCountry                                     = "UNSUPPORTED_COUNTRY",
     UnsupportedCurrency                                    = "UNSUPPORTED_CURRENCY",
     CannotBanSelf                                          = "CANNOT_BAN_SELF",
+    CannotSelfTerminate                                    = "CANNOT_SELF_TERMINATE",
     NoDuplicateCurrencies                                  = "NO_DUPLICATE_CURRENCIES",
 
     PlatformNotFound                                       = "PLATFORM_NOT_FOUND",
@@ -249,13 +256,18 @@ export enum ResponseErrorCode {
     CardNotBanned                                          = "CARD_NOT_BANNED",
     TestCardCannotBeBanned                                 = "TEST_CARD_CANNOT_BE_BANNED",
 
-    /** Installments */
+    /* Stats */
+    InvalidMetric                                          = "INVALID_METRIC",
+    InvalidResource                                        = "INVALID_RESOURCE",
+
+    /** Installments & Subscriptions */
     UseStartOn                                             = "USE_START_ON",
     PaymentInTimePeriod                                    = "PAYMENT_IN_TIME_PERIOD",
     SecondChargeAlreadyMade                                = "SECOND_CHARGE_ALREADY_MADE",
     NotSupportedByProcessor                                = "NOT_SUPPORTED_BY_PROCESSOR",
     SubscriptionAlreadyCanceled                            = "SUBSCRIPTION_ALREADY_CANCELED",
     SubscriptionNotFound                                   = "SUBSCRIPTION_NOT_FOUND",
+    MustBeLowerThanFullAmount                              = "MUST_BE_LOWER_THAN_FULL_AMOUNT",
     InstallmentPlanNotFound                                = "INSTALLMENT_PLAN_NOT_FOUND",
     InstallmentAlreadySet                                  = "INSTALLMENT_ALREADY_SET",
     InstallmentInvalidPlan                                 = "INSTALLMENT_INVALID_PLAN",
