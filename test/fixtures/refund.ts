@@ -6,6 +6,7 @@ export function generateFixture(): RefundItem {
     return {
         id              : uuid(),
         chargeId        : uuid(),
+        storeId         : uuid(),
         ledgerId        : uuid(),
         status          : RefundStatus.SUCCESSFUL,
         amount          : 1000,
