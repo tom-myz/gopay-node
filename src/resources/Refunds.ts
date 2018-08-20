@@ -42,6 +42,7 @@ export interface RefundUpdateParams {
 /* Response */
 export interface RefundItem {
     id: string;
+    storeId: string;
     chargeId: string;
     ledgerId?: string;
     status: RefundStatus;
