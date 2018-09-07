@@ -26,7 +26,6 @@ export function containsBinaryData(data: any): boolean {
         return Object.keys(data)
             .reduce((result: boolean, key: any) => result || containsBinaryData(data[key]), false);
     }
-    
     return false;
 }
 

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { containsBinaryData, objectToFormData } from "../../src/api/utils/payload";
 
-function arrayChunk<T>(arr: T[], len: number): Array<T[]> {
+function arrayChunk<T>(arr: T[], len: number): T[][] {
     return Array.from(
         Array(Math.ceil(arr.length / len))
             .fill(undefined)
