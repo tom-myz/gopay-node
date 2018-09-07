@@ -10,31 +10,10 @@ function isObject(value: any): boolean {
     return value === Object(value);
 }
 
-/*
-function isBlob(value: any): boolean {
-    return value
-        && typeof value.size === "number"
-        && typeof value.type === "string"
-        && typeof value.slice === "function";
-}
-
-function isFile(value: any): boolean {
-    return isBlob(value)
-        && (typeof value.lastModifiedDate === "object" || typeof value.lastModified === "number")
-        && typeof value.name === "string";
-}
-*/
-
 function isBuffer(value: any): boolean {
     return !!value.buffer
         && typeof value.byteOffset === "number";
 }
-
-/*
-function isDate(value: any): boolean {
-    return value instanceof Date;
-}
-*/
 
 export function containsBinaryData(data: any): boolean {
     let hasBinary: boolean = false;
