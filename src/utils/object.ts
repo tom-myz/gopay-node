@@ -32,11 +32,7 @@ export function missingKeys(obj: any, keys: string[] = []): string[] {
         return keys;
     }
 
-    if (obj.constructor !== {}.constructor) {
-        return [];
-    }
-
-    const objKeys: string[] = Object.keys(obj || {});
+    const objKeys: string[] = Object.keys(obj);
     const missing: string[] = [];
 
     for (const key of keys) {

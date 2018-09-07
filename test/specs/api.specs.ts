@@ -79,7 +79,7 @@ describe("API", function () {
     });
 
     it("should return error response", async function () {
-        fetchMock.getOnce(
+        fetchMock.get(
             `${testEndpoint}/error`,
             { status : 503 }
         );

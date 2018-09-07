@@ -22,6 +22,8 @@ import { ResponseErrorCode, RequestErrorCode } from "../errors/APIError";
 import { extractJWT, JWTPayload, parseJWT } from "./utils/JWT";
 import { ProcessingMode } from "../resources/common/enums";
 import { RequestError } from "../errors/RequestResponseError";
+import { Omit } from "type-zoo";
+import {containsBinaryData, objectToFormData} from "./utils/payload";
 
 export enum HTTPMethod {
     GET    = "GET",
@@ -98,24 +100,22 @@ export type PromiseCreator<A> = () => Promise<A>
 
 export type SendData<Data> = Data & AuthParams & IdempotentParams;
 
-function getData<Data extends object>(data: SendData<Data>): Data {
-    // TODO: make extraction from FormData
-    return data instanceof FormData
-        ? {} as any
-        : omit(data, internalParams);
+function getData<Data extends object>(
+    data: SendData<Data>
+): Omit<Data, keyof AuthParams | keyof IdempotentParams> {
+    return omit(data, internalParams);
 }
 
-function getRequestBody<Data>(data: SendData<Data>): string | FormData {
-    return data instanceof FormData
-        ? data
-        : JSON.stringify(transformKeys(omit(data, internalParams), decamelize));
+function getRequestBody<Data>(
+    data: SendData<Data>
+): string | FormData {
+    return containsBinaryData(data)
+        ? objectToFormData(data)
+        : JSON.stringify(transformKeys(data, decamelize));
 }
 
 function getIdempotencyKey<Data>(data: SendData<Data>): string | null {
-    // TODO: make extraction from FormData
-    return data instanceof FormData
-        ? null
-        : (typeof data === "object" && !!data ? data.idempotentKey : null);
+    return (typeof data === "object" && !!data ? data.idempotentKey : null);
 }
 
 function stringifyParams<Data extends object>(data: Data): string {
@@ -208,10 +208,9 @@ export class RestAPI {
         };
 
         const requestData = getData(data);
-
         const request: Request = new Request(
             `${this.endpoint}${uri}${payload ? "" : stringifyParams(requestData)}`,
-            payload ? { ...params, body : getRequestBody(data) } : params
+            payload ? { ...params, body : getRequestBody(requestData) } : params
         );
 
         return await execRequest(async () => {
