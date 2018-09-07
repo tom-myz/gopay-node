@@ -63,6 +63,18 @@ describe("Payload Helpers", function () {
                     }
                 },
                 true
+            ],
+            [
+                {
+                    foo  : "bar",
+                    foo2 : {
+                        bar : new Buffer(["test"])
+                    },
+                    foo3: {
+                        bar : "fizz"
+                    }
+                },
+                true
             ]
         ];
 

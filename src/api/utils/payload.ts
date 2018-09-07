@@ -16,20 +16,18 @@ function isBuffer(value: any): boolean {
 }
 
 export function containsBinaryData(data: any): boolean {
-    let hasBinary: boolean = false;
-
     if (isPrimitive(data)) {
-        return hasBinary;
+        return false;
     } else if (isBuffer(data)) {
-        hasBinary = true;
+        return true;
     } else if (Array.isArray(data)) {
-        hasBinary = data.reduce((result: boolean, value: any) => result || containsBinaryData(value), hasBinary);
+        return data.reduce((result: boolean, value: any) => result || containsBinaryData(value), false);
     } else if (isObject(data)) {
-        hasBinary = Object.keys(data)
-            .reduce((result: boolean, key: any) => result || containsBinaryData(data[key]), hasBinary);
+        return Object.keys(data)
+            .reduce((result: boolean, key: any) => result || containsBinaryData(data[key]), false);
     }
-
-    return hasBinary;
+    
+    return false;
 }
 
 export function objectToFormData(obj: any): FormData {
