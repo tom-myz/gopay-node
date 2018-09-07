@@ -4,7 +4,9 @@ import uuid from "uuid";
 import { testEndpoint } from "../utils";
 import { pathToRegexMatcher } from "../utils/routes";
 import {
-    BankAccounts,
+    BankAccounts
+} from "../../src/resources";
+import {
     BankAccountType,
     BankAccountCreateParams,
     BankAccountUpdateParams
