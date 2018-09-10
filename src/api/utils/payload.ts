@@ -11,7 +11,9 @@ function isObject(value: any): boolean {
 }
 
 function isClassInstance(value: any): boolean {
-    return !!value && value.constructor !== Object;
+    return typeof value === "object"
+        && !(value instanceof Array)
+        && value.constructor !== Object;
 }
 
 export function containsBinaryData(data: any): boolean {
