@@ -229,7 +229,7 @@ export class RestAPI {
 
     protected getHeaders<Data extends object>(data: SendData<Data>, payload: boolean): Headers {
         const headers: Headers = new Headers();
-        const isFormData = data instanceof FormData;
+        const isFormData = containsBinaryData(data);
 
         headers.append("Accept", "application/json");
 

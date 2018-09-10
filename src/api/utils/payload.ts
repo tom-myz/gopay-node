@@ -10,15 +10,14 @@ function isObject(value: any): boolean {
     return value === Object(value);
 }
 
-function isBuffer(value: any): boolean {
-    return !!value.buffer
-        && typeof value.byteOffset === "number";
+function isClassInstance(value: any): boolean {
+    return !!value && value.constructor !== Object;
 }
 
 export function containsBinaryData(data: any): boolean {
     if (isPrimitive(data)) {
         return false;
-    } else if (isBuffer(data)) {
+    } else if (isClassInstance(data)) {
         return true;
     } else if (Array.isArray(data)) {
         return data.reduce((result: boolean, value: any) => result || containsBinaryData(value), false);
