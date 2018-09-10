@@ -13,10 +13,12 @@ export interface StoresListParams extends CRUDPaginationParams {
 export interface StoreCreateParams {
     name: string;
     configuration?: ConfigurationCreateParams;
+    logo?: any; // For logo image upload
 }
 export interface StoreUpdateParams {
     name?: string;
     configuration?: ConfigurationUpdateParams;
+    logo?: any; // For logo image upload
 }
 
 /* Response */
