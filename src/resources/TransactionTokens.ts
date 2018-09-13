@@ -125,7 +125,7 @@ export type TransactionTokenQRScanDataItem = object
 export interface TransactionTokenConvenienceDataItem {
     convenienceStore?: ConvenienceStore
     customerName?: string
-    expirationDate?: string
+    expirationPeriod?: string
     phoneNumber?: PhoneNumber
 }
 
