@@ -99,6 +99,9 @@ describe("Payload Helpers", function () {
             foo5 : undefined,
             foo6 : {
                 bar : undefined
+            },
+            fooBar : {
+                fizzBuzz : "test"
             }
         };
 
@@ -115,7 +118,8 @@ describe("Payload Helpers", function () {
             "foo1.bar",
             "foo2.0",
             "foo3.0.bar",
-            "foo4"
+            "foo4",
+            "foo_bar.fizz_buzz",
         ]).and.not.containingAnyOf([
             "foo5",
             "foo6.bar"

@@ -1,4 +1,5 @@
 import { flatten } from "flat";
+import decamelize from "decamelize";
 
 function isPrimitive(value: any): boolean {
     return typeof value === "object"
@@ -37,7 +38,7 @@ export function objectToFormData(obj: any): FormData {
 
     Object.keys(flat).forEach((name: string) => {
         if (flat[name] !== undefined) {
-            formData.append(name, flat[name] === null ? "" : flat[name]);
+            formData.append(decamelize(name), flat[name] === null ? "" : flat[name]);
         }
     });
 
