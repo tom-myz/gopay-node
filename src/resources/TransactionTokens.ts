@@ -18,7 +18,8 @@ export enum PaymentType {
     CARD      = "card",
     QR_SCAN   = "qr_scan",
     KONBINI   = "konbini",
-    APPLE_PAY = "apple_pay"
+    APPLE_PAY = "apple_pay",
+    PAIDY     = "paidy"
 }
 
 export enum ConvenienceStore {
