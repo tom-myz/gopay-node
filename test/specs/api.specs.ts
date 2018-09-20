@@ -144,6 +144,48 @@ describe("API", function () {
         }
     });
 
+    it("should send request with Origin heder", async function () {
+        interface Origin {
+            origin?: string;
+        }
+        const asserts: Array<[Origin, Origin]> = [
+            [null, null],
+            [{ origin : "origin1" }, null],
+            [null, { origin : "origin2" }],
+            [{ origin : "origin1" }, { origin : "origin2" }]
+        ];
+
+        const mock: FetchMockStatic = fetchMock.get(
+            `${testEndpoint}/origin`,
+            {
+                status  : 200,
+                body    : okResponse,
+                headers : { "Content-Type" : "application/json" }
+            }, {
+                method : HTTPMethod.GET,
+                repeat : asserts.length
+            }
+        );
+
+        for (const [initParams, sendParams] of asserts) {
+            const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...initParams })
+            const response = await api.send(HTTPMethod.GET, "/origin", sendParams);
+            const { headers }  = mock.lastCall()[0] as any;
+            const reqOriginHeader = (headers as Headers).get("Origin");
+
+            expect(reqOriginHeader).to.be.equal(
+                !!sendParams && !!sendParams.origin
+                    ? sendParams.origin
+                    : (
+                        !!initParams && !!initParams.origin
+                            ? initParams.origin
+                            : "0.0.0.0"
+                    )
+            );
+            expect(response).to.eql(okResponse);
+        }
+    });
+
     it("should update token if it comes back in the response", async function () {
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
 

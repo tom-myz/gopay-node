@@ -40,6 +40,7 @@ export interface RestAPIOptions {
     jwt?: string;
     handleUpdateJWT?(jwt: string): void;
     secret?: string;
+    origin?: string;
 
     // Deprecated
     authToken?: string;
@@ -94,15 +95,21 @@ export interface IdempotentParams {
     idempotentKey?: string;
 }
 
-const internalParams: Array<keyof AuthParams | keyof IdempotentParams> = ["appId", "secret", "authToken", "jwt", "idempotentKey"];
+export interface OriginParams {
+    origin?: string;
+}
+
+const internalParams: Array<keyof AuthParams | keyof IdempotentParams | keyof OriginParams> = [
+    "appId", "secret", "authToken", "jwt", "idempotentKey", "origin"
+];
 
 export type PromiseCreator<A> = () => Promise<A>
 
-export type SendData<Data> = Data & AuthParams & IdempotentParams;
+export type SendData<Data> = Data & AuthParams & IdempotentParams & OriginParams;
 
 function getData<Data extends object>(
     data: SendData<Data>
-): Omit<Data, keyof AuthParams | keyof IdempotentParams> {
+): Omit<Data, keyof AuthParams | keyof IdempotentParams | keyof OriginParams> {
     return omit(data, internalParams);
 }
 
@@ -116,6 +123,10 @@ function getRequestBody<Data>(
 
 function getIdempotencyKey<Data>(data: SendData<Data>): string | null {
     return (typeof data === "object" && !!data ? data.idempotentKey : null);
+}
+
+function getOrigin<Data>(data: SendData<Data>): string | null {
+    return (typeof data === "object" && !!data ? data.origin : null);
 }
 
 function stringifyParams<Data extends object>(data: Data): string {
@@ -147,6 +158,7 @@ export class RestAPI {
     jwt: JWTPayload<any>;
     protected handleUpdateJWT: (jwt: string) => void = () => undefined;
     secret: string;
+    origin: string = "0.0.0.0";
 
     /**
      *  @deprecated
@@ -162,6 +174,7 @@ export class RestAPI {
 
     constructor(options: RestAPIOptions = {}) {
         this.endpoint = options.endpoint || process.env[ENV_KEY_ENDPOINT] || DEFAULT_ENDPOINT;
+        this.origin = options.origin || this.origin;
         this.jwtRaw = options.jwt;
 
         if (options.handleUpdateJWT && typeof options.handleUpdateJWT === "function") {
@@ -237,8 +250,10 @@ export class RestAPI {
             headers.append("Content-Type", "application/json");
         }
 
-        const idempotentKey = getIdempotencyKey(data);
+        const origin = getOrigin(data);
+        headers.append("Origin", origin || this.origin);
 
+        const idempotentKey = getIdempotencyKey(data);
         if (idempotentKey) {
             headers.append(IDEMPOTENCY_KEY_HEADER, idempotentKey);
         }
