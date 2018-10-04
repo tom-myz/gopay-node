@@ -82,6 +82,7 @@ export interface SubscriptionCreateBaseParams {
     amount: number;
     currency: string;
     period: SubscriptionPeriod;
+    descriptor?: string;
     metadata?: Metadata;
     initialAmount?: number;
     installmentPlan?: InstallmentPlanItem<any>;
@@ -135,6 +136,7 @@ export interface SubscriptionItem {
     transactionTokenId: string;
     nextPayment: ScheduledPaymentItem
     paymentsLeft: number;
+    descriptor: string;
 }
 
 interface SubscriptionSimulationBaseParams<InstallmentPlanData extends InstallmentBaseParams> {

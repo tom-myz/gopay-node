@@ -21,6 +21,7 @@ export function generateFixture(): ChargeItem {
         status                   : ChargeStatus.SUCCESSFUL,
         metadata                 : {},
         mode                     : ProcessingMode.TEST,
-        createdOn                : new Date().toISOString()
+        createdOn                : new Date().toISOString(),
+        descriptor               : "test"
     }
 }

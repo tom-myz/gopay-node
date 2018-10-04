@@ -11,6 +11,17 @@ import { RequestError, ResponseError } from "../../src/errors/RequestResponseErr
 import { fromError } from "../../src/errors/parser";
 import {Merchants} from "../../src/resources/Merchants";
 
+function getHeader(headers: any, header: string): string {
+    const values = headers[header.toLowerCase()];
+    return !values
+        ? null
+        : (
+            Array.isArray(values) && values.length === 1
+                ? values[0]
+                : values
+        );
+}
+
 describe("API", function () {
     const okResponse = { ok : true }
 
@@ -136,8 +147,8 @@ describe("API", function () {
         for (const [initParams, sendParams, authHeader] of asserts) {
             const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...initParams })
             const response = await api.send(HTTPMethod.GET, "/header", sendParams);
-            const { headers }  = mock.lastCall()[0] as any;
-            const reqAuthHeader = (headers as Headers).get("Authorization");
+            const { headers }  = mock.lastCall()[1];
+            const reqAuthHeader = getHeader(headers, "Authorization");
 
             expect(reqAuthHeader).to.be.equal(authHeader ? authHeader : null);
             expect(response).to.eql(okResponse);
@@ -170,8 +181,8 @@ describe("API", function () {
         for (const [initParams, sendParams] of asserts) {
             const api: RestAPI = new RestAPI({ endpoint : testEndpoint, ...initParams })
             const response = await api.send(HTTPMethod.GET, "/origin", sendParams);
-            const { headers }  = mock.lastCall()[0] as any;
-            const reqOriginHeader = (headers as Headers).get("Origin");
+            const { headers }  = mock.lastCall()[1];
+            const reqOriginHeader = getHeader(headers, "Origin");
 
             expect(reqOriginHeader).to.be.equal(
                 !!sendParams && !!sendParams.origin
@@ -288,8 +299,8 @@ describe("API", function () {
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint });
         await api.send(HTTPMethod.GET, "/header", { idempotentKey : "test" });
 
-        const { headers } = mock.lastCall()[0] as any;
-        const keyHeader = (headers as Headers).get(IDEMPOTENCY_KEY_HEADER);
+        const { headers } = mock.lastCall()[1];
+        const keyHeader = getHeader(headers, IDEMPOTENCY_KEY_HEADER);
 
         expect(keyHeader).to.equal("test");
     });
@@ -316,19 +327,15 @@ describe("API", function () {
         // For request with payload
         for (const assert of asserts) {
             await api.send(HTTPMethod.POST, "/camel", assert);
-            const [ url, init ]  = mock.lastCall() as any;
-
-            const req = typeof url === "object"
-                ? url
-                : new Request(url, init);
+            const req  = (mock.lastCall() as any).request;
             await expect(req.json()).to.eventually.eql(expectationPost);
         }
 
         // For request without payload
         for (const assert of asserts) {
             await api.send(HTTPMethod.GET, "/camel", assert);
-            const [ url ]  = mock.lastCall() as any;
-            const { query } = parseUrl(typeof url === "object" ? url.url : url);
+            const url  = mock.lastUrl();
+            const { query } = parseUrl(url);
             expect(query).to.eql(expectationGet);
         }
     });

@@ -28,6 +28,7 @@ export interface ChargeCreateParams {
     currency: string
     captureAt?: string | number
     capture?: boolean
+    descriptor?: string
     metadata?: Metadata
 }
 
@@ -53,6 +54,7 @@ export interface ChargeItem {
     createdOn: string
     transactionTokenId?: string
     transactionTokenType: TransactionTokenType
+    descriptor: string
 }
 
 export type ResponseCharge = ChargeItem
