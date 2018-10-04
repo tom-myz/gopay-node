@@ -33,6 +33,7 @@ export function generateFixture(): SubscriptionItem {
             preserveEndOfMonth: true
         },
         installmentPlan: InstallmentPlan.FIXED_CYCLES,
-        nextPayment: generatePayment()
+        nextPayment: generatePayment(),
+        descriptor: "test"
     }
 };
