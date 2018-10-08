@@ -25,6 +25,7 @@ export interface PlatformPaymentDefaults {
     prepaidEnabled: boolean;
     debitEnabled: boolean;
     convenienceEnabled: boolean;
+    paidyEnabled: boolean;
 }
 
 export interface PlatformItem extends WithCreatedOn {

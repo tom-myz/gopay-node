@@ -22,7 +22,7 @@ export function generateFixture(): PlatformConfigurationItem {
             country                : "JP",
             currency               : "JPY",
             logoUri                : "http://fake.com/logo.jpg",
-            userDefaults           :{
+            userDefaults           : {
                 percentFee           : 3.5,
                 transferSchedule     : generateTransferSchedule(),
                 flatFees             : [
@@ -43,7 +43,8 @@ export function generateFixture(): PlatformConfigurationItem {
                 qrScanEnabled: true,
                 prepaidEnabled: true,
                 debitEnabled: true,
-                convenienceEnabled: true
+                convenienceEnabled: true,
+                paidyEnabled: true
             },
             maximumChargeAmounts : [],
             minimumChargeAmounts : []

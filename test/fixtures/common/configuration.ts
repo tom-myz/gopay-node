@@ -52,6 +52,7 @@ export function generateFixture(): ConfigurationItem {
         cardConfiguration        : generateFixtureCardConfiguration(),
         qrScanConfiguration      : generateFixturePaymentType(),
         convenienceConfiguration : generateFixturePaymentType(),
+        paidyConfiguration       : generateFixturePaymentType(),
         flatFees                 : [
             { amount : 30, currency : "JPY" }
         ],

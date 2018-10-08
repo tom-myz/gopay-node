@@ -74,12 +74,18 @@ export interface TransactionTokenConvenienceData {
     phoneNumber: PhoneNumber
 }
 
+export interface TransactionTokenPaidyData {
+    paidyToken: string;
+    phoneNumber: PhoneNumber;
+    email: string;
+}
+
 export interface TransactionTokenCreateParams {
     paymentType: PaymentType
     type: TransactionTokenType
     email: string
     usageLimit?: UsageLimit
-    data: TransactionTokenCardData | TransactionTokenQRScanData | TransactionTokenConvenienceData
+    data: TransactionTokenCardData | TransactionTokenQRScanData | TransactionTokenConvenienceData | TransactionTokenPaidyData
     metadata?: Metadata
 }
 

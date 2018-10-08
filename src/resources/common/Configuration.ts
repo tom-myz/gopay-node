@@ -39,6 +39,8 @@ export type QRScanConfigurationItem = PaymentTypeConfiguration;
 
 export type ConvenienceConfigurationItem = PaymentTypeConfiguration;
 
+export type PaidyConfigurationItem = PaymentTypeConfiguration;
+
 export interface InstallmentsConfiguration {
     enabled?: boolean;
     minChargeAmount?: number;
@@ -81,6 +83,7 @@ export interface ConfigurationItem {
     cardBrandPercentFees: CardBrandPercentFeesItem
     cardConfiguration: CardConfigurationItem
     convenienceConfiguration: ConvenienceConfigurationItem
+    paidyConfiguration: PaidyConfigurationItem;
     country: string
     displayTimeZone: string
     flatFees: Array<AmountWithCurrency>
@@ -102,6 +105,7 @@ export interface ConfigurationParams {
     cardConfiguration?: Partial<CardConfigurationItem>
     qrScanConfiguration?: Partial<QRScanConfigurationItem>
     convenienceConfiguration?: Partial<ConvenienceConfigurationItem>
+    paidyConfiguration?: Partial<PaidyConfigurationItem>;
     installmentsConfiguration?: Partial<InstallmentsConfigurationItem>
 }
 
