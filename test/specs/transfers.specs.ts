@@ -45,7 +45,7 @@ describe("Transfers", function () {
                 }
             );
 
-            await expect(transfers.list(),).to.eventually.eql(listData);
+            await expect(transfers.list()).to.eventually.eql(listData);
         });
     });
 

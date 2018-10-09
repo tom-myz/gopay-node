@@ -83,7 +83,7 @@ describe("Verification", function () {
                 [pick(verificationData, "homepageUrl"), createRequestError(["companyDescription"])],
                 [pick(verificationData, "homepageUrl", "companyDescription"), createRequestError(["companyContactInfo"])],
                 [pick(verificationData, "homepageUrl", "companyDescription", "companyContactInfo"), createRequestError(["businessType"])],
-                [pick(verificationData, "homepageUrl", "companyDescription", "companyContactInfo", "businessType"), createRequestError(["systemManagerName"])],
+                [pick(verificationData, "homepageUrl", "companyDescription", "companyContactInfo", "businessType"), createRequestError(["systemManagerName"])]
             ];
 
             for (const [data, error] of asserts) {

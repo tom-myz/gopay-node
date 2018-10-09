@@ -44,7 +44,7 @@ describe("Ledgers", function () {
                 }
             );
 
-            await expect(ledgers.list(uuid()),).to.eventually.eql(listData);
+            await expect(ledgers.list(uuid())).to.eventually.eql(listData);
         });
     });
 

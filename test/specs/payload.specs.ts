@@ -119,7 +119,7 @@ describe("Payload Helpers", function () {
             "foo2.0",
             "foo3.0.bar",
             "foo4",
-            "foo_bar.fizz_buzz",
+            "foo_bar.fizz_buzz"
         ]).and.not.containingAnyOf([
             "foo5",
             "foo6.bar"

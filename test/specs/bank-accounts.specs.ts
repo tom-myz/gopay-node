@@ -67,7 +67,7 @@ describe("Bank Accounts", function () {
                 [{ accountNumber : "" }, createRequestError(["country"])],
                 [{ accountNumber : "", country : "JP" }, createRequestError(["currency"])],
                 [{ accountNumber : "", country : "JP", currency : "JPY" }, createRequestError(["holderName"])],
-                [{ accountNumber : "", country : "JP", currency : "JPY", holderName : "Joe" }, createRequestError(["bankName"])],
+                [{ accountNumber : "", country : "JP", currency : "JPY", holderName : "Joe" }, createRequestError(["bankName"])]
             ];
 
             for (const [data, error] of asserts) {

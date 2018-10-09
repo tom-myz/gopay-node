@@ -74,7 +74,7 @@ describe("Subscriptions", function () {
                 [{}, createRequestError(["transactionTokenId"])],
                 [{ transactionTokenId : uuid() }, createRequestError(["amount"])],
                 [{ transactionTokenId : uuid(), amount : 1000 }, createRequestError(["currency"])],
-                [{ transactionTokenId : uuid(), amount : 1000, currency : "JPY" }, createRequestError(["period"])],
+                [{ transactionTokenId : uuid(), amount : 1000, currency : "JPY" }, createRequestError(["period"])]
             ];
 
             for (const [data, error] of asserts) {
