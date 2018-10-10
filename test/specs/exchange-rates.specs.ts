@@ -40,4 +40,4 @@ describe("Exchange rates", function () {
             await expect(exchangeRates.calculate(data)).to.eventually.eql(recordData);
         })
     })
-})
+});

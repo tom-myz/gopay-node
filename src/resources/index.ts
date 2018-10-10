@@ -16,3 +16,4 @@ export { TransactionTokens } from "./TransactionTokens";
 export { Transfers } from "./Transfers";
 export { Verification } from "./Verification";
 export { WebHooks } from "./WebHooks";
+export { TemporaryTokenAlias } from "./TemporaryTokenAlias";

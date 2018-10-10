@@ -62,7 +62,7 @@ describe("Web Hooks", function () {
         it("should return validation error if data is invalid", async function () {
             const asserts: Array<[Partial<WebHookCreateParams>, RequestError]> = [
                 [{ }, createRequestError(["triggers"])],
-                [{ triggers : [WebHookTrigger.CHARGE_FINISHED] }, createRequestError(["url"])],
+                [{ triggers : [WebHookTrigger.CHARGE_FINISHED] }, createRequestError(["url"])]
             ];
 
             for (const [data, error] of asserts) {
@@ -88,7 +88,6 @@ describe("Web Hooks", function () {
                     headers : { "Content-Type" : "application/json" }
                 }
             );
-
 
             const asserts = [
                 webHooks.list(),

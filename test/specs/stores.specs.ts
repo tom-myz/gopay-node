@@ -52,7 +52,7 @@ describe("Stores", function () {
 
         it("should return validation error if data is invalid", async function () {
             const asserts: Array<[Partial<StoreCreateParams>, RequestError]> = [
-                [{ }, createRequestError(["name"])],
+                [{ }, createRequestError(["name"])]
             ];
 
             for (const [data, error] of asserts) {
@@ -79,7 +79,7 @@ describe("Stores", function () {
                 }
             );
 
-            await expect(stores.list(),).to.eventually.eql(listData);
+            await expect(stores.list()).to.eventually.eql(listData);
         });
     });
 
@@ -113,7 +113,7 @@ describe("Stores", function () {
                 name : "Store"
             };
 
-            await expect(stores.update(uuid(), data),).to.eventually.eql(recordData);
+            await expect(stores.update(uuid(), data)).to.eventually.eql(recordData);
         });
     });
 
