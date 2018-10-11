@@ -11,6 +11,7 @@ export function generateFixture(): CheckoutInfoItem {
         cardConfiguration        : generateFixtureCardConfiguration(),
         qrScanConfiguration      : generateFixturePaymentType(),
         convenienceConfiguration : generateFixturePaymentType(),
+        paidyConfiguration       : generateFixturePaymentType(),
         recurringCardChargeCvvConfirmation: {
             enabled: false
         },

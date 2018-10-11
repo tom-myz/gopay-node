@@ -2,10 +2,15 @@
  *  @module Resources/CheckoutInfo
  */
 
-import { ResponseCallback, HTTPMethod, SendData } from "../api/RestAPI"
+import { HTTPMethod, ResponseCallback, SendData } from "../api/RestAPI"
 import { Resource } from "./Resource"
 import { ProcessingMode } from "./common/enums"
-import { CardConfigurationItem, ConvenienceConfigurationItem, QRScanConfigurationItem } from "./common/Configuration"
+import {
+    CardConfigurationItem,
+    ConvenienceConfigurationItem,
+    PaidyConfigurationItem,
+    QRScanConfigurationItem
+} from "./common/Configuration"
 import { AmountWithCurrency } from "./common/types";
 import { RecurringTokenPrivilege } from "./TransactionTokens";
 
@@ -33,6 +38,7 @@ export interface CheckoutInfoItem {
     cardConfiguration: CardConfigurationItem
     qrScanConfiguration: QRScanConfigurationItem
     convenienceConfiguration: ConvenienceConfigurationItem
+    paidyConfiguration: PaidyConfigurationItem,
     recurringCardChargeCvvConfirmation: {
         enabled?: boolean;
         threshold?: AmountWithCurrency[];
