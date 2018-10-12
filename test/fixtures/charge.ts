@@ -22,6 +22,7 @@ export function generateFixture(): ChargeItem {
         metadata                 : {},
         mode                     : ProcessingMode.TEST,
         createdOn                : new Date().toISOString(),
-        descriptor               : "test"
+        descriptor               : "test",
+        onlyDirectCurrency       : false
     }
 }
