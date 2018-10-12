@@ -55,6 +55,7 @@ export interface ChargeItem {
     transactionTokenId?: string
     transactionTokenType: TransactionTokenType
     descriptor: string
+    onlyDirectCurrency: boolean
 }
 
 export type ResponseCharge = ChargeItem

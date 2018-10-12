@@ -137,6 +137,7 @@ export interface SubscriptionItem {
     nextPayment: ScheduledPaymentItem
     paymentsLeft: number;
     descriptor: string;
+    onlyDirectCurrency: boolean;
 }
 
 interface SubscriptionSimulationBaseParams<InstallmentPlanData extends InstallmentBaseParams> {
