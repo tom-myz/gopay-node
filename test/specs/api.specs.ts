@@ -155,7 +155,7 @@ describe("API", function () {
         }
     });
 
-    it("should send request with Origin heder", async function () {
+    it("should send request with Origin header", async function () {
         interface Origin {
             origin?: string;
         }
@@ -190,7 +190,7 @@ describe("API", function () {
                     : (
                         !!initParams && !!initParams.origin
                             ? initParams.origin
-                            : "0.0.0.0"
+                            : null
                     )
             );
             expect(response).to.eql(okResponse);
