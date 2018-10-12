@@ -34,6 +34,7 @@ export function generateFixture(): SubscriptionItem {
         },
         installmentPlan: InstallmentPlan.FIXED_CYCLES,
         nextPayment: generatePayment(),
-        descriptor: "test"
+        descriptor: "test",
+        onlyDirectCurrency: false
     }
 };
