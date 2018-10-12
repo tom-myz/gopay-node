@@ -158,7 +158,7 @@ export class RestAPI {
     jwt: JWTPayload<any>;
     protected handleUpdateJWT: (jwt: string) => void = () => undefined;
     secret: string;
-    origin: string = "0.0.0.0";
+    origin: string;
 
     /**
      *  @deprecated
@@ -250,8 +250,10 @@ export class RestAPI {
             headers.append("Content-Type", "application/json");
         }
 
-        const origin = getOrigin(data);
-        headers.append("Origin", origin || this.origin);
+        const origin = getOrigin(data) || this.origin;
+        if (origin) {
+            headers.append("Origin", origin);
+        }
 
         const idempotentKey = getIdempotencyKey(data);
         if (idempotentKey) {
