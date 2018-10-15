@@ -29,6 +29,7 @@ export interface ChargeCreateParams {
     captureAt?: string | number
     capture?: boolean
     descriptor?: string
+    onlyDirectCurrency?: boolean
     metadata?: Metadata
 }
 
