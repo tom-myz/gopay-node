@@ -86,6 +86,7 @@ export interface SubscriptionCreateBaseParams {
     metadata?: Metadata;
     initialAmount?: number;
     installmentPlan?: InstallmentPlanItem<any>;
+    onlyDirectCurrency?: boolean;
 }
 
 export interface SubscriptionCreateLegacyParams extends SubscriptionCreateBaseParams {
@@ -104,6 +105,7 @@ export interface SubscriptionUpdateParams {
     status?: SubscriptionStatus;
     metadata?: Metadata;
     installmentPlan?: Partial<InstallmentPlanItem<any>>;
+    onlyDirectCurrency?: boolean;
 }
 
 export type PaymentUpdateParams = Partial<ScheduledPaymentItem>;
