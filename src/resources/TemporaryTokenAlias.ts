@@ -37,14 +37,14 @@ export class TemporaryTokenAlias extends CRUDResource {
 
     get(storeId: string,
         id: string,
-        data?: any,
+        data?: SendData<void>,
         callback?: ResponseCallback<TemporaryTokenAliasItem>): Promise<TemporaryTokenAliasItem> {
         return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
     delete(storeId: string,
            id: string,
-           data?: any,
+           data?: SendData<void>,
            callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
