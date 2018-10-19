@@ -24,7 +24,8 @@ export function generateFixtureCardConfiguration(): CardConfigurationItem {
         cardLimit            : {
             amount   : 1000,
             currency : "JPY"
-        }
+        },
+        onlyDirectCurrency: false
     }
 }
 

@@ -35,7 +35,8 @@ export function generateFixture(): PlatformConfigurationItem {
                     currency : "JPY"
                 },
                 installmentsConfiguration : generateFixtureInstallmentConfiguration(),
-                subscriptionConfiguration : generateFixtureSubscriptionConfiguration()
+                subscriptionConfiguration : generateFixtureSubscriptionConfiguration(),
+                onlyDirectCurrency: false
             },
             refundPercentLimit: 5,
             paymentDefaults: {

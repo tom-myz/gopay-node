@@ -33,6 +33,7 @@ export interface CardConfigurationItem extends PaymentTypeConfiguration {
     allowedCountriesByIp: Array<string>;
     cardLimit: CardConfigurationMonthlyLimit;
     allowEmptyCvv: boolean;
+    onlyDirectCurrency: boolean;
 }
 
 export type QRScanConfigurationItem = PaymentTypeConfiguration;

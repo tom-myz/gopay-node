@@ -26,6 +26,6 @@ export function generateFixtureTransferStatusChange(): TransferStatusChangeItem 
         oldStatus  : TransferStatus.CREATED,
         newStatus  : TransferStatus.APPROVED,
         reason     : "Reason",
-        createdOn  : new Date().toISOString(),
+        createdOn  : new Date().toISOString()
     }
 }
