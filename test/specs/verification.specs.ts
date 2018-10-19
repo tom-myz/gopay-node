@@ -44,7 +44,7 @@ describe("Verification", function () {
         systemManagerEmail          : "test@fake.com",
         recurringTokenRequest       : RecurringTokenPrivilege.NONE,
         recurringTokenRequestReason : "Reason",
-        allowEmptyCvv               : false,
+        allowEmptyCvv               : false
     }
 
     const recordPathMatcher = `${testEndpoint}/verification`;
