@@ -87,6 +87,7 @@ export interface TransactionTokenCreateParams {
     usageLimit?: UsageLimit
     data: TransactionTokenCardData | TransactionTokenQRScanData | TransactionTokenConvenienceData | TransactionTokenPaidyData
     metadata?: Metadata
+    useConfirmation?: boolean
 }
 
 export interface TransactionTokenListParams extends CRUDPaginationParams {
@@ -98,6 +99,10 @@ export interface TransactionTokenListParams extends CRUDPaginationParams {
 
 export interface TransactionTokenUpdateParams {
     email?: string
+}
+
+export interface TransactionTokenConfirmParams {
+    confirmationCode: string
 }
 
 /* Response */
@@ -189,5 +194,12 @@ export class TransactionTokens extends CRUDResource {
            data?: SendData<void>,
            callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
         return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
+    }
+
+    confirm(storeId: string,
+            id: string,
+            data: SendData<TransactionTokenConfirmParams>,
+            callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this.defineRoute(HTTPMethod.POST, "/stores/:storeId/tokens/:id/confirm")(data, callback, ["storeId", "id"], storeId, id)
     }
 }

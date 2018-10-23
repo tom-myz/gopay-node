@@ -157,6 +157,25 @@ describe("Transaction Tokens", function () {
         });
     });
 
+    context("POST /stores/:storeId/tokens/:id", function () {
+        it("should get response", async function () {
+            fetchMock.postOnce(
+                pathToRegexMatcher(`${testEndpoint}/stores/:storeId/tokens/:id/confirm`),
+                {
+                    status  : 200,
+                    body    : recordData,
+                    headers : { "Content-Type" : "application/json" }
+                }
+            );
+
+            const data = {
+                confirmationCode: "1234"
+            };
+
+            await expect(transactionTokens.confirm(uuid(), uuid(), data)).to.eventually.eql(recordData);
+        });
+    });
+
     it("should return request error when parameters for route are invalid", async function () {
         const errorId = createRequestError(["id"]);
         const errorStoreId = createRequestError(["storeId"]);
