@@ -39,6 +39,7 @@ export interface CheckoutInfoItem {
     qrScanConfiguration: QRScanConfigurationItem
     convenienceConfiguration: ConvenienceConfigurationItem
     paidyConfiguration: PaidyConfigurationItem,
+    paidyPublicKey: string;
     recurringCardChargeCvvConfirmation: {
         enabled?: boolean;
         threshold?: AmountWithCurrency[];
