@@ -87,7 +87,7 @@ export interface TransactionTokenCreateParams {
     usageLimit?: UsageLimit
     data: TransactionTokenCardData | TransactionTokenQRScanData | TransactionTokenConvenienceData | TransactionTokenPaidyData
     metadata?: Metadata
-	useConfirmation?: boolean
+    useConfirmation?: boolean
 }
 
 export interface TransactionTokenListParams extends CRUDPaginationParams {
