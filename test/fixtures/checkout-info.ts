@@ -2,6 +2,7 @@ import { ProcessingMode } from "../../src/resources/common/enums";
 import { CheckoutInfoItem } from "../../src/resources/CheckoutInfo";
 import { RecurringTokenPrivilege } from "../../src/resources/TransactionTokens";
 import { generateFixturePaymentType, generateFixtureCardConfiguration } from "./common/configuration";
+import uuid from "uuid";
 
 export function generateFixture(): CheckoutInfoItem {
     return {
@@ -12,6 +13,7 @@ export function generateFixture(): CheckoutInfoItem {
         qrScanConfiguration      : generateFixturePaymentType(),
         convenienceConfiguration : generateFixturePaymentType(),
         paidyConfiguration       : generateFixturePaymentType(),
+        paidyPublicKey           : uuid(),
         recurringCardChargeCvvConfirmation: {
             enabled: false
         },
