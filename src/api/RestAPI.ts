@@ -202,7 +202,8 @@ export class RestAPI {
                               uri: string,
                               data?: SendData<Data>,
                               callback?: ResponseCallback<A>,
-                              requireAuth: boolean = true): Promise<A> {
+                              requireAuth: boolean = true,
+                              decodeJson: boolean = true): Promise<A> {
         const dateNow = new Date();
         const timestampUTC = Math.round(dateNow.getTime() / 1000);
 
@@ -236,7 +237,11 @@ export class RestAPI {
             }
 
             await checkStatus(response);
-            return await parseJSON(response);
+            if (decodeJson) {
+                return await parseJSON(response);
+            } else {
+                return response;
+            }
         }, callback);
     }
 
